@@ -1,0 +1,27 @@
+__pycache__/
+*.pyc
+*.pyo
+.ruff_cache/
+.DS_Store
+**/.claude/parallel-dev/
+workspace/
+
+# 异源 adversarial-review provider secrets — the profiles/<provider>.json templates
+# carry NO token; the keys live in .env (or the shell env), never committed.
+.env
+.env.*
+!.env.example
+*-hetero-*.json
+
+# Python runtime (virtualenv, pytest, coverage)
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Vale styles (downloaded by `vale sync` — like node_modules)
+.vale/styles/
+.claude/parallel-dev/loop-state.json
+.claude/parallel-dev/runs/
+.env.solidforge
+!.env.solidforge.example

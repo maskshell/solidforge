@@ -1,0 +1,43 @@
+[project]
+name = "solidforge"
+version = "0"
+description = "Solid Forge — loop-engineering skills for AI coding agents (parallel-development + blueprint-crafting). Not published as a package; this file marks the workspace as a Python project for gate detection + dev-dep management."
+requires-python = ">=3.11"
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "import-linter",
+    "pylint",
+    "pyright",
+    "pip-audit",
+    "pytest-json-report",
+    "pytest-cov",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.importlinter]
+root_packages = []
+
+[tool.pytest.ini_options]
+testpaths = ["skills/parallel-development/infra/test", "skills/blueprint-crafting/infra/test"]
+
+[dependency-groups]
+dev = [
+    "import-linter>=2.13",
+    "pip-audit>=2.10.1",
+    "pylint>=4.0.6",
+    "pyright>=1.1.411",
+    "pytest-cov>=7.1.0",
+    "pytest-json-report>=1.5.0",
+    "ruff>=0.15.20",
+]

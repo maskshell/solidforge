@@ -1,0 +1,8 @@
+{
+  "name": "solidforge",
+  "version": "0.1.0",
+  "description": "A Loop Engineering system for AI coding agents. Bundles the specify->implement convergence loop: the blueprint-crafting and parallel-development skills, their cascaded subagents (architect, backend/frontend-developer, ios-developer, ios-tester, tester, code-reviewer, security-specialist, requirements-manager, devops-engineer, documentation-writer, graphiti-config-generator, playwright-test-planner/generator/healer, plan-reviewer, researcher), and the deterministic convergence-loop hooks (fast-gate, blueprint read-only guard, breaker counters). Enable per-project (Layer 1); run /solidforge:arm-tools to provision gate tools + arch-configs + constitution (Layer 2).",
+  "author": {
+    "name": "solidforge"
+  }
+}
