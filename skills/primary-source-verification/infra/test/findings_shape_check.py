@@ -70,6 +70,23 @@ def _validate(
         )
     if not isinstance(coverage_record.get("escalations"), list):
         failures.append(f"{label}: escalations not a list")
+    # volatile-authority registry (fix B): when present, every entry is
+    # {claim_ref, volatile_source} — the re-fetchability signal for claims
+    # adjudicated against repo-external / unversioned sources.
+    reg = coverage_record.get("volatile_authority_registry")
+    if reg is not None:
+        if not isinstance(reg, list):
+            failures.append(f"{label}: volatile_authority_registry not a list")
+        else:
+            for entry in reg:
+                if not isinstance(entry, dict):
+                    failures.append(f"{label}: registry entry not an object: {entry}")
+                    continue
+                for field in ("claim_ref", "volatile_source"):
+                    if not isinstance(entry.get(field), str) or not entry.get(field):
+                        failures.append(
+                            f"{label}: registry entry missing {field}: {entry}"
+                        )
 
 
 def main() -> int:
@@ -109,6 +126,43 @@ def main() -> int:
     # fixture B: empty (M=0)
     cr, df = build_coverage([], "empty.md")
     _validate(cr, df, "fixture-B-empty", failures)
+
+    # fixture C: volatile-authority registry (fix B)
+    cr, df = build_coverage(
+        [
+            {"claim_id": "C1", "verdict": "verified"},
+            {
+                "claim_id": "C2",
+                "verdict": "narrowed",
+                "finding": {
+                    "defect_id": "c2",
+                    "severity": "warning",
+                    "kind": "claim-narrowed",
+                    "location": "s1",
+                    "evidence": 'src: "q"',
+                },
+            },
+        ],
+        "volatile.md",
+    )
+    cr["volatile_authority_registry"] = [
+        {
+            "claim_ref": "C1",
+            "volatile_source": "~/.claude/projects/-users/memory/project-x.md",
+        },
+        {"claim_ref": "C2", "volatile_source": "/tmp/clone (shallow)"},
+    ]
+    _validate(cr, df, "fixture-C-volatile-registry", failures)
+    # negative: malformed registry entry must fail the shape gate (asserted on
+    # a SEPARATE failures list — the expected negative is not a gate failure).
+    bad = dict(cr)
+    bad["volatile_authority_registry"] = [{"claim_ref": "C1"}]  # missing source
+    bad_failures: list[str] = []
+    _validate(bad, df, "fixture-C-bad-registry", bad_failures)
+    if "fixture-C-bad-registry: registry entry missing volatile_source" not in (
+        " ".join(bad_failures)
+    ):
+        failures.append("fixture-C-bad-registry: malformed registry entry NOT flagged")
 
     if failures:
         print("FAIL: findings shape-contract gate")

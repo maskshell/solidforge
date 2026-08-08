@@ -1,0 +1,75 @@
+{
+  "artifact": "docs/record-auditability-fix-plan.md (csr-converged)",
+  "outcome_axis_respected": true,
+  "findings": [
+    {
+      "defect_id": "claim-P61",
+      "claim_ref": "P61",
+      "claim": "borrow doc line 22 references retrieval-memory-evaluation.md (EverOS ref) AND project-self-evolution-* memory files (L3 sources)",
+      "severity": "blocker",
+      "verdict": "refuted",
+      "location": "Adjudication row 2e — line 22 attribution (extractor-parsed from the doc's repoint wording)",
+      "evidence": "Fetched quote (borrow-from-pi-llm-wiki.md line 22): \"memory `project-self-evolution-*`（自我进化架构/实施计划）/ `project-memory-design-borrowables`（EverOS 借鉴）\" — the string retrieval-memory-evaluation.md appears NOWHERE in the document; line 22's EverOS ref is `project-memory-design-borrowables`.",
+      "note": "The refutation targets the claim as extracted (which misparsed the doc's repoint DIRECTION as a citation). The doc's row 2e/Fix D never assert the borrow doc cites retrieval-memory-evaluation.md — the repoint is a replacement. Doc fix applied: row 2e now names the cited files explicitly and states the replacement semantics.",
+      "suggestion": "Row 2e corrected (2026-08-08): \"the borrow doc cites NO retrieval-memory-evaluation.md itself (verified: the string appears nowhere in it — the repoint is a replacement, not a re-citation)\"."
+    },
+    {
+      "defect_id": "claim-P8",
+      "claim_ref": "P8",
+      "claim": "convergence-record.schema.json round shape is counts-only: fields same_source_findings, hetero_findings, blockers, verdict at schema lines 60-72",
+      "severity": "warning",
+      "verdict": "narrowed",
+      "location": "Verified fact profile 1",
+      "evidence": "Fetched quote (convergence-record.schema.json $defs/round): \"round\" (integer ordinal), \"same_source_findings\" (integer), \"hetero_findings\" (integer), \"hetero_degraded\" (boolean), \"blockers\" (integer), \"verdict\" (string enum) — the claim's enumeration omits `round` and `hetero_degraded`; the counts-only core and no-per-finding-retention core hold.",
+      "note": "Doc fix applied: Fact 1 now reads \"the count fields are same_source_findings, hetero_findings, blockers, plus the ordinal round and the boolean hetero_degraded\".",
+      "suggestion": "none (doc corrected)"
+    },
+    {
+      "defect_id": "claim-P13",
+      "claim_ref": "P13",
+      "claim": "csr SKILL.md step 4 (Emit) promises only 'per-round findings trend' (SKILL.md line 53)",
+      "severity": "warning",
+      "verdict": "narrowed",
+      "location": "Verified fact profile 3",
+      "evidence": "Fetched quote (csr SKILL.md line 53): \"rounds, per-round findings trend, substantive_converged, coverage notes, stalemate flag\" — five record elements; \"only\" overstates. The defensible core: the trend is the record's only findings-reporting content (no per-finding doc-findings packet, contrast psv step 4).",
+      "note": "Doc fix applied: Fact 3 reworded to \"promises a per-round findings trend — the record's only findings-reporting content, not a per-finding packet (contrast psv step 4)\".",
+      "suggestion": "none (doc corrected)"
+    },
+    {
+      "defect_id": "claim-P37",
+      "claim_ref": "P37",
+      "claim": "fedaot-kb docs/retrieval-memory-evaluation.md §2.5 lists the three EverOS items",
+      "severity": "warning",
+      "verdict": "narrowed",
+      "location": "Verified fact profile 8",
+      "evidence": "Fetched quote (retrieval-memory-evaluation.md line 42, §2.5): \"带来 3 项借鉴,见 §3。\" — §2.5 announces the count and defers; the enumeration lives in §3.1 (内容哈希增量编译), §3.2 (可预期分类原则), §3.3 (evolver 反思持久化).",
+      "note": "Doc fix applied: Fact 8 now reads \"§2.5 announces the three borrowables, §3.1–3.3 enumerate them\".",
+      "suggestion": "none (doc corrected)"
+    },
+    {
+      "defect_id": "claim-P73",
+      "claim_ref": "P73",
+      "claim": "csr SKILL.md step 2's reconciliation table defines a different-family-only→escalate-to-human row",
+      "severity": "warning",
+      "verdict": "narrowed",
+      "location": "Fix A mechanism (escalated disposition)",
+      "evidence": "Fetched quote (csr SKILL.md line 49): \"both-report→adopt; same-family-only→adopt; different-family-only→escalate; neither→pass; DEGRADED→adopt same-family\" — the escalate row exists but names no target; \"to human\" appears only for cap-hit/stalemate (lines 14, 51). The skill's only named escalation target is the human; the row itself is under-defined (dogfood-log.md line 37 records this).",
+      "note": "Doc fix applied: fix A mechanism now reads \"escalated — the reconciliation table's different-family-only→escalate row (SKILL.md step 2; the row itself names no target — the skill's only named escalation target is the human, cap-hit lines 14/51)\". The under-defined escalate target is itself a candidate follow-up (fix A landing should consider making the target explicit in SKILL.md step 2).",
+      "suggestion": "fix A: consider making the escalate target explicit in SKILL.md step 2 as part of the landing"
+    }
+  ],
+  "volatile_authority_registry": [
+    {"claim_ref": "P6", "volatile_source": "grep over ~/.claude (provenance check — files exist today, unversioned)", "durability": "volatile"},
+    {"claim_ref": "P18", "volatile_source": "shell environment (grep tool identity/behavior — session-dependent)", "durability": "volatile"},
+    {"claim_ref": "P19", "volatile_source": "/tmp/pi-llm-wiki clone + fedaot-kb repo (clone may disappear; repo durable)", "durability": "volatile"},
+    {"claim_ref": "P22", "volatile_source": "/tmp/pi-llm-wiki (.git/shallow — /tmp volatile)", "durability": "volatile"},
+    {"claim_ref": "P23", "volatile_source": "/tmp/pi-llm-wiki files (present today, /tmp volatile)", "durability": "volatile"},
+    {"claim_ref": "P28", "volatile_source": "~/.claude/projects/-Users-solosus-dev-ws-wiki-fedaot-kb/memory/ (unversioned)", "durability": "volatile"},
+    {"claim_ref": "P30", "volatile_source": "memory/project-self-evolution-architecture.md (unversioned)", "durability": "volatile"},
+    {"claim_ref": "P31", "volatile_source": "~/.claude/.gitignore + work-tree state (unversioned)", "durability": "volatile"},
+    {"claim_ref": "P32", "volatile_source": "memory files (unversioned)", "durability": "volatile"},
+    {"claim_ref": "P33", "volatile_source": "memory/ directory listing (unversioned)", "durability": "volatile"},
+    {"claim_ref": "P78", "volatile_source": ".env.solidforge (gitignored; token value not read)", "durability": "volatile"},
+    {"claim_ref": "P79", "volatile_source": "git working-tree state (mutable; snapshot 2026-08-08)", "durability": "volatile"}
+  ]
+}

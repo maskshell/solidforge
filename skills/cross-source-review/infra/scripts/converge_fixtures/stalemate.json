@@ -2,7 +2,9 @@
   "artifact": "docs/stalemate-sample.md",
   "authority_ref": "",
   "size_tier": "short",
-  "core_claims": ["claim_a"],
+  "core_claims": [
+    "claim_a"
+  ],
   "rounds": [
     {
       "same_findings": [
@@ -16,7 +18,16 @@
       ],
       "hetero_findings": [],
       "hetero_degraded": false,
-      "core_claims_covered": ["claim_a"]
+      "core_claims_covered": [
+        "claim_a"
+      ],
+      "dispositions": [
+        {
+          "defect_id": "x",
+          "action": "fixed",
+          "note": "fixture disposition (accepted, artifact revised)"
+        }
+      ]
     },
     {
       "same_findings": [
@@ -30,7 +41,16 @@
       ],
       "hetero_findings": [],
       "hetero_degraded": false,
-      "core_claims_covered": ["claim_a"]
+      "core_claims_covered": [
+        "claim_a"
+      ],
+      "dispositions": [
+        {
+          "defect_id": "y",
+          "action": "fixed",
+          "note": "fixture disposition (accepted, artifact revised)"
+        }
+      ]
     }
   ]
 }

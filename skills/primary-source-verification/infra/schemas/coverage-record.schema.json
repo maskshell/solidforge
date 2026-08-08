@@ -52,6 +52,19 @@
       "type": "array",
       "items": {"type": "string"},
       "description": "Honest coverage notes (workspace rule 3): the extractor blind-spot (claims neither party could see are absent from M) and the comparison blind-spot (`verified` ≠ 'no contradiction exists'), plus any source-fetch degradation. Never silent."
+    },
+    "volatile_authority_registry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim_ref", "volatile_source"],
+        "additionalProperties": false,
+        "properties": {
+          "claim_ref": {"type": "string", "minLength": 1, "description": "The claim id whose adjudication source is volatile."},
+          "volatile_source": {"type": "string", "minLength": 1, "description": "Where the source lived at run time (e.g. ~/.claude/projects/... memory files, /tmp clones, shell environment state). Volatile = repo-external / unversioned / deletable."}
+        }
+      },
+      "description": "Volatile-authority registry (fix B): one entry per claim adjudicated against a non-durably-re-fetchable source. Covers verified claims too — their sources are counted-not-listed in the packet, so this registry is their only re-fetchability signal. Absent/empty when no volatile sources were used."
     }
   }
 }

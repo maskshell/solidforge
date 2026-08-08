@@ -1,0 +1,23 @@
+{
+  "artifact": "docs/record-auditability-fix-plan.md (csr-converged)",
+  "signal": "oracle_verified_under_known_coverage",
+  "counts": {
+    "verified": 69,
+    "refuted": 1,
+    "narrowed": 4,
+    "unverifiable": 0,
+    "total_extracted": 74
+  },
+  "rightness": "human_confirm_required",
+  "escalations": [],
+  "coverage": [
+    "M=74 source-admissible claims (P1-P79, P7/P59 not emitted by the extractor); K=0 — no unverifiable claims, no escalation (M>0)",
+    "1 refuted (P61 — blocker): borrow doc line 22's EverOS ref is project-memory-design-borrowables, not retrieval-memory-evaluation.md. The claim as extracted misparsed the doc's repoint direction as a citation; the doc's own row 2e/Fix D never assert the borrow doc cites the evaluation doc. Row 2e corrected to name the cited files and state the replacement semantics (doc fix applied 2026-08-08)",
+    "4 narrowed (P8 field enumeration; P13 'only' overstatement; P37 §2.5-vs-§3 enumeration; P73 escalate-target not named in SKILL.md) — all addressed in the doc (facts 1/3/8 + fix A mechanism); wording-level fixes, no structural change, no csr re-convergence required (rule 13)",
+    "P18 (grep tool-dependence) initially narrowed on the GNU leg; closed by direct run 2026-08-08 (/opt/homebrew/opt/grep/libexec/gnubin/grep -c 'C57' on the PDF → 1, exit 0) → counted as verified",
+    "Volatile-authority registry: 12 claims adjudicated against volatile sources (~/.claude memory, /tmp clone, shell env, git state, gitignored .env) — see the per-claim packet (fix B practice; the registry is the re-fetchability signal for verified-claim sources)",
+    "extractor blind-spot: M contains only claims author+extractor both saw; comparison blind-spot: verified = fetched text shows no contradiction, not proof of none",
+    "All adjudication sources local and fetched this session (solidforge + fedaot-kb files, memory files, /tmp clone, embedded Appendix A); no paywall, no network fetch",
+    "The fedaot-kb narrowed-claim quotes (C28/C36/C42/C49/C54) referenced by the audited psv record are NOT re-checkable (per-claim packet not persisted) — out of this run's adjudication surface"
+  ]
+}

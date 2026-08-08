@@ -44,13 +44,13 @@ You are the orchestrator. The legs are read-only agents/subprocesses; the driver
 
 2. **Round loop** (same-family ↔ different-family, orchestrator-driven) — each round:
    - Run the **same-family leg** — spawn `solidforge:doc-reviewer` (a fresh, independent context; it returns a doc-findings object).
-   - Reconcile: revise the artifact per accepted findings, or reject a finding with rationale.
+   - Reconcile: revise the artifact per accepted findings, or reject a finding with rationale. RECORD each finding's disposition at reconcile time (the producing step for the record's per-round dispositions — fix A): `fixed` = accepted, artifact revised; `rejected` = declined, with rationale (incl. coverage disclosures — not defects, carried in coverage notes); `escalated` = different-family-only findings, escalating to the human (the skill's only named escalation target).
    - Run the **different-family leg** — from the **project root** (the wrapper reads `<cwd>/.env.solidforge`), invoke `python3 "${CLAUDE_PLUGIN_ROOT}/skills/cross-source-review/infra/scripts/hetero_doc_review.py" --artifact <doc> --authority <ref-or-empty> --prior-findings <round-json> --profile deepseek` on the revised artifact (fed the same-family findings as prior, so it hunts the gap, not restatements) → doc-findings. Use the absolute path; do NOT `cd` into the skill dir — cwd must stay at the project root or the token will not resolve.
    - Reconcile again. Apply the per-round reconciliation table (both-report→adopt; same-family-only→adopt; different-family-only→escalate; neither→pass; DEGRADED→adopt same-family).
 
 3. **Convergence judgment** — substantive_converged when core claims are coverage-verified AND no new Blocker for ≥2 rounds. If the cap is hit without convergence → `adversarial-stalemate`, escalate to human (never silent-pick). Verify each leg's factual/citation claims against source independently — do not blind-trust either source.
 
-4. **Emit** — the converged artifact + a `convergence-record` (`infra/schemas/convergence-record.schema.json`): rounds, per-round findings trend, `substantive_converged`, coverage notes, stalemate flag.
+4. **Emit** — the converged artifact + a `convergence-record` (`infra/schemas/convergence-record.schema.json`): rounds — each carrying the reconciled findings AND their per-finding dispositions, so a reader can list what was found and what was done about it (retention fix A; the counts-only record is obsolete) — `substantive_converged`, coverage notes, stalemate flag.
 
 The pluggable seam: the driver takes `findings-schema` as a parameter (default doc-findings; a future code-shaped caller passes `violation-log`) and the same-family leg as a callback (default `solidforge:doc-reviewer`). This keeps a future code-domain caller a thin adaptation, not a rewrite (proposal §3).
 

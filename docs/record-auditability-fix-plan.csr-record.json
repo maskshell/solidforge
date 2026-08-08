@@ -1,0 +1,730 @@
+{
+  "artifact": "docs/record-auditability-fix-plan.md",
+  "rounds": [
+    {
+      "round": 1,
+      "same_source_findings": 7,
+      "hetero_findings": 6,
+      "hetero_degraded": false,
+      "blockers": 1,
+      "verdict": "rewrite",
+      "findings": [
+        {
+          "defect_id": "audit-claim-mislabel-1c",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Adjudication of the assessment table, row 1c",
+          "evidence": "Doc row 1c is headed by the column \"Audit claim\", yet its own evidence states the audit did not make this claim (Appendix A contains no psv-packet claim; its two defects are the csr counts defect and the authority volatility defect; the only psv mention is \"psv 类管线的 authority_ref 应禁用不可重取的源\"). The row is the doc's own extension presented as the audit's claim.",
+          "suggestion": "Relabel row 1c as the doc's own inference."
+        },
+        {
+          "defect_id": "pre-adr3-missing-rejected",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Pre-ADR design decisions, third bullet 'Schema back-compat (fix A)'",
+          "evidence": "Unlike the two sibling entries, which each carry an explicit rejected alternative, the schema back-compat entry names no rejected alternative. Workspace rule 6 requires ADRs to log the rejected alternatives.",
+          "suggestion": "Add an explicit 'Rejected:' line to the schema back-compat entry."
+        },
+        {
+          "defect_id": "verdict-taxonomy-drift",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Header line 3 vs Adjudication table rows 2c and 3",
+          "evidence": "The header promises a three-value verdict scale (confirmed / partially-confirmed / refuted), but the table uses a fourth value (MISDIRECTED) and a qualified fifth ('CONFIRMED, not a violation'). The promised enumeration does not cover the table's values.",
+          "suggestion": "Extend the header's verdict taxonomy or fold MISDIRECTED into refuted."
+        },
+        {
+          "defect_id": "cov-verbatim-not-on-disk",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Context section: 'It is NOT a file on disk anywhere; it is embedded verbatim in Appendix A'",
+          "evidence": "Greps for the appendix's distinctive phrases hit only this document itself; no matches in ws-wiki. Consistent with the claim but cannot prove the absolute negative 'anywhere'; 'verbatim' fidelity is unverifiable by design.",
+          "suggestion": "Treat 'verbatim' and 'nowhere on disk' as best-effort claims."
+        },
+        {
+          "defect_id": "cov-git-never-tracked",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Adjudication table row 2a",
+          "evidence": "Memory files live under ~/.claude/projects/ — structurally outside both project repos; Glob '**/.git' under ~/.claude found no git repo covering them. The '从未' (never) history negative across arbitrary other repos is not exhaustively provable from here.",
+          "suggestion": "Add a scope note ('checked: both project repos + ~/.claude') to make the evidence exact."
+        },
+        {
+          "defect_id": "cov-env-token-presence",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Pipeline self-description: '.env.solidforge DEEPSEEK token — present in this repo'",
+          "evidence": "The file exists; the presence of a DEEPSEEK token inside it is unverified (deliberately not read). The repo-root cwd-based .env.solidforge resolution is corroborated by the csr SKILL.md step-2 text.",
+          "suggestion": "None — token values should not be read; existence is the verifiable part."
+        },
+        {
+          "defect_id": "cov-graphiti-live-search",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Adjudication table row 2c",
+          "evidence": "The audit's Graphiti search outcome is a past live event against external service state — not re-runnable here. The MISDIRECTED verdict rests on the record evidence (adjudication sources named in the records are exclusively local; no Graphiti anywhere), which was confirmed.",
+          "suggestion": "None required."
+        },
+        {
+          "defect_id": "fix-d-line-omission",
+          "severity": "blocker",
+          "kind": "coverage-gap",
+          "location": "Fix set D (mechanism + acceptance) and Adjudication 2e, vs fedaot-kb `docs/plans/borrow-from-pi-llm-wiki.md` lines 43 and 89",
+          "evidence": "Plan D mechanism: \"repoint `docs/plans/borrow-from-pi-llm-wiki.md` lines 22 and 142: EverOS part → `docs/retrieval-memory-evaluation.md` (corroboration verified); self-evolution 3-paths → a durable in-repo source (staging MCP source) or a narrowed claim\"; acceptance: \"every memory reference in the doc resolves to a tracked artifact\". The borrow doc carries memory-file references at FOUR lines (22, 43, 89, 142 — verified by grep). Line 43 is the load-bearing citation the plan's own Fact 8/2e treat as repointable: \"memory `project-memory-design-borrowables`（EverOS）清单的三项——①内容哈希增量编译已实施、②可预期分类原则待写、③evolver 反思瞬态缺口未做\" (this is the P1/L5 EverOS anchor; line 22 only lists the memory files as references, so even the 'EverOS part' mapping is aimed at the wrong line). Line 89 carries C57's adjudication source: \"与 FEDAOT-KB 管道并行化方向（memory `project-pipeline-performance`：route 阶段线程池并行）**相关但不同构**\" — and psv-record.json coverage names \"C57 以 memory 为裁决面\" (agent memory). Neither 43 nor 89 appears in the mechanism, so the plan's own acceptance is unsatisfiable by its stated mechanism — the two volatile refs the audit's volatility complaint actually targets (C57 and the EverOS list) stay unrepointed.",
+          "suggestion": "Extend fix D to a complete reference census: repoint lines 43 (EverOS 三项 + 3-路径) and 89 (project-pipeline-performance → in-repo ETL source, e.g. src/etl/mcp_server.py for the tools) in addition to 22/142, and state the census grep (e.g. `grep -n 'memory .*project-'`) in the mechanism."
+        },
+        {
+          "defect_id": "fact4-grep-overstated",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "Verified fact profile #4 (record-layer claims)",
+          "evidence": "Plan: \"Grep for claim ids `C57`/`C28` across fedaot-kb `docs/` hits only the record file itself: the per-claim packet with fetched quotes was NOT persisted.\" Verified against the actual grep: `grep -rl 'C57\\|C28' fedaot-kb/docs/` returns TWO files — `docs/plans/borrow-from-pi-llm-wiki.psv-record.json` AND `docs/references/docling-tech-report.pdf` (the PDF contains the string \"C57#\"). The substantive conclusion (no per-claim packet persisted) still holds — the plans/ dir has no packet file and the record is counts-only — but the stated grep evidence is false as written for a doc whose whole thesis is evidence accuracy.",
+          "suggestion": "Restate Fact 4's evidence as 'grep of markdown/JSON sources hits only the record file; a binary PDF also matches the bare string' or filter the grep to text files and say so."
+        },
+        {
+          "defect_id": "fact7-quote-abridgement",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "Verified fact profile #7 (psv-record coverage quotes)",
+          "evidence": "Plan Fact 7 quotes: \"C57 以 memory 为裁决面（agent memory 非权威信源）\". psv-record.json line 29 actually reads: \"C57 以 memory 为裁决面（agent memory 非权威信源，仅裁决 claim↔text 保真度）\" — the dropped clause \"仅裁决 claim↔text 保真度\" is the operative scope statement (memory adjudicates claim↔text fidelity only, the very basis of the 2c MISDIRECTED verdict). The first quote similarly drops \"，无 paywall；fetch 过程两处被 verifier 独立复核纠正（C15 命令真实存在、C45 grep 描述不精确）\". Both abridgements are unmarked (no ellipsis) — while Fact 4's own SKILL.md quote does use \"…\" — in the document whose purpose is citation-fidelity remediation.",
+          "suggestion": "Mark abridgements with ellipsis or quote verbatim; the C57 quote should carry the fidelity-only clause since the 2c verdict rests on it."
+        },
+        {
+          "defect_id": "fix-a-disposition-producer-gap",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Fix set A (mechanism + landing)",
+          "evidence": "Plan fix A mechanism: \"AND a per-finding disposition list (`defect_id` → `fixed` / `rejected` with the orchestrator's reconcile rationale). The orchestrator already makes accept/reject decisions at reconcile time (SKILL.md step 2 …) — today that decision is discarded\"; landing: \"`converge.py` pass-through (it holds the findings in memory; emit them), SKILL.md step 4 wording …\". converge.py lines 231–232 receive only `same_findings`/`hetero_findings` from run.json — dispositions (orchestrator reconcile decisions) never enter the engine, and the landing set contains no SKILL.md step-2 instruction to record them and no run.json input-shape change. The acceptance (\"a reader of the record can list every finding per round, its severity, and what was done about it\") therefore has no producing step for the 'what was done about it' part — the fix re-creates the discard at a new field.",
+          "suggestion": "Add to fix A's landing: SKILL.md step-2 wording (record accept/reject + rationale per defect_id at reconcile time) and converge.py run.json input shape (per-round `dispositions` array passed through to the record)."
+        },
+        {
+          "defect_id": "coverage-graphiti-search-unverified",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Adjudication 2c (MISDIRECTED) — Graphiti group state",
+          "evidence": "I re-ran search_nodes(query='self-evolution 知识进入路径 submit_knowledge research_topic', group_ids=['fedaot-kb']) — all 10 returned nodes carry group_id 'personal-prefs' (the group filter appears not applied server-side), so the audit's 'Graphiti fedaot-kb group 经 search_nodes/get_episodes 均检索不到对应 episode' could not be robustly confirmed or refuted by me. The plan's MISDIRECTED verdict does not depend on this (the psv record establishes Graphiti was never the adjudication surface), so no plan defect — disclosed for honesty.",
+          "suggestion": "None required; the verdict is invariant to the unverified fact."
+        },
+        {
+          "defect_id": "coverage-fetched-quotes-unrecheckable",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Context (psv 58 claims) / Verified fact profile #4",
+          "evidence": "psv-record.json line 25 asserts the 5 narrowed claims (C28, C36, C42, C49, C54) '均附 fetched 引文' and line 27 cites verifier corrections (C15 命令真实存在、C45 grep 描述不精确) — but those fetched quotes live only in the unpreserved per-claim packet, so I could not re-check any of them against their sources. This is consistent with (and the very point of) the plan's Fact 4, but the plan itself nowhere re-verifies those quotes; flagged so the plan's own psv round on itself treats them as un-adjudicable.",
+          "suggestion": "Optional: state in the plan that the fedaot-kb narrowed-claim quotes are unre-checkable and out of the plan's adjudication surface."
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "audit-claim-mislabel-1c",
+          "action": "fixed",
+          "note": "row 1c relabeled as doc's own inference"
+        },
+        {
+          "defect_id": "pre-adr3-missing-rejected",
+          "action": "fixed",
+          "note": "Rejected line added to schema back-compat pre-ADR"
+        },
+        {
+          "defect_id": "verdict-taxonomy-drift",
+          "action": "fixed",
+          "note": "header taxonomy extended"
+        },
+        {
+          "defect_id": "cov-verbatim-not-on-disk",
+          "action": "rejected",
+          "note": "coverage disclosure, not a defect; carried in coverage notes"
+        },
+        {
+          "defect_id": "cov-git-never-tracked",
+          "action": "fixed",
+          "note": "row 2a scope note added"
+        },
+        {
+          "defect_id": "cov-env-token-presence",
+          "action": "rejected",
+          "note": "disclosure; token values not read by design"
+        },
+        {
+          "defect_id": "cov-graphiti-live-search",
+          "action": "rejected",
+          "note": "disclosure; verdict invariant"
+        },
+        {
+          "defect_id": "fix-d-line-omission",
+          "action": "fixed",
+          "note": "fix D extended to 4-line census (22/43/89/142)"
+        },
+        {
+          "defect_id": "fact4-grep-overstated",
+          "action": "fixed",
+          "note": "evidence restated (text sources; binary-PDF exclusion); underlying caution adopted"
+        },
+        {
+          "defect_id": "fact7-quote-abridgement",
+          "action": "fixed",
+          "note": "verbatim quotes with fidelity clause"
+        },
+        {
+          "defect_id": "fix-a-disposition-producer-gap",
+          "action": "fixed",
+          "note": "fix A landing gained SKILL.md step-2 + run.json input shape"
+        },
+        {
+          "defect_id": "coverage-graphiti-search-unverified",
+          "action": "rejected",
+          "note": "disclosure; verdict rests on record evidence"
+        },
+        {
+          "defect_id": "coverage-fetched-quotes-unrecheckable",
+          "action": "fixed",
+          "note": "Fact 4 consequence sentence added"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "same_source_findings": 3,
+      "hetero_findings": 5,
+      "hetero_degraded": false,
+      "blockers": 0,
+      "verdict": "pass",
+      "findings": [
+        {
+          "defect_id": "fix-d-3paths-line-mislocation",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "fix set D mechanism (line 71)",
+          "evidence": "Fix D routes 'the self-evolution 3-paths references (lines 22/142)' to a durable source or narrowed claim, but the 3-paths assertion 'FEDAOT-KB self-evolution 已有 3 路径 + 信任分级 + staging' is at line 43 ONLY (lines 22/142 are citation lines). Line 43 carries BOTH the 3-paths assertion and the EverOS memory ref; routing 43 only for its EverOS part leaves the load-bearing L3 assertion anchored to the volatile memory file — the exact defect fix D exists to repair.",
+          "suggestion": "Rename the target: the 3-paths assertion at line 43 (plus citation lines 22/142) → durable source or narrowed claim."
+        },
+        {
+          "defect_id": "fact6-incomplete-enumeration",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "verified fact profile item 6 (line 24)",
+          "evidence": "Fact 6 enumerates only three memory files but the doc's own fix D identifies C57's adjudication source as a fourth memory file (project-pipeline-performance.md), which exists on disk. The refutation's conclusion holds, but the evidence list understates the case.",
+          "suggestion": "Add project-pipeline-performance.md to the Fact 6 enumeration."
+        },
+        {
+          "defect_id": "row-2d-dangling-fact-ref",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "adjudication table row 2d",
+          "evidence": "Row 2d's evidence cites 'Fact 2a' — no such fact exists (facts are numbered 1–11); the intended referent is row 2a's scope note.",
+          "suggestion": "Change 'Fact 2a' to 'row 2a's scope note'."
+        },
+        {
+          "defect_id": "fact8-paths",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Verified fact profile, Fact 8 (line 26)",
+          "evidence": "Doc claims: \"It does NOT contain L3's '3 paths' content (its '路径' mentions are ETL compile paths, not knowledge-entry paths)\" — stated as read-verified this session. The cited file contradicts it: `docs/retrieval-memory-evaluation.md` line 23: \"compile 仅 ingest/watch/rebuild 路径,手工写页/research/staging 绕过\" and line 60: \"**手工写页 / research / staging 路径绕过 compile**:`research_topic`→staging(`src/etl/research/orchestrator.py:95-115`)\" — these name the knowledge-entry paths (manual ingest, research_topic, staging), NOT ETL compile paths; line 129 even cross-references \"`docs/wiki-common/knowledge-trust-tiering.md` — 知识信任分级\" (the trust-tiering half of the L3 claim). The stated reason is false and the main clause is overstated: the file does carry the three entry paths (in compile-gate-bypass framing), so the doc's basis for row 2e's 'invalid for L3' and Fix D's '→ a durable in-repo source, e.g. the staging MCP source' (rather than a partial repoint) is mis-stated.",
+          "suggestion": "Correct Fact 8: the file's 路径 mentions include the knowledge-entry paths (手工写页/research/staging, compile-bypass context), only the '已有 3 路径 + 信任分级' framing is absent — re-derive the row-2e partiality and Fix D line-43 target from that."
+        },
+        {
+          "defect_id": "row2e-line22",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Adjudication table row 2e (line 42)",
+          "evidence": "Row 2e verdict: \"valid for the EverOS items (L5, lines 22/43); invalid for L3's 3 paths (not in that doc)\". The audit's suggestion was to repoint lines 22 AND 142. Verified against the borrow doc: line 22 is \"memory `project-self-evolution-*`（自我进化架构/实施计划）/ `project-memory-design-borrowables`（EverOS 借鉴）\" — line 22 carries BOTH the L3 sources (project-self-evolution-*, which the doc's own Fact 6 names as the 3-paths source) and the EverOS ref. The row's \"valid for lines 22/43\" invites repointing line 22's L3 refs to a doc the same row declares invalid for L3, and line 142 (explicitly named by the audit) gets no verdict in the row at all — its fate is recoverable only from Fix D's catch-all \"lines 22/142 are citation lines only\". The adjudication of the audit's actual suggestion is therefore under-specified in the table itself.",
+          "suggestion": "Split line 22 explicitly in row 2e (EverOS ref → valid; project-self-evolution-* refs → invalid, L3 sources) and state line 142's verdict in the row."
+        },
+        {
+          "defect_id": "fact4-pdf-grep",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "Verified fact profile, Fact 4 (line 22)",
+          "evidence": "Doc claims: \"a binary fetched PDF carries the bare string only in its compressed stream — not rendered text, invisible to default grep; excluded as noise\". Verified against the only repo PDF with a raw C57 hit: `grep -c 'C57' docs/references/docling-tech-report.pdf` returns 1 — default grep DOES see the string; `pdftotext docs/references/docling-tech-report.pdf - | grep -c C57` returns 0 (rendered text clean). So the substance (compressed-stream-only) verifies, but the doc's own \"invisible to default grep\" is contradicted by default grep behavior on the same artifact — and no fetched PDF is named, so the claim is not verifiable as stated for whatever PDF the psv run actually fetched (docling is not cited anywhere in the borrow doc, and the /tmp clone is volatile).",
+          "suggestion": "Name the fetched PDF and rephrase: 'raw-bytes grep matches only in the compressed stream; rendered text (pdftotext) is clean — excluded as noise'."
+        },
+        {
+          "defect_id": "tmp-clone-packet",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Fact 4 consequence + pipeline self-description (lines 22, 97-98)",
+          "evidence": "Could not verify: the psv fetch base `/tmp/pi-llm-wiki 克隆仓库` (named in psv-record.json coverage line 4) and any transient per-claim packet there at run time. The doc's Fact-4 conclusion \"NOT re-checkable today\" is verified for the fedaot-kb repo (only the counts-style record exists; grep C57/C28 hits only psv-record.json), but whether the packet ever existed durably anywhere at run time is unverifiable from this repo's on-disk state — /tmp is volatile by nature, which is the doc's own volatility thesis. Also the identity of the \"fetched PDF\" (Fact 4 parenthetical) is unverifiable.",
+          "suggestion": "State in Fact 4 that the packet's run-time existence in /tmp is itself unverifiable (volatile) — the record's '均附 fetched 引文' therefore rests on an irrecoverable artifact either way."
+        },
+        {
+          "defect_id": "assessment-origin-0file",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Row 2a/2b + Context (lines 13, 38-39)",
+          "evidence": "Could not verify the intended meaning of the audit's \"git 从未跟踪（0 文件）\": the doc adjudicates it as a git-tracking claim (row 2a CONFIRMED, with scope note) while separately refuting the disk-existence reading (row 2b), and both readings flow from an assessment that exists ONLY as the doc's embedded Appendix A (relayed by the workspace owner, no original on disk — the doc discloses the provenance but never flags the '0 文件' interpretation choice). The split adjudication is contingent on that unverifiable interpretation; a '0 files exist' reading would make row 2a a refuted claim, not a confirmed one.",
+          "suggestion": "Add a coverage note to row 2a: the audit's '0 文件' wording is ambiguous (tracked-count vs existence); row 2a's CONFIRMED holds only under the tracking reading."
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "fix-d-3paths-line-mislocation",
+          "action": "fixed",
+          "note": "3-paths target moved to line 43"
+        },
+        {
+          "defect_id": "fact6-incomplete-enumeration",
+          "action": "fixed",
+          "note": "project-pipeline-performance.md added"
+        },
+        {
+          "defect_id": "row-2d-dangling-fact-ref",
+          "action": "fixed",
+          "note": "Fact 2a -> row 2a's scope note"
+        },
+        {
+          "defect_id": "fact8-paths",
+          "action": "fixed",
+          "note": "Fact 8 reason corrected (entry paths in bypass context; trust-tiering durable)"
+        },
+        {
+          "defect_id": "row2e-line22",
+          "action": "fixed",
+          "note": "line 22 split; line 142 stated"
+        },
+        {
+          "defect_id": "fact4-pdf-grep",
+          "action": "fixed",
+          "note": "PDF named; observable behavior stated"
+        },
+        {
+          "defect_id": "tmp-clone-packet",
+          "action": "fixed",
+          "note": "/tmp volatility sentence added"
+        },
+        {
+          "defect_id": "assessment-origin-0file",
+          "action": "fixed",
+          "note": "row 2a ambiguity coverage note added"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "same_source_findings": 3,
+      "hetero_findings": 8,
+      "hetero_degraded": false,
+      "blockers": 2,
+      "verdict": "rewrite",
+      "findings": [
+        {
+          "defect_id": "fact4-grep-exit1-contradiction",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "verified fact profile item 4 — docling-tech-report.pdf parenthetical",
+          "evidence": "The sentence asserts both a raw-byte hit ('visible to grep -a') and 'invisible to default grep (verified: exit 1)' for the same string in the same file, plus a causal story ('only in its compressed stream') that cannot produce grep invisibility (grep searches raw bytes regardless of PDF stream structure).",
+          "suggestion": "Name the exact tool+invocation for the 'exit 1' result and drop the compressed-stream locator; state observables only."
+        },
+        {
+          "defect_id": "fact4-tmp-clone-unverifiable",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "verified fact profile item 4 — final sentence",
+          "evidence": "'their run-time existence is itself unverifiable today' is false for the clone portion: /tmp/pi-llm-wiki exists today as a full re-fetchable git clone (188 files, .git/HEAD, adjudication sources present). The run-time packet is correctly unverifiable (verified absent).",
+          "suggestion": "Reword: the clone currently exists and is re-fetchable but /tmp is volatile; the packet was not persisted."
+        },
+        {
+          "defect_id": "fact4-pdftotext-unverifiable",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "verified fact profile item 4 — parenthetical",
+          "evidence": "The pdftotext run and the stream-level locator are not reproducible from this environment (no pdftotext binary here; PDF extraction renders images only).",
+          "suggestion": "State the command so it is reproducible."
+        },
+        {
+          "defect_id": "hetero-1",
+          "severity": "blocker",
+          "kind": "citation-error",
+          "location": "Verified fact profile, Fact 8 (line 26)",
+          "evidence": "Doc: \"the doc's own 路径 mentions name the knowledge-entry paths (手工写页 / research_topic / staging) only in compile-gate-bypass context (lines 23, 60), and it cross-references `docs/wiki-common/knowledge-trust-tiering.md` (line 129)\". Against the named subject (borrow-from-pi-llm-wiki.md, 149 lines): line 23 is EMPTY, line 60 is \"- **落地动作**：wiki-writer SKILL 增\"不得捏造元数据\"条目；lint 增 `stale_after` 解析与「过时」检查…\" (no path mention), line 129 is EMPTY, and `grep -n 'knowledge-trust-tiering' docs/plans/borrow-from-pi-llm-wiki.md` returns nothing. All three citations resolve ONLY against the OTHER file, retrieval-memory-evaluation.md: line 23 \"手工写页/research/staging 绕过\", line 60 \"**手工写页 / research / staging 路径绕过 compile**\", line 129 \"- `docs/wiki-common/knowledge-trust-tiering.md` — 知识信任分级\". The fact profile claims to be \"verified by reading the named artifact this session\" — the evidence lines are attached to the wrong artifact; a reader following the citations cannot verify a single one against the named doc.",
+          "suggestion": "Disambiguate the referent in Fact 8 (which file each claim and line range is about); the lines 23/60/129 evidence belongs to retrieval-memory-evaluation.md, not the borrow doc."
+        },
+        {
+          "defect_id": "hetero-2",
+          "severity": "blocker",
+          "kind": "contradiction",
+          "location": "Verified fact profile, Fact 8 (line 26) → conclusion feeding row 2e and Fix D",
+          "evidence": "Doc: \"the A/B/C path enumeration exists only in the memory file … so the 信任分级 half of L3 has durable anchors, the path enumeration does not.\" Contradicted by the tracked fedaot-kb file docs/staging-usage.md line 3: \"所有外部知识（手动录入、Agent 提交、研究报告）均先进入 Staging，经过信任分级和纯度检查后…\" — that is exactly the memory file's three knowledge-entry paths (C 手动 ingest = 手动录入, A submit_knowledge = Agent 提交, B research_topic = 研究报告), durably anchored in a versioned repo file. The false conclusion drives row 2e's PARTIAL verdict and Fix D's \"or a narrowed claim\" fallback (line 71) — the plan's premise that the 3-paths assertion is unanchored and needs a new source or claim-narrowing is wrong; a direct repoint to staging-usage.md exists.",
+          "suggestion": "Correct Fact 8: the three-path enumeration has a durable anchor (docs/staging-usage.md §1); drop the 'narrowed claim' alternative from Fix D line 43 and repoint to staging-usage.md."
+        },
+        {
+          "defect_id": "hetero-3",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "Verified fact profile, Fact 4 parenthetical (line 22)",
+          "evidence": "Doc: \"default BSD grep on this machine reports no match (exit 1, binary-mode detection quirk)\". Direct test on this machine: `grep 'C57' docs/references/docling-tech-report.pdf` prints \"grep: docs/references/docling-tech-report.pdf: binary file matches\" with exit 0; `grep -c 'C57' …` prints 1 with exit 0; `grep -r` exit 0. BSD grep does NOT report no-match/exit-1 for a matching binary — the claim is also internally inconsistent with the doc's own raw-byte hit (\"grep -a match at offset 672115\", which I reproduced exactly). The exclusion conclusion is sound (pdftotext count = 0 verified); the stated evidence mechanism is not.",
+          "suggestion": "Delete or correct the BSD-grep exit-code sentence; the raw-byte hit is noise because the rendered text has no match, not because grep exits 1."
+        },
+        {
+          "defect_id": "hetero-4",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Adjudication table row 2b (line 39)",
+          "evidence": "Doc row 2b: \"Fact 6 — all three files exist; content matches the claims (3 paths; EverOS items)\" — but Fact 6 (line 24) enumerates FOUR files, explicitly counting: \"…memory/{project-self-evolution-architecture,project-self-evolution-plan,project-memory-design-borrowables,project-pipeline-performance}.md (the fourth file is C57's adjudication source — fix D line 89)\". The audit's 2b claim (\"磁盘不存在\") covered the whole memory/project-*.md glob including C57's source; the refutation undercounts its own evidence by one.",
+          "suggestion": "Say 'all four files exist' (or name the three L3 files explicitly and adjudicate C57's source separately)."
+        },
+        {
+          "defect_id": "hetero-5",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Fix B — mechanism vs acceptance (lines 57–61)",
+          "evidence": "Fix B acceptance: \"a repo reader can re-fetch every adjudication source\" — but its mechanism implements \"the SKILL.md's already-mandated 'plus a doc-findings packet'\", and psv SKILL.md line 57 defines that packet as \"(refuted / narrowed / unverifiable findings; `verified` claims are counted, not listed)\". With 53 of 58 claims verified, no mechanism records the adjudication source for the verified majority, so the acceptance criterion is unreachable under the cited mandate; making the packet per-claim (claim_ref/verdict/source_ref/quote for ALL claims) would exceed the SKILL.md definition the fix cites as its authority. The plan needs to state which it means.",
+          "suggestion": "Either extend the packet to all claims' source refs (and update SKILL.md line 57 accordingly) or narrow the acceptance to 'every non-verified finding's source re-fetchable + volatile-source disclosure'."
+        },
+        {
+          "defect_id": "hetero-6",
+          "severity": "warning",
+          "kind": "scope-creep",
+          "location": "Scope (line 5) + Scope boundary (line 90) vs Fix D mechanism (line 71)",
+          "evidence": "Doc scope: \"NOT a review of fedaot-kb's content\" and \"Not touched: … fedaot-kb content\" — yet Fix D's mechanism prescribes a content change to the external doc: \"the load-bearing 3-paths assertion (L3 — → a durable in-repo source, e.g. the staging MCP source, or a narrowed claim)\". 'A narrowed claim' alters what L3 asserts (claim-strength modification), which is fedaot-kb content, not reference repointing; the 'executed after the pipeline, separately' framing mitigates but does not reconcile the stated non-goal with the prescribed content option.",
+          "suggestion": "Restrict Fix D to reference repointing and explicit 'verify-against' notes; move any claim-narrowing decision to fedaot-kb's own review process."
+        },
+        {
+          "defect_id": "hetero-7",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Context section, line 13",
+          "evidence": "Doc: \"It is NOT a file on disk anywhere; it is embedded verbatim in Appendix A\". I searched fedaot-kb docs/plans, solidforge docs/ and workspace/ and found no third-party assessment file, but a disk-wide absence is unprovable and Appendix A's 'verbatim' fidelity has no original to check against (the doc relies on the relayed text being complete, e.g. it nowhere quotes the audit naming psv's packet gap — consistent with row 1c's reading, but that consistency cannot be confirmed against an original).",
+          "suggestion": "Record this as a declared coverage limit in the csr-record coverage notes (source of the assessment is the owner's relay, not a fetchable artifact)."
+        },
+        {
+          "defect_id": "hetero-8",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Fact 4, line 22",
+          "evidence": "Doc: \"full git clone containing the psv adjudication sources\" (/tmp/pi-llm-wiki) and \"verified absent from both the clone and the fedaot-kb repo\". I verified the clone is a git repo of zosmaai/pi-llm-wiki at a4c9da4 and that no packet file exists in fedaot-kb docs/plans, but did not re-verify each adjudication source file's presence inside the clone, and the packet-absence in the clone is a spot-check of a run-time artifact that never belonged to the repo — the negative is not fully re-derivable.",
+          "suggestion": "List the concrete adjudication-source paths inside /tmp/pi-llm-wiki in the fact profile so the claim is re-checkable before the clone disappears."
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "fact4-grep-exit1-contradiction",
+          "action": "fixed",
+          "note": "observables + tool identities stated"
+        },
+        {
+          "defect_id": "fact4-tmp-clone-unverifiable",
+          "action": "fixed",
+          "note": "clone-exists wording"
+        },
+        {
+          "defect_id": "fact4-pdftotext-unverifiable",
+          "action": "fixed",
+          "note": "command stated"
+        },
+        {
+          "defect_id": "hetero-1",
+          "action": "fixed",
+          "note": "Fact 8 referent disambiguated (file named per clause)"
+        },
+        {
+          "defect_id": "hetero-2",
+          "action": "fixed",
+          "note": "staging-usage.md durable anchor; fix D repoint; narrowed-claim fallback dropped"
+        },
+        {
+          "defect_id": "hetero-3",
+          "action": "fixed",
+          "note": "grep tool-dependent statement"
+        },
+        {
+          "defect_id": "hetero-4",
+          "action": "fixed",
+          "note": "row 2b four files"
+        },
+        {
+          "defect_id": "hetero-5",
+          "action": "fixed",
+          "note": "fix B volatile-authority registry covering all claims"
+        },
+        {
+          "defect_id": "hetero-6",
+          "action": "fixed",
+          "note": "fix D restricted to reference repointing"
+        },
+        {
+          "defect_id": "hetero-7",
+          "action": "rejected",
+          "note": "coverage disclosure; origin recorded in coverage notes"
+        },
+        {
+          "defect_id": "hetero-8",
+          "action": "fixed",
+          "note": "clone adjudication-source paths listed"
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "same_source_findings": 2,
+      "hetero_findings": 5,
+      "hetero_degraded": false,
+      "blockers": 0,
+      "verdict": "pass",
+      "findings": [
+        {
+          "defect_id": "r4-1",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Scope boundary vs fix D mechanism",
+          "evidence": "Scope boundary says 'Not touched: ... fedaot-kb content' while fix D prescribes per-line repointing inside a fedaot-kb file; 'fedaot-kb content' is undefined, so a reader cannot reconcile 'does not modify fedaot-kb content' with the repoint mapping.",
+          "suggestion": "Gloss 'content' (knowledge claims, not citation strings) or rephrase fix D: 'executed by fedaot-kb's own process; this pipeline modifies no fedaot-kb file'."
+        },
+        {
+          "defect_id": "r4-2",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Adjudication table; Appendix A; Fact 8",
+          "evidence": "Appendix A's 'L3 的\"3 路径\"计数则完全落在挥发源上，无法复验' is answered only implicitly in Fact 8 and row 2e; the split verdict (re-verifiability refuted by the staging-usage.md anchor; citation volatility stands) is never stated as a table row, violating the doc's own contract of a verdict per audit point.",
+          "suggestion": "Add a row adjudicating L3's 3-paths re-verifiability split."
+        },
+        {
+          "defect_id": "hetero-1",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Adjudication table rows 2a/2d, evidence column (also feeds Fix B's volatile-authority classification)",
+          "evidence": "Doc row 2a: \"memory dir is under `~/.claude/projects/`, outside both repos (tracked-ness checked in: both project repos + `~/.claude`; a hypothetical repo outside these is out of scope)\" and row 2d: \"sources repo-external, unversioned, deletable\". Verified against the filesystem: `git -C ~/.claude rev-parse --show-toplevel` returns `/Users/solosus/.claude` — ~/.claude IS a git work tree and the memory dir lies INSIDE it, untracked only because `~/.claude/.gitignore` line 2 is a blanket `*` (`git check-ignore -v` returns `.gitignore:2:*`). The doc's own coverage note says it checked tracked-ness in \"~/.claude\" — that check would have surfaced the work tree. The verdicts survive only because 0 files are tracked, so the stated verified fact \"outside both repos\" / \"repo-external\" is false even though the CONFIRMED outcomes happen to hold.",
+          "suggestion": "Re-word to \"inside the ~/.claude git work tree but blanket-ignored (`.gitignore` `*`), hence untracked and unversioned\" — the volatility conclusion is unchanged but the stated fact becomes true."
+        },
+        {
+          "defect_id": "hetero-2",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "Pre-ADR section, line 82",
+          "evidence": "Doc: \"Pre-ADR design decisions (recorded before bc; ADRs land in `skills/cross-source-review/references/design-decisions.md`)\". Verified: `ls skills/cross-source-review/references/` contains ONLY `install.md`; `find skills -name design-decisions.md` finds the file only under parallel-development (`references/`), blueprint-crafting, primary-source-verification and prior-art-search (`docs/`) — nowhere under cross-source-review. The cited landing path does not exist and is not marked as to-be-created, so the citation is unverifiable.",
+          "suggestion": "Either point to the real convention (the sibling skills keep design-decisions.md under `docs/` — csr's docs/ dir exists and holds proposal.md/iteration-plan.md) or state explicitly that the file will be created when the ADRs land."
+        },
+        {
+          "defect_id": "hetero-3",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Fix set A — Mechanism vs Acceptance vs Pre-ADR 'Schema back-compat'",
+          "evidence": "Doc Fix A: \"round gains required `findings` + optional `dispositions`\" but \"Acceptance: a reader of the record can list every finding per round, its severity, and what was done about it\". A schema-valid record with findings and no dispositions satisfies the mechanism yet fails the acceptance. The doc's own Pre-ADR rationale for rejecting optional `findings` — \"optionality would silently re-create the counts-only hole\" — applies verbatim to `dispositions`, but dispositions is kept optional with no stated reason, re-creating the untraceability hole on the disposition half (findings present, what-was-done absent).",
+          "suggestion": "Make `dispositions` required (or argue why an optional disposition list cannot re-create the auditability hole the pre-ADR explicitly rejects for findings)."
+        },
+        {
+          "defect_id": "hetero-4",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "Verified fact profile, Fact 4 (grep-behavior parenthetical)",
+          "evidence": "Doc: \"tool-dependent grep behavior verified 2026-08-08: default shell grep (ugrep 7.5.0) skips the binary (exit 1, no output), BSD grep (/usr/bin/grep -c) reports the binary match (1, exit 0)\". Verified in this environment today: `which grep` returns `/opt/homebrew/opt/grep/libexec/gnubin/grep` (GNU grep 3.12) — the default is NOT ugrep — and plain `grep -c 'C57' docs/references/docling-tech-report.pdf` (no -a) returns `1`, exit 0, i.e. it does NOT skip the binary. Only the BSD-grep half reproduces. The doc's own hedge (\"the exclusion rests on the rendered-text fact, not on any grep exit code\") keeps the conclusion sound, but the claimed tool identity and behavior inside the 'verified' profile do not match reality.",
+          "suggestion": "Either drop the tool-identity claim or state the actual default (GNU grep 3.12 here) and its actual behavior; the pdftotext=0 fact alone suffices."
+        },
+        {
+          "defect_id": "hetero-5",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Context section, line 13 (Appendix A provenance)",
+          "evidence": "Doc: \"The assessment was relayed by the workspace owner ... It is NOT a file on disk anywhere; it is embedded verbatim in [Appendix A]\". This is an unverifiable negative: I could not confirm the assessment exists nowhere on disk (e.g. stashed in the fedaot-kb side, chat history exports, or the workspace), so the audit's verbatim fidelity — and row 1c's inference that \"the audit did not name psv's packet gap\" — rests on a claim I cannot re-check. The verbatim-embedding mitigation is sound; the provenance claim itself is not independently verifiable.",
+          "suggestion": "State explicitly that the provenance check covered X locations on Y date (as Fact 4 does for the packet), or mark the negative as out of adjudication surface."
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "r4-1",
+          "action": "fixed",
+          "note": "scope boundary glossed"
+        },
+        {
+          "defect_id": "r4-2",
+          "action": "fixed",
+          "note": "row 2f added"
+        },
+        {
+          "defect_id": "hetero-1",
+          "action": "fixed",
+          "note": "rows 2a/2d + Fact 6: inside ~/.claude work tree, blanket-ignored"
+        },
+        {
+          "defect_id": "hetero-2",
+          "action": "fixed",
+          "note": "ADR landing path -> docs/design-decisions.md"
+        },
+        {
+          "defect_id": "hetero-3",
+          "action": "fixed",
+          "note": "dispositions required alongside findings"
+        },
+        {
+          "defect_id": "hetero-4",
+          "action": "fixed",
+          "note": "grep tool identities precise"
+        },
+        {
+          "defect_id": "hetero-5",
+          "action": "fixed",
+          "note": "line 13 concrete provenance check"
+        }
+      ]
+    },
+    {
+      "round": 5,
+      "same_source_findings": 4,
+      "hetero_findings": 6,
+      "hetero_degraded": false,
+      "blockers": 0,
+      "verdict": "pass",
+      "findings": [
+        {
+          "defect_id": "r5-1",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Fix set A — mechanism + acceptance",
+          "evidence": "The dispositions enum (fixed / rejected) cannot express the reconciliation table's different-family-only→escalate outcome (csr SKILL.md step 2), so 'what was done about it' is unrepresentable for exactly the findings the different-family leg contributes.",
+          "suggestion": "Add a third disposition value (escalated) to fix A's enum."
+        },
+        {
+          "defect_id": "r5-c3",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "verified fact profile 4 — /tmp clone",
+          "evidence": "/tmp/pi-llm-wiki/.git/shallow exists — the clone is SHALLOW, not full-history; 'full' holds only for checkout completeness.",
+          "suggestion": "Reword 'full git clone' to 'complete checkout (shallow clone)'."
+        },
+        {
+          "defect_id": "r5-c1",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "verified fact profile 4 (line 22)",
+          "evidence": "Fact 4's tool-specific claims (ugrep/GNU/BSD grep behavior, pdftotext 0-hit, offset 672115, 'only repo PDF') are not re-runnable in the reviewer environment (no shell); the load-bearing conclusions (counts-only record, packet not persisted, text-grep hits only the record) were independently verified.",
+          "suggestion": "Record in coverage notes; the rendered-text prong stays as the orchestrator's direct measurement."
+        },
+        {
+          "defect_id": "r5-c2",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Fact 6 / row 2a / row 2f",
+          "evidence": "The 'tracked by no repo' negative and the 'durable anchor' reading were verified via work-tree/gitignore evidence (~/.claude .git/HEAD exists, .gitignore line 2 = '*'), not git plumbing (git ls-files / check-ignore unavailable to the reviewer).",
+          "suggestion": "Record in coverage notes; tracking status was verified by the orchestrator's direct git checks."
+        },
+        {
+          "defect_id": "fixA-disposition-enum-gap",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Fix A, lines 52–53 (Mechanism vs Landing)",
+          "evidence": "Line 52 defines a three-state disposition: \"a per-finding disposition list (`defect_id` → `fixed` / `rejected` / `escalated` with the orchestrator's reconcile rationale — `escalated` covers the reconciliation table's different-family-only→escalate-to-human row (SKILL.md step 2), which is neither fixed nor rejected)\". Line 53's landing then enumerates only two states: \"per-round `dispositions` array: defect_id → fixed/rejected + rationale — the engine's new required input\". The state the mechanism explicitly says is \"neither fixed nor rejected\" is dropped from the landing's enumeration. Since line 53 makes dispositions a REQUIRED engine input (a future schema enum — the doc's own line 86 calls them \"required\"), an executor deriving the enum from the landing would produce a two-value enum that cannot represent the reconciliation table's different-family-only→escalate row that line 52's mechanism exists to cover.",
+          "suggestion": "Change the landing to \"defect_id → fixed / rejected / escalated + rationale\" so the three-state enumeration is identical in mechanism and landing (workspace rule 10: one complete enumeration per concept)."
+        },
+        {
+          "defect_id": "fixC-env-misalignment",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "Fix C (lines 64–68) + row 3 (line 43)",
+          "evidence": "The audited degradation occurred in the fedaot-kb run: its csr-record coverage note (verified) says \"findings-schema validation skipped: jsonschema absent (rule 1 — install jsonschema for full pluggable-seam validation)\", and the appendix's flag \"findings-schema validation skipped: jsonschema absent\" refers to that record. Fix C's landing is \"pyproject.toml\" — the solidforge repo's — and its acceptance is \"converge.py under the repo venv validates findings-schema + record without the SKIP note\". The audited run's environment is fedaot-kb's own: fedaot-kb has its own `.venv` and `.env.solidforge` (verified at repo root), and fedaot-kb's `pyproject.toml` also contains no `jsonschema` (verified: grep empty). Nothing in fixes A–E touches fedaot-kb's environment, and the plan does not disclose that the environment where the audited degradation was observed remains unaddressed; row 3's \"env fix is trivial (Fact 9)\" and Fix C's \"the standard environment stops taking the degraded path\" map the audit's flag onto the workspace env without noting the distinction.",
+          "suggestion": "Either extend Fix C's landing to note the fedaot-kb environment (or the workspace's own run-execution contract) or add a coverage note stating the audited run's environment is external and its jsonschema gap is not remediated by this fix set."
+        },
+        {
+          "defect_id": "fixD-p1-undefined",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Fix D, line 72 (\"the P1/L5 anchor\")",
+          "evidence": "Fix D's mechanism relies on P1 as a load-bearing label: \"Line 43 carries BOTH the EverOS three-item list (the P1/L5 anchor → docs/retrieval-memory-evaluation.md, corroboration verified) AND the load-bearing 3-paths assertion (L3 → docs/staging-usage.md…)\". P1 is never defined or glossed anywhere in this document — it is a label from the external borrow doc (borrow-from-pi-llm-wiki.md line 43: \"P1 是 FEDAOT-KB 机制空间内的独立新槽位\"), and the appended assessment (Appendix A) does not use it either. Every other external label (L3, L5, C57, C15, C45) is glossed inline or quoted in the appendix; P1 is not. The doc's own line 6 cites workspace rule 10 as companion rubric, whose gloss requirement states \"An agent without the referenced doc must still understand the sentence\" — an agent consuming this plan as bc input (line 48) cannot resolve \"P1/L5 anchor\" without fetching the external borrow doc.",
+          "suggestion": "Gloss P1 once at first use (e.g. \"P1 — the borrow doc's primary proposal slot, defined at its line 43\") or drop it in favor of the audit-side label L5, which the appendix already defines."
+        },
+        {
+          "defect_id": "rule10-slash-enums",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Line 6 (companion rubrics) vs lines 3, 52 (enumeration format)",
+          "evidence": "Line 6 declares \"Companion rubrics: [CLAUDE.md](../CLAUDE.md) workspace rules (esp. 1, 3, 4, 10)\", and the doc is a plan doc — within rule 10's scope (\"design + plan docs\"). Rule 10 requires \"Enumerations that are a checker's or registry's input unit → a bullet list, one item per line. Never `·` / `+`-joined prose\" (and one joiner per document). The doc renders its checker-input enumerations slash-joined instead: line 52's \"defect_id / severity / kind / location / evidence / suggestion — the doc-findings shape, already validated by converge.py when jsonschema is present\" (this is the live doc-findings.schema.json `$defs.finding` field set — a registry input unit) and line 52's dispositions \"`fixed` / `rejected` / `escalated`\" (destined to be the engine's required input enum per line 53). The doc's own format contradicts the rubric it cites as governing it.",
+          "suggestion": "Render the doc-findings shape and disposition-state enumerations as one-per-line bullet lists (or a table), matching rule 10's format for checker-input enumerations."
+        },
+        {
+          "defect_id": "coverage-ugrep-detail",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Fact 4 parenthetical, line 22",
+          "evidence": "Could not verify the tool-dependence sub-claim \"this shell's default grep (ugrep 7.5.0, via profile) skips the binary (exit 1, no output)\": ugrep is absent from PATH and from the standard shell profiles in the current environment (`which ugrep` empty; `grep --version` → GNU grep 3.12, which reports the binary match, count=1 — matching the doc's own \"GNU grep 3.12 (the PATH binary)\" description rather than its ugrep-default description). The two load-bearing facts DO verify independently: `grep -a -b -o 'C57'` matches at offset 672115 in docling-tech-report.pdf, and `pdftotext docs/references/docling-tech-report.pdf - | grep -c 'C57'` → 0 (and the other two repo PDFs have 0 raw-byte hits). The doc itself grounds the exclusion on the rendered-text fact, so the unverifiable ugrep detail carries no weight — disclosing it for the record.",
+          "suggestion": "No fix needed; the parenthetical's environment description could be updated to the GNU-grep-3.12 default if the profile claim no longer holds."
+        },
+        {
+          "defect_id": "coverage-appendix-verbatim",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Line 13 / Appendix A",
+          "evidence": "Could not verify the appendix is embedded \"verbatim\" — the assessment's original is intentionally not on disk, so no comparison source exists (this is the doc's own provenance claim, which partially verifies: grep for the appendix's distinctive phrase \"已披露的灰色而非绿色\" across solidforge + fedaot-kb + ~/.claude hits only this document, matching line 13's \"only this document matches\"). Every checkable claim the appendix makes was verified accurate against the records (round 1 = 6+5=11 / 2 blockers / rewrite; round 2 = 9+7=16 / 0 / pass; round 3 = 6+4=10 / 0 / pass; M=58 claims; 5 narrowed C28/C36/C42/C49/C54 \"均附 fetched 引文\"), but verbatim fidelity itself is unverifiable by design.",
+          "suggestion": "None — inherent to the design; record the disclosure in the convergence record's coverage notes as rule 3 prescribes."
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "r5-1",
+          "action": "fixed",
+          "note": "escalated disposition added to mechanism"
+        },
+        {
+          "defect_id": "r5-c1",
+          "action": "rejected",
+          "note": "coverage disclosure; raw-byte/rendered-text prong recorded in coverage notes"
+        },
+        {
+          "defect_id": "r5-c2",
+          "action": "rejected",
+          "note": "coverage disclosure; tracking verified via work-tree/gitignore evidence"
+        },
+        {
+          "defect_id": "r5-c3",
+          "action": "fixed",
+          "note": "shallow clone stated"
+        },
+        {
+          "defect_id": "fixA-disposition-enum-gap",
+          "action": "fixed",
+          "note": "landing enumeration now three-state"
+        },
+        {
+          "defect_id": "fixC-env-misalignment",
+          "action": "fixed",
+          "note": "external-env coverage note added to fix C"
+        },
+        {
+          "defect_id": "fixD-p1-undefined",
+          "action": "fixed",
+          "note": "P1 glossed at first use"
+        },
+        {
+          "defect_id": "rule10-slash-enums",
+          "action": "fixed",
+          "note": "finding shape + disposition enum rendered one-per-line"
+        },
+        {
+          "defect_id": "coverage-ugrep-detail",
+          "action": "rejected",
+          "note": "coverage disclosure; hedged claim, exclusion rests on rendered-text fact"
+        },
+        {
+          "defect_id": "coverage-appendix-verbatim",
+          "action": "rejected",
+          "note": "coverage disclosure; verbatim fidelity unverifiable by design"
+        }
+      ]
+    }
+  ],
+  "substantive_converged": true,
+  "coverage": [
+    "core-claims-coverage: 16/16",
+    "cap=5, rounds=5"
+  ],
+  "stalemate": false,
+  "rightness": "human_confirm_required",
+  "cap": 5,
+  "core_claims": [
+    "C1 convergence-record.schema.json round shape counts-only (schema ~60-72)",
+    "C2 converge.py receives full findings but emits counts only (~231-232 in, ~258-267 out)",
+    "C3 csr SKILL.md step 4 promises only per-round findings trend",
+    "C4 psv per-claim packet not persisted in fedaot-kb repo; binary-PDF noise exclusion",
+    "C5 audit round numbers match csr-record (11/2/rewrite, 16/0/pass, 10/0/pass)",
+    "C6 memory files exist on disk with matching content (3 paths A/B/C; EverOS items; C57 source)",
+    "C7 Graphiti never the adjudication surface; psv coverage notes verbatim",
+    "C8 retrieval-memory-evaluation.md corroborates L5 not L3 enumeration; staging-usage.md anchors 3-paths",
+    "C9 pyproject.toml dev deps lack jsonschema",
+    "C10 pd run-record counts-only; csr no code dependency on pd",
+    "C11 disclosed degradation is workspace-rule-3 compliant",
+    "C12 rows 1a/1b/1c adjudications (counts-only confirmed; inference labeled)",
+    "C13 rows 2a/2b/2c adjudications (tracking confirmed; existence refuted; Graphiti misdirected)",
+    "C14 rows 2d/2e/2f adjudications (volatility core; 4-line census; 3-paths re-verifiability)",
+    "C15 row 3 adjudication (disclosed gray, not a violation)",
+    "C16 fix set A-E + pre-ADRs + scope + pipeline self-description internally consistent"
+  ],
+  "authority_ref": "self-contained (embedded Appendix A) + solidforge repo root + external fedaot-kb docs/ + ~/.claude memory + /tmp/pi-llm-wiki shallow clone",
+  "size_tier": "long"
+}

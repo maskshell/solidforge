@@ -67,7 +67,7 @@ COVERAGE_CONTAINS = {
         "cap=2, rounds=2",
     ],
     "degraded.json": [
-        "round 1 异源 degraded: error_max_budget_usd",
+        "round 1 different-family degraded: error_max_budget_usd",
         "cap=2, rounds=2",
     ],
     "warnings_dont_block.json": ["core-claims-coverage: 1/1", "cap=2, rounds=2"],

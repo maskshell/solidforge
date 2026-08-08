@@ -1,0 +1,60 @@
+{
+  "findings": [
+    {
+      "defect_id": "novel-1",
+      "severity": "warning",
+      "kind": "contradiction",
+      "location": "iteration-plan DAG",
+      "evidence": "DAG drawing misrepresented declared edges (B1→B3→B2; dangling C1/B2 connectors).",
+      "suggestion": "Redraw to match edges (done: wave-form DAG matches depends_on arrays)."
+    },
+    {
+      "defect_id": "novel-2",
+      "severity": "warning",
+      "kind": "gap",
+      "location": "E1 DoD",
+      "evidence": "Fix E names csr+psv+pd suites; E1 DoD dropped pd.",
+      "suggestion": "Add pd suite to E1 DoD (done)."
+    },
+    {
+      "defect_id": "novel-3",
+      "severity": "warning",
+      "kind": "contradiction",
+      "location": "Gate 4",
+      "evidence": "Gate 4 'or flags it volatile' weaker than fix B acceptance (non-verified finding sources must be re-fetchable).",
+      "suggestion": "Reword Gate 4 to fix B's acceptance (done)."
+    },
+    {
+      "defect_id": "novel-4",
+      "severity": "warning",
+      "kind": "gap",
+      "location": "A1/A4 DoD",
+      "evidence": "Partial dispositions array would validate and re-create untraceability in softened form.",
+      "suggestion": "Pin one-disposition-per-finding + required rationale invariant in A1/A4 DoD + convergence_policy_check (done)."
+    },
+    {
+      "defect_id": "novel-5",
+      "severity": "warning",
+      "kind": "gap",
+      "location": "R1 mitigation",
+      "evidence": "Schema-version note in SKILL.md/install.md orphaned (no owning item).",
+      "suggestion": "Land in A3/A5 scope (done)."
+    },
+    {
+      "defect_id": "novel-6",
+      "severity": "warning",
+      "kind": "gap",
+      "location": "Out of scope",
+      "evidence": "Fix C's external-env note not carried; reader can mis-scope C1 as closing the audited degradation.",
+      "suggestion": "Add fedaot-kb env-gap follow-up to out-of-scope (done)."
+    },
+    {
+      "defect_id": "novel-7",
+      "severity": "coverage",
+      "kind": "coverage",
+      "location": "csr/psv docs census",
+      "evidence": "Stale-enumeration census beyond X1 patterns + external-repo facts not fully verifiable here.",
+      "suggestion": "X1/A5 grep covers during execution; fix D covers external."
+    }
+  ]
+}

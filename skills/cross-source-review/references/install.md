@@ -118,6 +118,12 @@ csr reads the token from shell / `.env` / `.env.solidforge`, INJECTS it as
 - The same-family leg (`solidforge:doc-reviewer`) — a local fresh-context agent; needs nothing
   beyond the Claude Code runtime.
 - The convergence engine (`converge.py`) — pure stdlib; jsonschema OPTIONAL (the engine
-  graceful-skips schema validation if absent, with an honest coverage note).
+  graceful-skips schema validation if absent, with an honest coverage note). The solidforge
+  dev workspace ships jsonschema via `uv sync` (dev deps, fix C) — the SKIP note appears
+  only in environments without it.
+- **Record schema version note (fix A / ADR #3)**: records produced before the retention
+  fix (round `findings` + `dispositions` required) no longer validate against the current
+  `convergence-record.schema.json`. Historical counts-only records (e.g. any emitted before
+  2026-08) are accepted as-is — no migration (ADR #3); treat them as version-0 records.
 - csr's self-gates — run on csr's own infra (the solidforge dev workspace). An external
   project invoking csr NEVER runs them.

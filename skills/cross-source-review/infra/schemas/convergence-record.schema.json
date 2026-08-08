@@ -59,7 +59,7 @@
   "$defs": {
     "round": {
       "type": "object",
-      "required": ["round", "same_source_findings", "hetero_findings", "blockers", "verdict"],
+      "required": ["round", "same_source_findings", "hetero_findings", "blockers", "verdict", "findings", "dispositions"],
       "additionalProperties": false,
       "properties": {
         "round": {"type": "integer", "minimum": 1, "description": "Round number (1-indexed)."},
@@ -67,7 +67,40 @@
         "hetero_findings": {"type": "integer", "minimum": 0, "description": "Count of findings from the different-family leg this round (0 + degraded=true when the leg DEGRADED on a substrate error)."},
         "hetero_degraded": {"type": "boolean", "description": "True iff the different-family leg DEGRADED this round (budget/turn cap, provider overwhelm — ADR #41). The same-family primary stands."},
         "blockers": {"type": "integer", "minimum": 0, "description": "New BLOCKER-class findings this round (across both legs, de-duplicated). The convergence count tracks this."},
-        "verdict": {"type": "string", "enum": ["pass", "rewrite", "adversarial-stalemate"], "description": "The reconciled verdict for this round. pass = no new blocker; rewrite = new blocker(s) to fix; adversarial-stalemate = persistent disagreement (escalate to human)."}
+        "verdict": {"type": "string", "enum": ["pass", "rewrite", "adversarial-stalemate"], "description": "The reconciled verdict for this round. pass = no new blocker; rewrite = new blocker(s) to fix; adversarial-stalemate = persistent disagreement (escalate to human)."},
+        "findings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/finding"},
+          "description": "The reconciled findings this round (same-family + hetero combined per the reconciliation table; empty when the round is clean). RETENTION FIX (record-auditability): the record embeds the findings so a reader can re-judge severity — the counts-only hole is closed."
+        },
+        "dispositions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/disposition"},
+          "description": "One disposition per finding defect_id in this round's findings (fixed / rejected / escalated, each with the orchestrator's rationale). RETENTION FIX: 'what was done about it' is recorded, not inferred. converge.py enforces the 1:1 coverage invariant."
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["defect_id", "severity", "kind", "location", "evidence"],
+      "additionalProperties": false,
+      "properties": {
+        "defect_id": {"type": "string", "minLength": 1, "description": "Stable id for this finding (e.g. 'novel-1')."},
+        "severity": {"type": "string", "enum": ["blocker", "warning", "coverage"], "description": "blocker = real defect blocking convergence; warning = suspected/advisory (never blocks — rule 4); coverage = honest disclosure (rule 3)."},
+        "kind": {"type": "string", "enum": ["contradiction", "authority-chain-break", "scope-creep", "structural-gap", "citation-error", "coverage-gap"], "description": "The doc-domain defect category (mirrors doc-findings.schema.json — that schema is authoritative for leg outputs; this inline copy is the record's retention shape)."},
+        "location": {"type": "string", "minLength": 1, "description": "Where: doc section heading, line range, or anchor id."},
+        "evidence": {"type": "string", "minLength": 1, "description": "Concrete quote from the artifact (and from the source verified against, when applicable) + why it is a defect."},
+        "suggestion": {"type": "string", "description": "Optional one-line fix direction."}
+      }
+    },
+    "disposition": {
+      "type": "object",
+      "required": ["defect_id", "action", "note"],
+      "additionalProperties": false,
+      "properties": {
+        "defect_id": {"type": "string", "minLength": 1, "description": "The finding's defect_id this disposition covers (1:1 with this round's findings)."},
+        "action": {"type": "string", "enum": ["fixed", "rejected", "escalated"], "description": "fixed = accepted, artifact revised; rejected = declined, with rationale (incl. coverage disclosures — not defects, carried in coverage notes); escalated = the reconciliation table's different-family-only→escalate row (SKILL.md step 2 — the row names no target; the skill's only named escalation target is the human)."},
+        "note": {"type": "string", "minLength": 1, "description": "The orchestrator's reconcile rationale — required (a disposition without a rationale is a contract violation)."}
       }
     }
   }

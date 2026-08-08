@@ -176,6 +176,77 @@ def _combined_findings(round_obj):
     return combined
 
 
+_SEVERITY_RANK = {"blocker": 3, "warning": 2, "coverage": 1}
+
+
+def _dedup_findings(findings):
+    """De-dup the record's embedded findings by defect_id (fix A mechanism:
+    'reconciled findings array (same-family + hetero, de-duplicated)').
+
+    Keeps the highest-severity copy (blocker > warning > coverage); on a tie
+    the first copy wins — same-family precedes hetero in the combined list, so
+    the primary leg's wording is kept. The leg COUNT fields
+    (same_source_findings / hetero_findings) stay raw; only the embedded array
+    is de-duplicated. Dispositions are keyed by defect_id, so 1:1 holds
+    against the de-duplicated set.
+    """
+
+    def _rank(f):
+        return _SEVERITY_RANK.get(f.get("severity"), 0)
+
+    best = {}
+    for f in findings:
+        did = f.get("defect_id")
+        if did is None:
+            continue  # shape-validated elsewhere (jsonschema path)
+        if did not in best or _rank(f) > _rank(best[did]):
+            best[did] = f
+    return list(best.values())
+
+
+def _validate_dispositions(findings, dispositions, round_no):
+    """RETENTION FIX (record-auditability) — the 1:1 disposition-coverage invariant.
+
+    Every finding in the round's combined set must have EXACTLY ONE disposition
+    with a non-empty rationale, and every disposition must name a finding in the
+    set. A partial dispositions array would re-create the untraceability hole in
+    softened form (findings listed, 'what was done about it' missing) — reject
+    (rule 3 — never silent). Pure python; no jsonschema needed.
+    """
+    by_id = {}
+    for d in dispositions:
+        if not isinstance(d, dict):
+            raise ConvergeError(f"round {round_no}: disposition must be an object")
+        did = d.get("defect_id")
+        if not isinstance(did, str) or not did:
+            raise ConvergeError(f"round {round_no}: disposition missing defect_id")
+        if d.get("action") not in ("fixed", "rejected", "escalated"):
+            raise ConvergeError(
+                f"round {round_no}: disposition {did} action must be "
+                "fixed/rejected/escalated"
+            )
+        note = d.get("note")
+        if not isinstance(note, str) or not note.strip():
+            raise ConvergeError(
+                f"round {round_no}: disposition {did} missing rationale (note)"
+            )
+        if did in by_id:
+            raise ConvergeError(f"round {round_no}: duplicate disposition {did}")
+        by_id[did] = d
+    finding_ids = [f.get("defect_id") for f in findings]
+    missing = [did for did in finding_ids if did not in by_id]
+    if missing:
+        raise ConvergeError(
+            f"round {round_no}: findings without disposition: {sorted(missing)}"
+        )
+    stray = [did for did in by_id if did not in set(finding_ids)]
+    if stray:
+        raise ConvergeError(
+            f"round {round_no}: dispositions without a matching finding: "
+            f"{sorted(stray)}"
+        )
+
+
 def _degraded_subtype(round_obj):
     """Best-effort extraction of a degrade subtype from a round, for the coverage note.
     The run.json shape carries hetero_degraded as a boolean; an optional subtype may
@@ -245,6 +316,14 @@ def _reconcile_run(run, finding_schema, validator_cls):
                 )
 
         combined = _combined_findings(r)
+        # RETENTION FIX (record-auditability): the record now embeds the reconciled
+        # findings (de-duplicated by defect_id) + per-finding dispositions so a
+        # reader can re-judge severity and 'what was done about it'. The 1:1
+        # coverage invariant is enforced here — a partial dispositions array is a
+        # contract violation, never silent.
+        record_findings = _dedup_findings(combined)
+        dispositions = list(r.get("dispositions") or [])
+        _validate_dispositions(record_findings, dispositions, round_no)
         round_blocker_ids = _blocker_ids(combined)
         new_blocker_ids = round_blocker_ids - prior_blocker_ids
         new_blockers_count = len(new_blocker_ids)
@@ -263,6 +342,8 @@ def _reconcile_run(run, finding_schema, validator_cls):
                 "hetero_degraded": hetero_degraded,
                 "blockers": new_blockers_count,
                 "verdict": verdict,
+                "findings": record_findings,
+                "dispositions": dispositions,
             }
         )
         if hetero_degraded:
