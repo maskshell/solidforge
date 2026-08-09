@@ -1,0 +1,209 @@
+{
+  "artifact": "fedaot-kb docs/retrieval-memory-evaluation.md (rule-13 archetype: load-bearing citations, fetchable sources, adoption decisions rest on them)",
+  "run_type": "psv GATE (evidence experiment for docs/psv-gate-mode-proposal.md, ODP-4: experiment before convergence)",
+  "date": "2026-08-09",
+  "signal": "NO-GO",
+  "counts": {
+    "verified": 8,
+    "refuted": 0,
+    "narrowed": 4,
+    "unverifiable": 9,
+    "total_extracted": 21
+  },
+  "cost_ledger": {
+    "extractor_tokens": 31713,
+    "verifier_tokens": 190538,
+    "fetches": 5,
+    "total_tokens_approx": 222251,
+    "comparable_csr_rounds": "~1.5 same-family rounds (~100-140k tokens each); the saved-work claim is bounded, NOT quantified: on a NO-GO doc the gate saves the csr investment (≥1 round; long-doc csr runs cap at 5-7) — '5 rounds saved' was speculative and is retracted (adv-5)"
+  },
+  "batch_signal": "NO-GO — no fabricated/refuted citations, but 4 narrowed + 9 unverifiable (incl. the LOAD-BEARING SAG rejection premise G5 and the EverOS G15-G21), → the batch rule's unverifiable-load-bearing clause flips. G5: the fetched SAG abstract does NOT self-admit append-only / no fact-invalidation — the doc's rejection rationale cites a property the oracle does not establish (pending full-text re-fetch). G7 (deep-research 'adversarial claim verification') is a misattribution-class narrowing: 'adversarial' appears 0 times in the Anthropic article. Action: re-fetch full texts (SAG PDF, STORM PDF) + rework the affected citations BEFORE csr investment.",
+  "claims": [
+    {
+      "claim_id": "G1",
+      "verdict": "narrowed",
+      "note": "STORM abstract supports two-stage + pre-writing; 'cited article' attribute not in fetched text (abstract says 'grounded and organized long-form articles')"
+    },
+    {
+      "claim_id": "G2",
+      "verdict": "verified",
+      "note": "+25% organization / +10% breadth, FreshWiki, experienced Wikipedia editors — verbatim"
+    },
+    {
+      "claim_id": "G3",
+      "verdict": "verified",
+      "note": "source bias transfer + over-association of unrelated facts — verbatim"
+    },
+    {
+      "claim_id": "G4",
+      "verdict": "unverifiable",
+      "note": "publication-readiness: abstract-only fetch cannot adjudicate; needs PDF limitations section"
+    },
+    {
+      "claim_id": "G5",
+      "verdict": "unverifiable",
+      "note": "LOAD-BEARING: SAG abstract has NO 'append-only'/'invalidation'/'versioning' — 'incremental writes' ≠ 'append-only'; the doc's rejection premise is unsupported by the fetched oracle"
+    },
+    {
+      "claim_id": "G6",
+      "verdict": "verified",
+      "note": "query-time dynamic hyperedges, 'Instead of pre-building a global static graph' — verbatim"
+    },
+    {
+      "claim_id": "G7",
+      "verdict": "narrowed",
+      "note": "'adversarial claim verification' step: word 'adversarial' appears 0 times in the Anthropic article; actual workflow = fan-out search → interleaved-thinking evaluation → CitationAgent attribution"
+    },
+    {
+      "claim_id": "G8",
+      "verdict": "narrowed",
+      "note": "80% is scoped to BrowseComp performance variance, not 'multi-agent quality gains'"
+    },
+    {
+      "claim_id": "G9",
+      "verdict": "verified",
+      "note": "~15x chat tokens — verbatim (baseline = chat interactions)"
+    },
+    {
+      "claim_id": "G10",
+      "verdict": "verified",
+      "note": "shared-context/dependency-heavy domains 'not a good fit ... today' — verbatim"
+    },
+    {
+      "claim_id": "G11",
+      "verdict": "verified",
+      "note": "spawning 50 subagents / scouring the web endlessly / distracting each other — verbatim"
+    },
+    {
+      "claim_id": "G12",
+      "verdict": "verified",
+      "note": "shared task list + communicate directly with each other — verbatim"
+    },
+    {
+      "claim_id": "G13",
+      "verdict": "narrowed",
+      "note": "experimental + off-by-default verified; 'no worktree isolation' NOT adjudicated anywhere in the fetched agent-teams doc"
+    },
+    {
+      "claim_id": "G14",
+      "verdict": "verified",
+      "note": "own context, returns only the summary, per-agent tool restriction — verbatim"
+    },
+    {
+      "claim_id": "G15",
+      "verdict": "unverifiable",
+      "volatile": true,
+      "note": "EverOS core thesis: agent memory is a governance problem, not a storage problem — source: user-supplied X-post, NO URL in artifact; unfetchable (K)"
+    },
+    {
+      "claim_id": "G16",
+      "verdict": "unverifiable",
+      "volatile": true,
+      "note": "EverOS memory = reference/experience/reflection three layers, not everything-in-vector-DB — same unfetchable source (K)"
+    },
+    {
+      "claim_id": "G17",
+      "verdict": "unverifiable",
+      "volatile": true,
+      "note": "EverOS 'remembering more ≠ remembering better' — same unfetchable source (K)"
+    },
+    {
+      "claim_id": "G18",
+      "verdict": "unverifiable",
+      "volatile": true,
+      "note": "EverOS Knowledge Wiki (external) + Reflection (internal) complementarity — same unfetchable source (K)"
+    },
+    {
+      "claim_id": "G19",
+      "verdict": "unverifiable",
+      "volatile": true,
+      "note": "EverOS quote 'the worst fear is classification unpredictability, not lack of intelligence' — same unfetchable source (K)"
+    },
+    {
+      "claim_id": "G20",
+      "verdict": "unverifiable",
+      "volatile": true,
+      "note": "EverOS Reflection = offline background consolidation into stable narrative, incremental merge, originals retained + supersede records + operation trail — same unfetchable source (K)"
+    },
+    {
+      "claim_id": "G21",
+      "verdict": "unverifiable",
+      "volatile": true,
+      "note": "EverOS article identity (title/author/date/X long-form) — same unfetchable source (K)"
+    }
+  ],
+  "escalated": [
+    {
+      "claim_ref": "E1-E18",
+      "reason": "interpretive/design judgments (SAG 不引入裁决、STORM 借 pre-writing、evolver 方案 a/b/c 等) — outcome axis, human"
+    }
+  ],
+  "coverage_notes": [
+    "gate-3 correction: G15-G21 are EXTRACTED claims (psv SKILL.md step 2: volatile/unfetchable sources stay admissible, marked volatile) — counted as unverifiable (K=9, M=21), NOT gate-external. The batch rule's unverifiable-load-bearing clause now covers them (EverOS is the doc's largest load-bearing decision)",
+    "gate-8 disclosure: fetched texts live at the fetch_paths above (workspace/ is gitignored/volatile — re-fetch from the URLs if needed); fetched-quote excerpts are NOT embedded in this record — the evidence section of the proposal discloses this and the fix-B packet contract applies to the FULL psv run, not the gate",
+    "Gate scope = load-bearing claims only (14 of a full-M ~58-equivalent, ~1/4) — the subset design holds; full-M extraction would have been ~4x this cost",
+    "Verification was grouped by source (5 verifier agents, shared fetch context) — a gate cost optimization; full psv uses per-claim fresh context",
+    "G4/G5 narrowed-or-unverifiable status may resolve with full-text fetches (SAG PDF, STORM PDF) — the gate's NO-GO action is re-fetch + rework BEFORE csr, not abandonment",
+    "Comparison blind-spot + extractor blind-spot caveats (workspace rule 3) apply as usual",
+    "The doc already passed a human review in 2026-06 ('正文经用户提供完整文本核证') — the gate still caught citation-quality defects a recall-level review missed: evidence that the gate's fetched-text oracle adds signal csr/human review lacks"
+  ],
+  "sources": [
+    {
+      "url": "https://aclanthology.org/2024.naacl-long.347",
+      "fetch_path": "workspace/psv-gate-dogfood/storm.txt",
+      "claims": [
+        "G1",
+        "G2",
+        "G3",
+        "G4"
+      ]
+    },
+    {
+      "url": "https://arxiv.org/abs/2606.15971",
+      "fetch_path": "workspace/psv-gate-dogfood/sag.txt",
+      "claims": [
+        "G5",
+        "G6"
+      ]
+    },
+    {
+      "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "fetch_path": "workspace/psv-gate-dogfood/anthropic.txt",
+      "claims": [
+        "G7",
+        "G8",
+        "G9",
+        "G10",
+        "G11"
+      ]
+    },
+    {
+      "url": "https://code.claude.com/docs/en/agent-teams",
+      "fetch_path": "workspace/psv-gate-dogfood/agent-teams.txt",
+      "claims": [
+        "G12",
+        "G13"
+      ]
+    },
+    {
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "fetch_path": "workspace/psv-gate-dogfood/sub-agents.txt",
+      "claims": [
+        "G14"
+      ]
+    },
+    {
+      "url": "none (user-supplied X-post, no URL in artifact)",
+      "fetch_path": null,
+      "claims": [
+        "G15",
+        "G16",
+        "G17",
+        "G18",
+        "G19",
+        "G20",
+        "G21"
+      ]
+    }
+  ]
+}

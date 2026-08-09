@@ -1,0 +1,76 @@
+{
+  "findings": [
+    {
+      "defect_id": "novel-1",
+      "severity": "warning",
+      "kind": "blind-spot",
+      "location": "E7 DoD + Gate 1",
+      "evidence": "E7 patterns miss CLAUDE.md:112/USER_GUIDE:47 and would false-flag exclusions.",
+      "suggestion": "Add patterns + exclusion list + reconcile scope (done)."
+    },
+    {
+      "defect_id": "novel-2",
+      "severity": "warning",
+      "kind": "blind-spot",
+      "location": "ODP-1/ODP-5 vs E1/E5",
+      "evidence": "ODP-1/ODP-5 resolutions unrecorded; plan hardcodes recommended-default branch.",
+      "suggestion": "Record ODP-1 resolved; E1/E5 contingent on ODP-5 (done)."
+    },
+    {
+      "defect_id": "novel-3",
+      "severity": "warning",
+      "kind": "contradiction",
+      "location": "plan-model authority_chain",
+      "evidence": "psv design-decisions.md omitted though E6 is constrained by its ADRs.",
+      "suggestion": "Add to authority_chain (done)."
+    },
+    {
+      "defect_id": "novel-4",
+      "severity": "warning",
+      "kind": "contradiction",
+      "location": "queue header",
+      "evidence": "plan_ref points at the proposal; dod_refs point at the iteration plan.",
+      "suggestion": "plan_ref -> iteration plan (done)."
+    },
+    {
+      "defect_id": "novel-5",
+      "severity": "warning",
+      "kind": "contradiction",
+      "location": "proposal status header",
+      "evidence": "Master self-describes pre-convergence while plan asserts converged.",
+      "suggestion": "Update status header (done)."
+    },
+    {
+      "defect_id": "novel-6",
+      "severity": "warning",
+      "kind": "contradiction",
+      "location": "gate-record batch_signal",
+      "evidence": "Prose says 4 narrowed + 2 unverifiable; counts say 9.",
+      "suggestion": "Fix prose (done)."
+    },
+    {
+      "defect_id": "novel-7",
+      "severity": "warning",
+      "kind": "gap",
+      "location": "E2 DoD",
+      "evidence": "GO-non-authoritative marker absent from USER_GUIDE change.",
+      "suggestion": "Add marker to E2 DoD (done)."
+    },
+    {
+      "defect_id": "novel-8",
+      "severity": "coverage",
+      "kind": "coverage-gap",
+      "location": "ODP-1/ODP-5 resolutions",
+      "evidence": "No artifact recorded them; see novel-2.",
+      "suggestion": "None (disclosed)."
+    },
+    {
+      "defect_id": "novel-9",
+      "severity": "coverage",
+      "kind": "coverage-gap",
+      "location": "plan status line",
+      "evidence": "Convergence citation mispoints at the gate record.",
+      "suggestion": "Cite csr-record (done)."
+    }
+  ]
+}

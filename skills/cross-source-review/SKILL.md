@@ -62,6 +62,8 @@ The pluggable seam: the driver takes `findings-schema` as a parameter (default d
 
 ## Coordination with blueprint-crafting / parallel-development
 
+- `primary-source-verification` (psv) is the outcome-axis additive layer (per-claim fetched-source verification). GATE MODE: when rule-13 conditions hold, psv runs FIRST as a load-bearing-claims gate (GO/NO-GO batch signal; the gate record is NOT a coverage record); its load-bearing list becomes this skill's core-claims frame; the authoritative full-M psv record follows this skill's convergence. See the psv SKILL.md.
+
 - `blueprint-crafting` stays PURE (process-axis, same-family `plan-reviewer`, deterministic inner ring). It MAY call this skill for a different-family outer pass on its draft — calling a skill, not importing code.
 - `parallel-development` owns code review. The different-family substrate here is a copy-PATTERN of pd's `infra/scripts/hetero_review.py` (workspace rule 7 — self-contained deployability; proposal §5 — Phase-B copy-vs-share is evidence-gated, NOT pre-committed); the function-signature contract is preserved + divergences logged for Phase-B viability.
 - **Phase-A coordination note**: the bc/pd routing + call relationships above are CSR-side design intent. The reciprocal bc/pd Scope-Guard hints are DEFERRED per proposal §7 / Q4 (Phase A is explicit-invocation only); a reader following these claims into bc/pd will not yet find them mirrored there.

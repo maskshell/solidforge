@@ -1,0 +1,518 @@
+{
+  "artifact": "docs/psv-gate-mode-proposal.md",
+  "rounds": [
+    {
+      "round": 1,
+      "same_source_findings": 9,
+      "hetero_findings": 6,
+      "hetero_degraded": false,
+      "blockers": 0,
+      "verdict": "pass",
+      "findings": [
+        {
+          "defect_id": "PSVGM-01",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Evidence section vs gate record counts",
+          "evidence": "G15-G21 labeled (K) but outside M=14 — category misuse of psv's K semantics (K counts only extracted claims).",
+          "suggestion": "Relabel as gate-external escalations."
+        },
+        {
+          "defect_id": "PSVGM-02",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "batch rule vs R3 vs evidence",
+          "evidence": "'batch refuted → NO-GO' contradicts R3 'single refuted does not NO-GO'; the recorded NO-GO had 0 refuted (driven by load-bearing unverifiable + narrowed); batch-verdict threshold undefined.",
+          "suggestion": "Define the batch-verdict rule explicitly."
+        },
+        {
+          "defect_id": "PSVGM-03",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "frame reuse vs pipeline sequencing",
+          "evidence": "Gate runs BEFORE csr, so csr's frame (csr step 1) does not exist yet; the dogfood evidence exercised standalone enumeration.",
+          "suggestion": "State the reuse direction: gate list feeds csr frame (gate→csr)."
+        },
+        {
+          "defect_id": "PSVGM-04",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "enumerations list vs csr SKILL.md",
+          "evidence": "csr SKILL.md coordination has NO psv positioning text — the bullet 'unchanged content, verify wording' misdescribes a nonexistent section.",
+          "suggestion": "Reword: ADD psv positioning note."
+        },
+        {
+          "defect_id": "PSVGM-05",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "enumerations list vs USER_GUIDE diagram",
+          "evidence": "USER_GUIDE lines 27-31 pipeline diagram omitted from the update list.",
+          "suggestion": "Add it."
+        },
+        {
+          "defect_id": "PSVGM-06",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "counter-evidence dismissal",
+          "evidence": "The fix-plan doc is itself rule-13-qualifying — the qualitative trigger does not separate q>0 from q≈0 samples.",
+          "suggestion": "Soften; ODP-5 (external-vs-local citation discriminator) is the honest separator."
+        },
+        {
+          "defect_id": "PSVGM-07",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "boundary ADR #5",
+          "evidence": "gate-M=0 semantics undefined: under a locked rule-13 trigger, subset-M=0 signals trigger-misapplication, not 'no admissible surface'.",
+          "suggestion": "Define gate-M=0 as trigger-misapplication with its own escalation."
+        },
+        {
+          "defect_id": "PSVGM-08",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "ODP-4 status",
+          "evidence": "ODP-4 still listed open although its before-branch was executed.",
+          "suggestion": "Mark resolved."
+        },
+        {
+          "defect_id": "PSVGM-09",
+          "severity": "warning",
+          "kind": "scope-creep",
+          "location": "GO signal vs psv ADR #3",
+          "evidence": "A batch GO is a positive doc-level verification claim; psv ADR #3 locks 'sole top-line signal is oracle_verified_under_known_coverage' — the boundary section doesn't address GO's relation to it.",
+          "suggestion": "GO = premise signal on core claims only, outside ADR #3's contract; fold into ODP-3 wording."
+        },
+        {
+          "defect_id": "adv-1",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Evidence — Result bullet (line 33); propagated into Interpretation line 40",
+          "evidence": "Doc: \"14 load-bearing claims — 9 verified / 0 refuted / 3 narrowed / 2 unverifiable → batch signal NO-GO.\" The cited gate record (docs/psv-gate-dogfood.gate-record.json) contradicts this: its own per-claim array G1–G14 yields 8 verified (G2,G3,G6,G9,G10,G11,G12,G14), 4 narrowed (G1,G7,G8,G13), 2 unverifiable (G4,G5) — the record's counts field (\"verified\": 9, \"narrowed\": 3) itself disagrees with its claims array (machine-recounted: {'narrowed': 4, 'verified': 8, 'unverifiable': 2}, total 14). The doc's narrative also names only G7/G8/G13 as narrowed, silently dropping G1 ('STORM abstract supports two-stage + pre-writing; 'cited article' attribute not in fetched text' — a narrowed verdict in the record). The doc reproduces the record's wrong counts field instead of its adjudication data.",
+          "suggestion": "Recount from the claims array: 8 verified / 0 refuted / 4 narrowed / 2 unverifiable, and correct the gate-record's counts field (or the array) so doc and record agree."
+        },
+        {
+          "defect_id": "adv-2",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Proposed design — Gate bullet (line 23) vs Risks R3 (line 70)",
+          "evidence": "Doc line 23 (explicit rule PSVGM-02): \"NO-GO iff any load-bearing claim is refuted OR unverifiable, OR ≥2 load-bearing claims are narrowed; GO otherwise.\" Doc line 70 (R3 mitigation): \"a single refuted claim does not NO-GO (threshold in ODP-5).\" For one refuted LOAD-BEARING claim the rule says NO-GO while R3 says not-NO-GO — the two statements conflict as written, with no load-bearing/non-load-bearing qualifier in R3. Additionally R3's parenthetical mis-points: \"threshold in ODP-5\" references ODP-5, whose actual subject is \"cost threshold: write a quantified q·C > p gate rule into the guide vs keep the qualitative rule-13 conditions\" (line 64) — a cost threshold, not the batch-verdict threshold the rule already fixes. The batch threshold for refuted non-load-bearing claims is also left undefined.",
+          "suggestion": "Qualify R3 to \"a single refuted NON-load-bearing claim does not NO-GO\" and repoint the parenthetical (or delete it — the threshold is fixed by the gate rule)."
+        },
+        {
+          "defect_id": "adv-3",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Evidence — Interpretation bullet (line 40); ODP-5 (line 64)",
+          "evidence": "Doc line 40: \"q > 0 on this sample; gate cost ≈ 1.5 rounds vs 5 csr rounds saved on a NO-GO doc → q·C > p holds here.\" Doc line 64: \"write a quantified q·C > p gate rule into the guide.\" The symbols q, C, p are never defined anywhere in the doc, and a repo-wide search finds no definition (only round1-same.json PSVGM-06's bare use of 'q>0'/\"q≈0\"). The doc's central cost-benefit conclusion and ODP-5's entire proposal depend on this notation; a reader cannot evaluate \"q·C > p\" (which quantity is q — gate catch-rate? and what are C and p?) without the external 2026-08-09 discussion the doc never glosses (workspace rule 10).",
+          "suggestion": "Define q, C, p inline at first use (e.g., q = P(gate catches a defect csr's recall misses), C = csr round cost, p = gate cost)."
+        },
+        {
+          "defect_id": "adv-4",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Evidence — Counter-evidence bullet (line 41)",
+          "evidence": "Doc: \"the two q≈0 samples are THEMSELVES rule-13-qualifying (the fix-plan doc ran the rule-13 chain) — the rule-13 trigger alone does NOT separate them from the q>0 sample... the q≈0 samples cited almost exclusively local files.\" Only ONE sample is identified (the fix-plan doc, whose psv record docs/record-auditability-fix-plan.psv-record.json indeed adjudicates \"All adjudication sources local... no network fetch\"). The second q≈0 sample is never named, and no other psv record exists in docs/ or workspace/ to identify it. The counter-evidence argument cannot be audited without that referent.",
+          "suggestion": "Name the second q≈0 sample (and cite its record), or restate as \"the fix-plan q≈0 sample\""
+        },
+        {
+          "defect_id": "adv-5",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Evidence — Interpretation bullet (line 40)",
+          "evidence": "Doc: \"gate cost ≈ 1.5 rounds vs 5 csr rounds saved on a NO-GO doc → q·C > p holds here.\" The \"5 csr rounds saved\" figure's only source is the gate record's own cost_ledger assertion (\"would have saved 5 csr rounds on a citation-broken doc\") — the record states it with no basis, and I could not verify any repo artifact grounding it (the fix-plan csr-run shows cap=5 for a different doc, which is a cap, not a saved-rounds count; memory notes long-doc csr runs take up to 7 rounds). The doc promotes this unsourced figure into its quantitative q·C > p conclusion. This is the honest-disclosure item: the q·C > p claim is not independently checkable.",
+          "suggestion": "Ground the saved-rounds figure (e.g., in a real csr run on the same artifact) or downgrade the claim to \"likely saves ≥1 csr round\" until ODP-5 quantifies it."
+        },
+        {
+          "defect_id": "adv-6",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Risks R4 (line 71) vs Evidence — Subject (line 31)",
+          "evidence": "Doc line 71: \"R4 — evidence experiment selects an unrepresentative doc. Mitigation: the dogfood doc must be the doc's own next real citation-heavy artifact (not a synthetic fixture).\" Doc line 31: \"Subject: fedaot-kb `docs/retrieval-memory-evaluation.md`.\" fedaot-kb is an external repository — the fix-plan csr run's authority_ref lists it as \"external fedaot-kb docs/\" — not a solidforge/psv-skill artifact, so the executed evidence does not satisfy R4's stated \"the doc's own\" criterion, and the doc nowhere reconciles the executed subject with its own risk mitigation. (The subject is real and non-synthetic, so only the \"own artifact\" half of the criterion is in question — but as written the doc's own mitigation was not honored by its executed evidence.)",
+          "suggestion": "Either amend R4 to \"a real citation-heavy artifact (own or external)\" with the fedaot-kb subject explicitly disclosed as external, or commit to re-dogfooding on a solidforge artifact."
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "PSVGM-01",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-02",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-03",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-04",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-05",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-06",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-07",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-08",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-09",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "adv-1",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "adv-2",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "adv-3",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "adv-4",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "adv-5",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "adv-6",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "same_source_findings": 12,
+      "hetero_findings": 9,
+      "hetero_degraded": false,
+      "blockers": 0,
+      "verdict": "pass",
+      "findings": [
+        {
+          "defect_id": "PSVGM-N01",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "ODP-2 vs design",
+          "evidence": "Design forecloses ODP-2(a) (csr→gate reuse impossible by sequencing) while ODP-2 stays open; R2 presupposes a pre-existing csr frame.",
+          "suggestion": "Mark ODP-2 resolved-standalone; align R2."
+        },
+        {
+          "defect_id": "PSVGM-N02",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "trigger machinery vs ODP-5",
+          "evidence": "'No new trigger machinery' conflicts with ODP-5's quantified-rule option and the doc's own use of q·C > p.",
+          "suggestion": "Make line-27 commitment contingent on ODP-5."
+        },
+        {
+          "defect_id": "PSVGM-N03",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "counter-evidence sample (1)",
+          "evidence": "The borrow-from-pi-llm-wiki psv record is no longer on disk (fedaot-kb docs/plans/ holds only wiki-golang-build.md; /tmp clone gone) — '0 refuted' unfetchable; the same volatility class the proposal flags.",
+          "suggestion": "Cite in-repo corroboration; mark volatile."
+        },
+        {
+          "defect_id": "PSVGM-N04",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "counter-evidence sample (1)",
+          "evidence": "q≈0 label ignores the run's 5 narrowed claims (C28/C36/C42/C49/C54) — the batch rule's ≥2-narrowed threshold would flip; the label needs their local adjudication shown.",
+          "suggestion": "State the 5-narrowed detail + local adjudication."
+        },
+        {
+          "defect_id": "PSVGM-N05",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "NO-GO action",
+          "evidence": "NO-GO action conflates author-rework vs verifier re-fetch; no re-verify loop defined.",
+          "suggestion": "Differentiate by verdict class; define the re-gate loop."
+        },
+        {
+          "defect_id": "PSVGM-N06",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "pipeline family vs grouped verification",
+          "evidence": "'the same single pipeline' vs the grouped-by-source verification the evidence used; gate config unspecified.",
+          "suggestion": "Reword to 'same pipeline family' + state the grouped config."
+        },
+        {
+          "defect_id": "PSVGM-N07",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "scope vs ODP-3 persisted record",
+          "evidence": "A persisted gate record with GO/NO-GO signal is a new artifact + schema — beyond 'NOT a code change'.",
+          "suggestion": "Annotate ODP-3(b) as follow-up outside scope."
+        },
+        {
+          "defect_id": "PSVGM-N08",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "P61 reference",
+          "evidence": "P61 unglossed cross-reference (rule 10).",
+          "suggestion": "Gloss inline."
+        },
+        {
+          "defect_id": "PSVGM-N09",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "enumerations list",
+          "evidence": "psv docs/proposal.md Q5 ('after or beside csr') omitted — the authoritative-design statement the gate mode amends; no ADR planned for the gate-mode decisions.",
+          "suggestion": "Add Q5 + plan an ADR entry."
+        },
+        {
+          "defect_id": "PSVGM-N10",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "batch rule parenthetical",
+          "evidence": "'a narrowed/unverifiable non-load-bearing claim does not flip' is vacuous — the gate extracts only load-bearing claims.",
+          "suggestion": "Delete or restate as non-goal."
+        },
+        {
+          "defect_id": "PSVGM-C1",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "oracle-side verdicts",
+          "evidence": "SAG/Anthropic/agent-teams/STORM texts unreachable from this leg — the gate record's own claims are the only source.",
+          "suggestion": "A fetch-capable leg should re-verify before convergence."
+        },
+        {
+          "defect_id": "PSVGM-C2",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "cost basis",
+          "evidence": "'~100-140k tokens per csr round' and 'full-M ~58-equivalent' have no in-repo derivation; ≈1.5 sits at the favorable end of the range.",
+          "suggestion": "Note range sensitivity."
+        },
+        {
+          "defect_id": "gate-1",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "Evidence section, line 43 (counter-evidence sample (1), VOLATILE citation parenthetical)",
+          "evidence": "Proposal: \"the fedaot-kb record `docs/plans/borrow-from-pi-llm-wiki.psv-record.json` is no longer on disk as of 2026-08-09 (verified: docs/plans/ holds only wiki-golang-build.md; /tmp clone also gone — a live instance of the volatility defect class this project fixes)\". Verified against the machine: `/tmp/pi-llm-wiki` EXISTS (git checkout created 2026-08-08 01:09 — before the doc's 2026-08-09 'verified' claim — branch main, up to date with origin/main) and still holds ALL FOUR adjudication sources fix-plan Fact 4 names (docs/architecture.md, docs/superpowers/specs/2026-08-02-okf-foundation-design.md, docs/superpowers/specs/2026-08-02-okf-v0.2-interoperability-design.md, AGENTS.md, prompts/). The first half of the parenthetical (docs/plans/ holds only wiki-golang-build.md — the psv-record itself is gone) is TRUE; the second half, presented as equally 'verified', is FALSE. The doc's own honesty standard (PSVGM-06: \"Counter-evidence is real and must be read honestly\") is violated by a mis-stated verification inside the counter-evidence section. The narrowed claims' adjudication SOURCES are in fact still re-fetchable today.",
+          "suggestion": "Correct the parenthetical to state only the record is gone; re-verify and disclose the clone's actual state (or drop the claim)."
+        },
+        {
+          "defect_id": "gate-2",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Evidence section, line 41 (definitions adv-3) vs lines 40/42 + gate-record cost_ledger",
+          "evidence": "Proposal defines: \"**q** = P(the gate catches a defect csr's recall-level verification would miss, on this doc class); **C** = csr round cost; **p** = gate cost. The decision rule is q·C > p (gate worth it when expected saved csr cost exceeds gate cost)\". With the doc's own numbers — p ≈ 222k tokens (line 40; gate-record `total_tokens_approx: 222251`), C = \"~100-140k tokens each\" (gate-record `comparable_csr_rounds`), i.e. p ≈ 1.5C — the rule requires q > p/C ≈ 1.5, which no probability q ∈ [0,1] satisfies. The rule as parameterized can never fire, yet the doc presents it as the decision rule and ODP-5 proposes to \"write a quantified q·C > p gate rule into the guide\". The verbal gloss \"expected saved csr cost\" implies C is the multi-round saved run (line 42: \"the gate saves the csr investment — ≥1 round, bounded above by the long-doc cap (5–7)\"), contradicting the definition \"C = csr round cost\". Either the definition or the gloss is wrong; as written the rule is vacuous.",
+          "suggestion": "Define C as the expected saved csr investment (multi-round, 1..cap) or restate the rule with per-round cost; make the unit explicit."
+        },
+        {
+          "defect_id": "gate-3",
+          "severity": "warning",
+          "kind": "authority-chain-break",
+          "location": "Proposed design, line 23 (N10) + Evidence line 39 (G15–G21, PSVGM-01) + gate-record escalated array",
+          "evidence": "Proposal line 39: \"G15–G21 (gate-external escalations — NOT counted in M=14; unfetched, non-extracted): the doc's largest borrowable decision (EverOS) rests on a user-supplied X-post with NO URL in the artifact — unfetchable ... (These are gate-external, distinct from psv's K semantics, which counts only EXTRACTED claims — PSVGM-01.)\" The cited authority says the opposite: psv SKILL.md step 2 — \"A claim whose only adjudicating source is volatile ... is still admissible, but mark it volatile at extraction so the registry in the coverage-record captures it\" — unfetchable-source claims ARE extracted, counted, and marked. Meanwhile the doc's own N10 (line 23) defines the gate's extraction surface as load-bearing claims (\"the gate NEVER extracts non-load-bearing claims\") and its own line 39 calls EverOS \"the doc's largest borrowable decision\" / \"an adoption-load-bearing source\" — so the gate excluded its single largest in-scope load-bearing claim from M via a rationale (\"K counts only EXTRACTED claims\") that is true-but-irrelevant, since G15–G21 were enumerated with claim IDs and substantive notes in the record. Additionally the batch rule (PSVGM-02) has no vocabulary for gate-external escalations — how a 'flagged' unfetchable load-bearing claim interacts with GO/NO-GO is undefined, so a GO signal can ignore the doc's largest load-bearing risk.",
+          "suggestion": "Either count unfetchable load-bearing claims as unverifiable (K) per SKILL.md step 2, or define explicitly in PSVGM-02 how gate-external escalations participate in the batch signal."
+        },
+        {
+          "defect_id": "gate-4",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Evidence lines 34 + 42 vs Proposed design line 23 (UNVERIFIABLE action), against psv SKILL.md taxonomy",
+          "evidence": "Line 34: \"G5 (LOAD-BEARING, unverifiable): the doc's SAG rejection premise ... is NOT in the fetched SAG abstract — 'incremental writes' ≠ 'append-only'. The adoption decision's cited property is unsupported by the oracle.\" Line 42: \"the gate caught citation-quality defects (an unsupported load-bearing premise + a misattribution)\" — the q>0 evidence rests on G5 as a caught defect. But line 23 defines the unverifiable action as: \"UNVERIFIABLE load-bearing → VERIFIER-side re-fetch first (full-text fetch may resolve it, as G4/G5's abstract-limited status suggests), and only rework if the re-fetch confirms the gap\" — i.e., the gap is UNCONFIRMED pending re-fetch. And psv SKILL.md step 3 defines unverifiable as \"no fetchable source adjudicates it\" — not a defect finding; SKILL.md line 14: a finding that cannot ground a fetched quote is \"downgraded to unverifiable, never asserted\". The doc asserts the premise as an unsupported defect (line 34/42) while its own action semantics say the gap is not confirmed. An unverifiable is counted as q>0 evidence in the interpretation while the same doc's NO-GO action treats it as unresolved.",
+          "suggestion": "State in the interpretation that the q>0 evidence rests on the 4 narrowed claims (G1/G7/G8/G13) and the unverifiable G5 is pending re-fetch — not a confirmed catch."
+        },
+        {
+          "defect_id": "gate-5",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "Evidence line 43 (counter-evidence sample (2)) vs line 41 (q definition), against fix-plan psv-record coverage line 16",
+          "evidence": "Line 41 defines q as \"P(the gate catches a defect csr's recall-level verification would miss, on this doc class)\" — no refuted-only restriction. Line 43 labels the fix-plan run q≈0: \"the q≈0 label rests on: 0 refuted + narrowed claims locally adjudicated (N04)\". But the fix-plan psv-record (docs/record-auditability-fix-plan.psv-record.json) coverage line 16 records \"4 narrowed (P8 field enumeration; P13 'only' overstatement; P37 §2.5-vs-§3 enumeration; P73 escalate-target not named in SKILL.md) — all addressed in the doc\" — on an artifact the record itself marks \"(csr-converged)\": real post-csr defect catches by psv, exactly the q-definition event. The positive sample (dogfood) has 0 refuted too and is labeled q>0 on narrowed+unverifiable evidence. The q labels are assigned by refuted-count for the negative samples and by catch-class for the positive one — the same evidence class (narrowed catches) is counted as q for the dogfood and excluded from q for the fix-plan sample, without citing the fix-plan csr-run record to establish those 4 were csr-caught first.",
+          "suggestion": "Either show from the fix-plan csr-run record that P8/P13/P37/P73 were already csr findings, or relabel the fix-plan sample per the same catch-class standard applied to the dogfood."
+        },
+        {
+          "defect_id": "gate-6",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Status/scope line 4 + Boundary line 57 vs Proposed design line 23 (re-verify loop)",
+          "evidence": "Line 4: \"the gate is the same pipeline FAMILY run twice (subset then full), not a loop\" and line 57: \"psv ADR #1 (single pipeline, NOT a debate loop) — the gate is the same pipeline run twice, not a loop.\" Line 23: \"Re-verify loop: after rework/re-fetch, the affected claims are RE-RUN through the gate (cheap subset pass) before any csr investment — a re-gate is required to re-establish GO.\" On the rework path the pipeline runs ≥3 times (gate → rework → re-gate → csr → full psv) and the design has iterate-until-GO semantics — yet the doc's central scoping claim is \"run twice, not a loop\". The boundary between the allowed re-gate iteration and the ADR #1-forbidden \"debate loop / cap / stalemate\" (ADR #1 decision text) is never defined — a load-bearing distinction for the doc's own ADR #1-non-violation claim. psv has no existing cap/stalemate machinery for re-gate iteration either; how many re-gates before abandon is unspecified.",
+          "suggestion": "Define the loop/re-run boundary explicitly and specify re-gate iteration bounds (or a cap) so the 'not a loop / ADR #1 intact' claim is checkable."
+        },
+        {
+          "defect_id": "gate-7",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "Boundary section, line 58 (PSVGM-07 gate-M=0 semantics)",
+          "evidence": "Proposal: \"The GATE has its own M=0 semantics (PSVGM-07): under a locked rule-13 trigger, gate-M=0 signals TRIGGER-MISAPPLICATION (the doc does not qualify after all — a qualifying doc has load-bearing claims by definition), escalated with its own wording\". The authoritative source the gate inherits from names a second cause for M=0: psv SKILL.md line 26 — \"claim extraction inherits the extractor's blind spots — claims neither author nor extractor can see are absent from M\". A gate extraction on a truly rule-13-qualifying doc can yield subset-M=0 because the extractor missed the load-bearing claims — the signal semantics assert trigger-misapplication as the meaning, silently excluding a documented alternative cause. The doc's own rule 3 (never silently green; state coverage gaps honestly) is the standard this over-assertion fails.",
+          "suggestion": "Add extractor-blind-spot as an equally possible cause in PSVGM-07's signal semantics (e.g. 'trigger-misapplication OR extractor miss — human adjudicates')."
+        },
+        {
+          "defect_id": "gate-8",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "Evidence section, lines 33–44 + gate-record (docs/psv-gate-dogfood.gate-record.json)",
+          "evidence": "The doc applies a re-fetchability standard to its counter-evidence — line 43: \"the 0-refuted half is not independently re-fetchable\" (used as the volatility-defect evidence) — but its own positive evidence fails that same standard: the gate-record's 14 per-claim entries carry verdict + note only, with NO source_refs, NO fetched quotes, and NO URLs (contrast the fix-B doc-findings packet contract: claim_ref / verdict / source_ref / fetched quote, SKILL.md step 4), and the fetched texts (SAG abstract, STORM abstract, Anthropic article, agent-teams doc) are not persisted anywhere. The proposal's q>0 evidence (G5 premise 'unsupported', G7 'adversarial' 0 times, G8 80% BrowseComp, G13 worktree, G1 'cited article') is therefore not independently re-fetchable — the identical defect class the doc flags in the q≈0 samples and in fix B — and the doc does not disclose this asymmetry. Something required for soundness is absent: re-fetchable grounding for the evidence that carries the proposal's q>0 claim.",
+          "suggestion": "Disclose in the evidence section that gate verdicts are not independently re-fetchable (no persisted fetched quotes/source refs) — same standard applied to the counter-evidence — or persist the fetched quotes as the psv fix-B contract requires."
+        },
+        {
+          "defect_id": "gate-9",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "Evidence section (entire dogfood record) — reviewer's honest disclosure",
+          "evidence": "Could not verify: (1) the gate verdicts' grounding — the fetched texts for G1/G4/G5/G7/G8/G13 (SAG abstract, STORM abstract, Anthropic article, agent-teams doc, BrowseComp) are not persisted and no source_refs/URLs exist in the gate record, so G5's 'incremental writes ≠ append-only' and G7's 'adversarial appears 0 times' absence-claims cannot be re-checked against the oracle (arXiv:2606.15971 was not re-fetched); (2) whether the fix-plan run's 4 narrowed (P8/P13/P37/P73) were already caught by that doc's csr round — docs/record-auditability-fix-plan.csr-run.json shows no defect_ids corresponding to them, but overlap could not be fully excluded; (3) the '~222k tokens ≈ 1.5 rounds' and '~1/4 of full-M' cost extrapolations — full-M for the subject doc was never run. These do not affect the findings above but are stated per workspace rule 3.",
+          "suggestion": "None required (disclosure)."
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "PSVGM-N01",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-N02",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-N03",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-N04",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-N05",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-N06",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-N07",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-N08",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-N09",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-N10",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "PSVGM-C1",
+          "action": "rejected",
+          "note": "coverage disclosure, not a defect; carried in coverage notes"
+        },
+        {
+          "defect_id": "PSVGM-C2",
+          "action": "rejected",
+          "note": "coverage disclosure, not a defect; carried in coverage notes"
+        },
+        {
+          "defect_id": "gate-1",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "gate-2",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "gate-3",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "gate-4",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "gate-5",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "gate-6",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "gate-7",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "gate-8",
+          "action": "fixed",
+          "note": "accepted, proposal revised"
+        },
+        {
+          "defect_id": "gate-9",
+          "action": "rejected",
+          "note": "coverage disclosure, not a defect; carried in coverage notes"
+        }
+      ]
+    }
+  ],
+  "substantive_converged": true,
+  "coverage": [
+    "core-claims-coverage: 9/9",
+    "cap=2, rounds=2"
+  ],
+  "stalemate": false,
+  "rightness": "human_confirm_required",
+  "cap": 2,
+  "core_claims": [
+    "C1 pipeline-order enumerations at CLAUDE.md:112/122, USER_GUIDE.md:24/27-31/33/47/49/54, psv SKILL.md:73",
+    "C2 no ADR locks the psv insertion point (psv ADR #1 = single pipeline, not a debate loop; gate = same pipeline family run twice, bounded re-gate)",
+    "C3 gate = standalone load-bearing list (psv frame) that becomes csr's frame; explicit batch rule; second psv = only authoritative record",
+    "C4 trigger = rule-13 conditions + ODP-5 refinement; no other new machinery",
+    "C5 full double-psv rejected (claim-set instability; unmergeable records)",
+    "C6 gate dogfood evidence as recorded (M=21: 8v/0r/4n/9u, NO-GO, G5 load-bearing unverifiable, G7 'adversarial' 0 times, cost ~222k tokens ≈ 1.5 rounds)",
+    "C7 counter-evidence honest (two q≈0 samples with their narrowed-catch detail; volatility live-demonstrated)",
+    "C8 enumeration update list complete (rule 5 incl. proposal.md Q5 + ADR plan)",
+    "C9 boundaries (ADR #1/#3/#5 relations; gate-M=0 semantics; GO signal contract; non-rule-13 docs unchanged)"
+  ],
+  "authority_ref": "solidforge repo root (CLAUDE.md, USER_GUIDE.md, psv SKILL.md + ADRs + proposal.md, csr SKILL.md) + docs/psv-gate-dogfood.gate-record.json + fix-plan records",
+  "size_tier": "short"
+}

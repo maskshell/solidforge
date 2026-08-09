@@ -21,16 +21,17 @@ Five skills, one pipeline plus two additive outcome-axis layers (cited-source ve
 | **cross-source-review** (csr) | converge — drive same-family + different-family cross-review of a doc to substantive convergence | "cross-review this requirements doc", "converge this design doc", "different-family review this wiki page" |
 | **blueprint-crafting** (bc) | specify — converged specs, arch-designs, iteration plans | "author a spec for …", "author an arch-design for …" |
 | **parallel-development** (pd) | implement — code converged through the dual ring | "implement …", "fix …", "refactor …" |
-| **primary-source-verification** (psv) | verify — per-claim CITED-source verification (additive outcome-axis layer, not sequential) | "verify this doc's citations against primary sources", "fact-check this spec's arXiv claims" |
+| **primary-source-verification** (psv) | verify — per-claim CITED-source verification (additive outcome-axis layer, not sequential; gate mode: load-bearing subset GO/NO-GO before csr when rule-13 conditions hold) | "verify this doc's citations against primary sources", "fact-check this spec's arXiv claims" |
 | **prior-art-search** | collision-check — hunt UNcited prior art for a doc's NOVELTY claims (additive outcome-axis layer) | "does this paper overclaim novelty", "hunt uncited prior art for these novelty claims", "is this framing already in the literature" |
 
 ```text
 csr (converge a doc) → bc (specify) → frozen spec → pd (implement) → converged code
-psv (verify each CITED citation claim vs its fetched source) — additive outcome-axis layer
+psv (verify each CITED citation claim vs its fetched source) — additive outcome-axis layer; authoritative full-M record after csr
+psv-gate (load-bearing subset, GO/NO-GO) — optional, BEFORE csr when rule-13 conditions hold; gate record is NOT a coverage record
 prior-art-search (hunt UNcited prior art for each NOVELTY claim) — second additive outcome-axis layer
 ```
 
-psv and prior-art-search are the two outcome-axis legs — both additive, both run on any doc, after or beside csr. psv = backward-CITED (does each cited source actually support the claim?); prior-art-search = backward-UNCITED (does findable prior art already make a novelty claim the doc didn't cite?). They compose (a high-stakes doc may run both); they never merge, and neither emits a truth/novelty boolean (`oracle_verified_under_known_coverage` / `collisions_under_known_coverage`; never `correctness_converged` / `novel_confirmed`).
+psv and prior-art-search are the two outcome-axis legs — both additive, both run on any doc, after or beside csr. psv additionally has a GATE mode: when rule-13 conditions hold (load-bearing citations against fetchable sources), run it BEFORE csr as a load-bearing-claims subset gate — the gate's GO/NO-GO is a batch signal, NOT a coverage record; the authoritative coverage disclosure comes only from the full-M run after csr. psv = backward-CITED (does each cited source actually support the claim?); prior-art-search = backward-UNCITED (does findable prior art already make a novelty claim the doc didn't cite?). They compose (a high-stakes doc may run both); they never merge, and neither emits a truth/novelty boolean (`oracle_verified_under_known_coverage` / `collisions_under_known_coverage`; never `correctness_converged` / `novel_confirmed`).
 
 csr is the convergence layer **upstream of bc** (and reusable standalone): it drives a same-family (same-family, fresh-context) + different-family (cross-family, e.g. DeepSeek) multi-round review of a doc-shaped artifact — a requirements input before bc, a design doc, a wiki page — to **substantive convergence** (the core claims coverage-verified AND no new Blocker for ≥2 rounds; NOT zero-finding). bc MAY call csr for a different-family pass on its draft. csr is NOT code review (pd), spec authoring (bc), or research gathering (bc's researcher); it converges PROCESS-AXIS quality (well-formed, consistent, citation-accurate), never whether the doc is "right" (outcome-axis — human). Provisioning + custom providers: [csr install.md](skills/cross-source-review/references/install.md).
 
@@ -44,14 +45,14 @@ Activation is by description (the model routes from your phrasing) — usually c
 
 ### Two-axis doc convergence: csr + psv (optional — for high-stakes, citation-heavy docs)
 
-psv is **optional and additive**, not a required stage. Reach for it only for a **high-stakes, citation-heavy doc where a wrong citation would materially weaken the argument** (a spec/research citing arXiv, a design doc citing standards). For low-citation or low-stakes docs, csr alone suffices (psv returns `M=0 → no admissible surface`).
+psv is **optional and additive**, not a required stage. Reach for it only for a **high-stakes, citation-heavy doc where a wrong citation would materially weaken the argument** (a spec/research citing arXiv, a design doc citing standards). When those conditions hold, run it TWICE: a load-bearing-claims GATE before csr (GO/NO-GO — the gate's GO is a batch signal, NOT a coverage record), then the authoritative full-M run after csr. For low-citation or low-stakes docs, csr alone suffices (psv returns `M=0 → no admissible surface`).
 
-When you do use it, add psv as a second axis **after csr, before bc**:
+When you do use it, add psv in two passes — a load-bearing-claims **gate before csr** (GO/NO-GO; its load-bearing list becomes csr's core-claims frame), then the authoritative full-M run **after csr, before bc**:
 
 1. **`/cross-source-review`** — process axis: well-formed, internally consistent, citation-structured, coverage-complete (recall-based).
 2. **`/primary-source-verification`** — outcome-axis admissible surface: each citation claim verified against its **fetched** source (`verified` / `refuted` / `narrowed` / `unverifiable`) + an honest `oracle_verified_under_known_coverage` disclosure (fetch-based).
 
-**Order: `csr → psv → bc`** (psv an optional insert, not a fixed pipeline stage). psv catches citation misattributions csr's recall-based legs miss (it found real defects in peer skills' design docs this way); csr catches structural gaps psv doesn't. psv findings feed back into csr's re-convergence. Neither judges whether the doc is *right* — that stays human.
+**Order (rule-13 docs): `psv(gate) → csr → psv(full M) → bc`** — the gate first (cheap premise check; NO-GO → rework sources before csr investment), the full-M record after csr (authoritative). Non-rule-13 docs: `csr → psv → bc` unchanged (psv an optional insert, not a fixed pipeline stage). psv catches citation misattributions csr's recall-based legs miss (it found real defects in peer skills' design docs this way); csr catches structural gaps psv doesn't. psv findings feed back into csr's re-convergence. Neither judges whether the doc is *right* — that stays human.
 
 **Sibling outcome-axis layer — `/prior-art-search`:** where psv checks the doc's *cited* sources, prior-art-search hunts *uncited* prior art for the doc's **novelty** claims ("we introduce X", "first to Y", "no prior art"). Use it for a high-stakes doc whose novelty framing could overclaim — a design paper, a research doc — alongside or instead of psv. prior-art-search emits `collisions_under_known_coverage` (N collisions / U uncited-relevant / C clear-under-search / I inconclusive of M) and NEVER `novel_confirmed` (the absence-of-evidence limit: a zero-collision result is "no collision in what was searched," not "novel"). Its oracle — the searchable prior-art corpus — is weaker than psv's fetched source at two layers (comparison-side + selection-side), which is exactly why it stops at a coverage disclosure.
 

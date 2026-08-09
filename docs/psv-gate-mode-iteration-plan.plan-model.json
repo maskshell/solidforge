@@ -1,0 +1,193 @@
+{
+  "plan_model_version": "v1",
+  "artifact_type": "iteration-plan",
+  "authority_chain": [
+    "docs/psv-gate-mode-proposal.md",
+    "skills/primary-source-verification/SKILL.md",
+    "skills/primary-source-verification/docs/proposal.md",
+    "skills/primary-source-verification/docs/design-decisions.md"
+  ],
+  "conflict_rule": "on conflict, authority_chain[0] (psv-gate-mode-proposal.md) wins",
+  "anchors": {
+    "complexity-tiers": {
+      "present": true,
+      "ref": "Complexity tiers",
+      "confidence": "latch"
+    },
+    "dependency-edges": {
+      "present": true,
+      "ref": "Dependency edges",
+      "confidence": "latch"
+    },
+    "per-iteration-dod": {
+      "present": true,
+      "ref": "Per-iteration DoD",
+      "confidence": "latch"
+    },
+    "dag": {
+      "present": true,
+      "ref": "DAG",
+      "confidence": "latch"
+    },
+    "phase-acceptance-gates": {
+      "present": true,
+      "ref": "Phase acceptance gates",
+      "confidence": "latch"
+    },
+    "risks-mitigations": {
+      "present": true,
+      "ref": "Risks and mitigations",
+      "confidence": "latch"
+    },
+    "out-of-scope": {
+      "present": true,
+      "ref": "Out of scope",
+      "confidence": "latch"
+    },
+    "cross-cutting-tasks": {
+      "present": true,
+      "ref": "Cross-cutting tasks",
+      "confidence": "latch"
+    }
+  },
+  "anchors_meta": {
+    "source": "author-supplied"
+  },
+  "items": [
+    {
+      "item_id": "E1",
+      "seq": 1,
+      "depends_on": [],
+      "dod_ref": "psv-gate-mode-iteration-plan.md §DoD/E1",
+      "title": "CLAUDE.md rule 13 insertion-point wording",
+      "scope": "lines 112+122: psv additive; gate-first when rule-13 conditions hold; authoritative full-M after csr",
+      "source_location": "psv-gate-mode-proposal.md §Enumerations",
+      "complexity": "S",
+      "risk": "constitution-level wording — must not contradict the additive positioning",
+      "odp_status": [],
+      "constraints_profile": "iteration-plan",
+      "parallel_group": "wave1",
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "E2",
+      "seq": 2,
+      "depends_on": [],
+      "dod_ref": "psv-gate-mode-iteration-plan.md §DoD/E2",
+      "title": "USER_GUIDE.md Two-axis + diagram",
+      "scope": "lines 24, 27-31, 33, 47, 49, 54 — gate mode named",
+      "source_location": "psv-gate-mode-proposal.md §Enumerations",
+      "complexity": "M",
+      "risk": "diagram + prose drift",
+      "odp_status": [],
+      "constraints_profile": "iteration-plan",
+      "parallel_group": "wave1",
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "E3",
+      "seq": 3,
+      "depends_on": [],
+      "dod_ref": "psv-gate-mode-iteration-plan.md §DoD/E3",
+      "title": "psv SKILL.md gate-mode note",
+      "scope": "description + line 73: subset gate, batch GO/NO-GO, gate record non-authoritative, bounded re-gate",
+      "source_location": "psv-gate-mode-proposal.md §Enumerations",
+      "complexity": "M",
+      "risk": "conflict with additive positioning wording",
+      "odp_status": [],
+      "constraints_profile": "iteration-plan",
+      "parallel_group": "wave1",
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "E4",
+      "seq": 4,
+      "depends_on": [],
+      "dod_ref": "psv-gate-mode-iteration-plan.md §DoD/E4",
+      "title": "csr SKILL.md psv-positioning note",
+      "scope": "coordination section: ADD gate-mode note (no psv text exists there today)",
+      "source_location": "psv-gate-mode-proposal.md §Enumerations",
+      "complexity": "S",
+      "risk": "none material",
+      "odp_status": [],
+      "constraints_profile": "iteration-plan",
+      "parallel_group": "wave1",
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "E5",
+      "seq": 5,
+      "depends_on": [],
+      "dod_ref": "psv-gate-mode-iteration-plan.md §DoD/E5",
+      "title": "psv proposal.md Q5 amendment",
+      "scope": "'after or beside csr' → 'and before csr as the gate when rule-13 conditions hold'",
+      "source_location": "psv-gate-mode-proposal.md §Enumerations (N09)",
+      "complexity": "S",
+      "risk": "authoritative-design doc — keep amendment minimal",
+      "odp_status": [],
+      "constraints_profile": "iteration-plan",
+      "parallel_group": "wave1",
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "E6",
+      "seq": 6,
+      "depends_on": [
+        "E3"
+      ],
+      "dod_ref": "psv-gate-mode-iteration-plan.md §DoD/E6",
+      "title": "psv design-decisions.md ADR entry",
+      "scope": "gate-mode decisions ADR (GO contract, gate-M=0, batch threshold, bounded re-gate); ADR #1/#3/#5 untouched",
+      "source_location": "psv-gate-mode-proposal.md §Enumerations (N09)",
+      "complexity": "L",
+      "risk": "accidental amendment of existing ADRs",
+      "odp_status": [],
+      "constraints_profile": "iteration-plan",
+      "parallel_group": "wave2",
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "E7",
+      "seq": 7,
+      "depends_on": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "dod_ref": "psv-gate-mode-iteration-plan.md §DoD/E7",
+      "title": "doc-audit sweep (rule 5)",
+      "scope": "grep every pipeline-order statement; zero stale; proposal enumeration list maps 1:1",
+      "source_location": "psv-gate-mode-proposal.md §Enumerations + rule 5",
+      "complexity": "L",
+      "risk": "missed statement outside the 6 enumerated locations",
+      "odp_status": [],
+      "constraints_profile": "iteration-plan",
+      "parallel_group": "wave3",
+      "blueprint_subset": []
+    }
+  ],
+  "subset_tags": {
+    "executable": [
+      "item_id",
+      "seq",
+      "depends_on",
+      "dod_ref"
+    ],
+    "upstream_only": [
+      "title",
+      "scope",
+      "source_location",
+      "complexity",
+      "risk",
+      "odp_status",
+      "constraints_profile",
+      "parallel_group"
+    ],
+    "downstream_only": [
+      "blueprint_subset"
+    ]
+  }
+}
