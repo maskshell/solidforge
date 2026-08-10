@@ -24,13 +24,25 @@ Each skill's `docs/` directory contains the design proposal, iteration plan, ADR
 
 ## Install + enable (Layer 1)
 
+**From the repo URL** (the repo is its own marketplace — `.claude-plugin/marketplace.json`):
+
+```text
+/plugin marketplace add maskshell/solidforge
+/plugin install solidforge@solidforge
+/reload-plugins
+```
+
+or non-interactively: `claude plugin install solidforge@solidforge --scope project`.
+
 Local dev (no marketplace):
 
 ```bash
 claude --plugin-dir /path/to/solidforge
 ```
 
-Or via a marketplace / `--plugin-url` (zip). Then enable per project (`/plugin`) or globally.
+Session-only alternative: `claude --plugin-url <zip-url>` (zip archives only — no install record, no update tracking).
+
+Then enable per project (`/plugin`) or globally.
 Enabling activates the skills, the scoped agents, and the hooks. Plugin agents are priority 5 — user `~/.claude/agents/` same-named globals take precedence, so the skills spawn the plugin agents by their scoped names (`solidforge:<name>`).
 
 ## Arm a project (Layer 2)

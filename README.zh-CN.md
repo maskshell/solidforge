@@ -24,13 +24,25 @@
 
 ## 安装 + 启用（第 1 层）
 
+**从仓库 URL 安装**（本仓库同时是自己的 marketplace——`.claude-plugin/marketplace.json`）：
+
+```text
+/plugin marketplace add maskshell/solidforge
+/plugin install solidforge@solidforge
+/reload-plugins
+```
+
+或非交互形式：`claude plugin install solidforge@solidforge --scope project`。
+
 本地开发（无市场）：
 
 ```bash
 claude --plugin-dir /path/to/solidforge
 ```
 
-或通过市场 / `--plugin-url`（zip）。然后按项目启用（`/plugin`）或全局启用。
+会话级替代：`claude --plugin-url <zip-url>`（仅 zip——无安装记录、无更新跟踪）。
+
+然后按项目启用（`/plugin`）或全局启用。
 启用会激活技能、作用域代理与钩子。插件代理优先级为 5——用户 `~/.claude/agents/` 下同名全局代理优先，因此技能按作用域名（`solidforge:<name>`）生成插件代理。
 
 ## 武装项目（第 2 层）
