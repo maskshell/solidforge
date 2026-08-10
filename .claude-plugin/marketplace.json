@@ -1,0 +1,14 @@
+{
+  "name": "solidforge",
+  "description": "SolidForge — loop-engineering skills for AI coding agents: converge → specify → implement pipeline (cross-source-review, blueprint-crafting, parallel-development) plus outcome-axis verification layers (primary-source-verification, prior-art-search).",
+  "owner": {
+    "name": "maskshell"
+  },
+  "plugins": [
+    {
+      "name": "solidforge",
+      "source": "./",
+      "description": "SolidForge — loop-engineering skills for AI coding agents (converge → specify → implement pipeline + outcome-axis verification layers)"
+    }
+  ]
+}
