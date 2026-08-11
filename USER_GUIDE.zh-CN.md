@@ -228,8 +228,10 @@ Solid Forge 接入了**部分**异源 oracle（下方可选异源扩展）——
 
 ```bash
 python3 <plugin-root>/skills/parallel-development/infra/scripts/hetero_review.py \
-  --profile deepseek --diff <file-or-ref> --blueprint <blueprint-ref>
+  --diff <file-or-ref> --blueprint <blueprint-ref>
 ```
+
+省略 `--profile`——wrapper 从 `HETERO_PROFILE`（`<project>/.env.solidforge` / 环境变量，逗号列表 = 双异源，默认 deepseek）解析提供方；硬编码 `--profile` 会静默丢弃所有其他已配置提供方（ADR #48/#5）。
 
 调和：双方都报 → 高置信采纳；仅同源 → 采纳；**仅异源 → 强信号，升级**；都无 → 通过。上面的一次性命令是一趟异源腿；**多轮辩论由编排器驱动**（编排器交替同源 ↔ 异源腿，经 `loop_state` 计轮）。触顶未收敛的辩论由编排器记为 `adversarial-stalemate`（经 `loop_state`）并升级给你——绝不静默选边。**无代码变更添加提供方**：放 `profiles/<name>.json` + 设 `<大写名>_ANTHROPIC_AUTH_TOKEN`。**双异源**：`--profile deepseek,qwen3`。决策锚点：ADR #40；策略：[model-routing.md](skills/parallel-development/references/model-routing.md)。
 
@@ -261,7 +263,7 @@ python3 <plugin-root>/skills/parallel-development/infra/scripts/hetero_review.py
 | 一次性 bc → pd（**跳过规范评审**） | `Using @ctx.md, have /blueprint-crafting produce a spec, then /parallel-development implement it` | bc → pd（无评审——bc 的假设未经检查直接通过） |
 | 代码 + 外部工具（Vale/Semgrep/…） | `/solidforge:arm-tools --scaffold-configs …` → `implement …` | pd + 工具 |
 | 带设计治理的前端 | `/impeccable init` → `implement …` | pd + Impeccable |
-| 异源（跨族）对抗评审 | `/solidforge:arm-tools` → 填 `.env.solidforge` → `hetero_review.py --profile deepseek …`（或条目 `hetero: on`） | pd + hetero |
+| 异源（跨族）对抗评审 | `/solidforge:arm-tools` → 填 `.env.solidforge` → `hetero_review.py …`（省略 `--profile`；wrapper 用 `HETERO_PROFILE`，默认 deepseek——或条目 `hetero: on`） | pd + hetero |
 | 修 / 重构 / 测试 / 文档 | `fix …` / `refactor …` / `write e2e tests …` / `document …` | pd |
 
 ---

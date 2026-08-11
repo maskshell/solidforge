@@ -228,8 +228,10 @@ The *why* is the [orthogonal axis](#the-orthogonal-axis--verification-source-dec
 
 ```bash
 python3 <plugin-root>/skills/parallel-development/infra/scripts/hetero_review.py \
-  --profile deepseek --diff <file-or-ref> --blueprint <blueprint-ref>
+  --diff <file-or-ref> --blueprint <blueprint-ref>
 ```
+
+Omit `--profile` — the wrapper resolves the provider(s) from `HETERO_PROFILE` (`<project>/.env.solidforge` / env, comma-list = dual-different-family, default `deepseek`); a hardcoded `--profile` silently drops every other configured provider (ADR #48/#5).
 
 Reconciliation: both sources report → high-confidence adopt; same-family-only → adopt; **different-family-only → strong signal, escalate**; neither → pass. The one-shot command above is one different-family leg; **multi-round debate is orchestrator-driven** (the orchestrator alternates same-family ↔ different-family legs, counting rounds via `loop_state`). A debate that hits the round cap without convergence is recorded by the orchestrator as `adversarial-stalemate` (via `loop_state`) and escalated to you — never silently picks a side. **Add a provider** with no code change: drop `profiles/<name>.json` + set `<UPPERCASE-NAME>_ANTHROPIC_AUTH_TOKEN`. **Dual-different-family**: `--profile deepseek,qwen3`. Decision anchor: ADR #40; policy: [model-routing.md](skills/parallel-development/references/model-routing.md).
 
@@ -261,7 +263,7 @@ Reconciliation: both sources report → high-confidence adopt; same-family-only 
 | One-shot bc → pd (**skip spec review**) | `Using @ctx.md, have /blueprint-crafting produce a spec, then /parallel-development implement it` | bc → pd (no review — bc's assumptions ride through unchecked) |
 | Code + external tool (Vale/Semgrep/…) | `/solidforge:arm-tools --scaffold-configs …` → `implement …` | pd + tool |
 | Frontend with design governance | `/impeccable init` → `implement …` | pd + Impeccable |
-| different-family (cross-family) adversarial review | `/solidforge:arm-tools` → fill `.env.solidforge` → `hetero_review.py --profile deepseek …` (or item `hetero: on`) | pd + hetero |
+| different-family (cross-family) adversarial review | `/solidforge:arm-tools` → fill `.env.solidforge` → `hetero_review.py …` (omit `--profile`; wrapper uses `HETERO_PROFILE`, default deepseek — or item `hetero: on`) | pd + hetero |
 | Fix / refactor / tests / docs | `fix …` / `refactor …` / `write e2e tests …` / `document …` | pd |
 
 ---
