@@ -140,6 +140,30 @@ def run():
     findings = []
     skill = _read(SKILL) or ""
 
+    # --- different-family profile-hardcode guard (external-app regression) ---
+    # SKILL.md's step-2 command MUST NOT hardcode `--profile <name>`: a CLI arg
+    # silently drops every other provider configured via HETERO_DOC_PROFILE
+    # (e.g. a dual-different-family .env.solidforge — regression 2026-08-11).
+    # The wrapper resolves the provider(s) itself; the instruction text may only
+    # reference the selector and defaults, never pass a concrete profile.
+    hardcoded_profile = re.findall(r"--profile [A-Za-z][A-Za-z0-9_,]*", skill)
+    if hardcoded_profile:
+        findings.append(
+            _finding(
+                "profile-hardcode",
+                f"SKILL.md hardcodes {hardcoded_profile[0]} — a CLI --profile "
+                "silently drops other providers configured via "
+                "HETERO_DOC_PROFILE (external-app regression, 2026-08-11)",
+                "remove --profile from the step-2 command; the wrapper resolves "
+                "the provider(s) from HETERO_DOC_PROFILE (default deepseek)",
+            )
+        )
+    else:
+        coverage.append(
+            "  profile-selector: no hardcoded --profile in SKILL.md (wrapper "
+            "resolves HETERO_DOC_PROFILE, default deepseek)"
+        )
+
     # --- SKILL.md frontmatter ---
     lines = skill.splitlines()
     if not lines or lines[0].strip() != "---":
