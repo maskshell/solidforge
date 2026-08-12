@@ -48,6 +48,7 @@ IT_PLAN_ANCHORS = [
     "risks-mitigations",
     "out-of-scope",
     "cross-cutting-tasks",
+    "facade-impact-assessment",
 ]
 
 

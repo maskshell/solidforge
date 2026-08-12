@@ -133,6 +133,7 @@ Anchors:
 - risks and mitigations
 - out-of-scope
 - cross-cutting tasks
+- facade impact assessment (for each user-visible capability the plan introduces/changes, list candidate facade locations — README, USER_GUIDE, GitHub About — that may need sync; a plan changing no user-visible behavior states so explicitly; content advisory per rule 4, presence required like every anchor)
 
 ### Executable summary (executable-plan / `.plan.md` / queue)
 

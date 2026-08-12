@@ -45,6 +45,9 @@
     },
     "cross-cutting-tasks": {
       "present": true
+    },
+    "facade-impact-assessment": {
+      "present": true
     }
   }
 }

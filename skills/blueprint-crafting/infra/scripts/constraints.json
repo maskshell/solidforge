@@ -35,7 +35,8 @@
         "phase-acceptance-gates",
         "risks-mitigations",
         "out-of-scope",
-        "cross-cutting-tasks"
+        "cross-cutting-tasks",
+        "facade-impact-assessment"
       ],
       "authority_rule": "iteration-plan defers to arch-design"
     },
@@ -63,6 +64,7 @@
     "risks-mitigations": ["risks and mitigation", "risk and mitigation", "风险与缓解", "风险和缓解", "风险与对策", "风险"],
     "out-of-scope": ["out of scope", "out-of-scope", "范围外", "不在范围内"],
     "cross-cutting-tasks": ["cross-cutting", "cross-cutting task", "横切", "横切任务", "横切关注点"],
+    "facade-impact-assessment": ["facade impact", "facade-impact", "门面影响", "门面"],
     "positioning": ["positioning", "定位"],
     "what-it-does-not-do": ["what it does not do", "does not implement", "不做什么", "不实现", "不包含"],
     "layering": ["dual ring", "inner ring", "layer", "分层", "内环", "双环", "层"],

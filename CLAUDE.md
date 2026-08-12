@@ -48,7 +48,15 @@ Codable rules become deterministic gates that Block on a real violation. Best-ef
 
 A capability ripples through ~9+ files. The recurring failure mode is updating the code and forgetting a table, caveat, or enum. After adding a language/gate/role/tool, grep for the capability's enumerations and update all of them:
 
-- strength tables (`extending.md`), gate tables (`install.md` "What each gate does"), maturity caveats (`maturity.md`), domain enums (`golden-paths.md`), role triggers (`role-agent-mapping.md`), per-platform rows (`arch-contracts.md`).
+- strength tables (`extending.md`)
+- gate tables (`install.md` "What each gate does")
+- maturity caveats (`maturity.md`)
+- domain enums (`golden-paths.md`)
+- role triggers (`role-agent-mapping.md`)
+- per-platform rows (`arch-contracts.md`)
+- **project facade docs (README, USER_GUIDE, GitHub About)** — capability descriptions that must reflect user-visible behavior changes
+  - severity: **advisory** — content correctness is a semantic judgment, not grep-able
+  - grep capability terms to find candidate locations; the sync decision is human/outer-ring, never a Blocker (rule 4)
 
 Treat a doc-audit pass as a required step, not an afterthought.
 

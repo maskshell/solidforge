@@ -156,6 +156,10 @@ I0 scaffold+activation ─▶ I1 plan-model ─┬─▶ I2 normalizer ─▶ I3
 | process/outcome-axis isolation review | I6 | re-assert field non-translation on every verdict change | rule 3 |
 | research staging never bypassed | I4 | the staging queue is a Blocker constraint; promotion stays human-gated | — |
 
+## Facade impact assessment
+
+This plan builds `blueprint-crafting` itself — the specify-side meta-skill consumed by `parallel-development`. Its facade impact (per CLAUDE.md rule 5): **none at the end-user layer.** The project facade docs (README, USER_GUIDE, GitHub About) describe the plugin's user-facing skills + install flow; they do not enumerate bc's internal anchors, the plan-model schema, or the constraints-checker. So this build changed no end-user facade text. (This section exists because the iteration-plan profile requires the `facade-impact-assessment` anchor — dogfood: bc's own plan satisfies bc's own profile. A plan that DID change a user-visible capability would list the candidate facade sections here for sync.)
+
 ## Appendix: execution notes
 
 - **First action**: ODP-2 is closed (single skill, ADR #6) and ODP-4 is closed (v1 subset,
