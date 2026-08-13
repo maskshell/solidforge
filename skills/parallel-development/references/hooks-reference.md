@@ -23,7 +23,7 @@ PostToolUse cannot prevent an edit, only react to it. So "the fast gate blocks b
 
 | Hook | Event | Mechanism | Contract |
 | --- | --- | --- | --- |
-| `fast_gate.py` | PostToolUse | `decision:block` on failure | per-file cheap lint/format; records fingerprint in loop-state; queries breaker; emits reason incl. the breaker action |
+| `fast_gate.py` | PostToolUse | `decision:block` on failure | per-file cheap lint/format; records fingerprint in loop-state; queries breaker; emits reason incl. the breaker action; the reason's remediation SPLITS by tool — lint failures (`ruff check`/`eslint`/`swift-format`) → fix-in-ring, format failures (`ruff format`/`google-java-format`/`gofmt`/`rustfmt`) → commit-stratification guidance ([commit-stratification.md](commit-stratification.md)) |
 | `blueprint_guard.py` | PreToolUse | `permissionDecision:deny` | blocks Edit/Write to a `status:frozen` blueprint; the only legitimate change path is the revision channel |
 | `counters.py` | PreToolUse | `permissionDecision:deny` when terminal | stops edits once loop-state is `suspended`/`hard_terminated`, so a stalled task cannot keep thrashing |
 

@@ -24,7 +24,7 @@ Two consequences, enforced elsewhere in this skill:
 Primary axis = deterministic vs semantic. Secondary axis = cost.
 
 - Inner ring = ALL deterministic checks.
-  - Fast gate: lint / format / AOT-compile / single-file unit, ms~sec, every edit. Hook-enforced (PostToolUse `fast_gate.py`).
+  - Fast gate: lint / format / AOT-compile / single-file unit, ms~sec, every edit. Hook-enforced (PostToolUse `fast_gate.py`). Lint failures remediate fix-in-ring; FORMAT failures block with commit-stratification guidance ([commit-stratification.md](commit-stratification.md)) — the format churn is isolated into a standalone `style:` commit instead of being inline-rewritten into the logic diff.
   - Architecture-contract gate: circular deps / layer isolation / concurrency baseline. Heavier. Runs at the inner convergence point, NOT every edit.
   - Gate附加条件 (additional pass conditions): Exit 0 alone is not a pass.
 - Outer ring = only uncodable semantic checks. Independent `code-reviewer` subagent.

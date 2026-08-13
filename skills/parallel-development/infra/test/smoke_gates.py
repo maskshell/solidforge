@@ -715,6 +715,60 @@ def smoke_iac():
     print(f"  iac: PASS ({len(data['findings'])} misconfig finding(s); advisory)")
 
 
+def smoke_fast_gate_guidance():
+    # Option C behavioral coverage (fast-gate-format-advisory.plan.md fg-1; bc
+    # outer-ring novel-2: no other test invokes fast_gate.py). A FORMAT failure's
+    # block reason must carry the commit-stratification remediation (standalone
+    # `style:` commit, C-pre); a LINT failure must keep the fix-in-ring wording.
+    # CLAUDE_PROJECT_DIR isolates the loop-state side effect (both fast_gate.py and
+    # loop_state.py resolve state via CLAUDE_PROJECT_DIR-or-cwd).
+    if not have("ruff"):
+        print("  fast-gate guidance: SKIP (ruff not installed)")
+        return
+    hook = os.path.join(ROOT, "infra", "hooks", "fast_gate.py")
+    d = tempfile.mkdtemp(prefix="pdsmoke_fg_")
+    env = dict(os.environ, CLAUDE_PROJECT_DIR=d)
+    lint_fail = os.path.join(d, "lint_fail.py")  # F401 unused import, format-clean
+    fmt_fail = os.path.join(d, "fmt_fail.py")  # lint-clean, format-dirty
+    write(lint_fail, "import os\n")
+    write(fmt_fail, "x=1\n")
+
+    def run_hook(path):
+        proc = subprocess.run(
+            ["python3", hook],
+            input=json.dumps({"tool_input": {"file_path": path}}),
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=120,
+        )
+        assert proc.stdout.strip(), (
+            f"fast-gate emitted nothing for {path}: rc={proc.returncode} {proc.stderr}"
+        )
+        return json.loads(proc.stdout)
+
+    lint_out = run_hook(lint_fail)
+    assert lint_out.get("decision") == "block", lint_out
+    lint_reason = lint_out.get("reason", "")
+    assert "ruff check" in lint_reason, lint_reason
+    assert "fix in the inner ring" in lint_reason, (
+        "lint failure must positively carry the fix-in-ring guidance "
+        "(guards against a vacuous absence-only assertion)"
+    )
+    assert "stratify" not in lint_reason.lower() and "style:" not in lint_reason, (
+        "lint failure must keep fix-in-ring guidance, not format stratification"
+    )
+
+    fmt_out = run_hook(fmt_fail)
+    assert fmt_out.get("decision") == "block", fmt_out
+    fmt_reason = fmt_out.get("reason", "")
+    assert "ruff format" in fmt_reason, fmt_reason
+    assert "stratify" in fmt_reason.lower() and "style:" in fmt_reason, (
+        "format failure must carry the commit-stratification remediation"
+    )
+    print("  fast-gate guidance: PASS (lint→fix-in-ring; format→stratify)")
+
+
 def main():
     print("smoke_gates:")
     failures = []
@@ -736,6 +790,7 @@ def main():
         smoke_oasdiff,
         smoke_license,
         smoke_iac,
+        smoke_fast_gate_guidance,
     ):
         try:
             fn()

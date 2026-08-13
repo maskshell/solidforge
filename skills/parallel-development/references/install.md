@@ -87,7 +87,7 @@ Impeccable is the exception — it is a skill (not a standalone CLI): arm it via
 
 | Gate | When | Mechanism | Failure behavior |
 | --- | --- | --- | --- |
-| Fast gate (`fast_gate.py`) | Every Edit/Write | PostToolUse hook; per-file lint/format | `decision:block` + reason; Claude self-corrects next turn; inner short-circuit |
+| Fast gate (`fast_gate.py`) | Every Edit/Write | PostToolUse hook; per-file lint (Blocker, fix-in-ring) + format (Blocker, commit-stratified remediation — [commit-stratification.md](commit-stratification.md)); format-emitting checks: Python/Java/Go/Rust; Swift/Web/Python are lint | `decision:block` + reason; Claude self-corrects next turn; inner short-circuit |
 | Blueprint guard (`blueprint_guard.py`) | Edit/Write to a frozen blueprint | PreToolUse hook | `permissionDecision:deny`; edit blocked |
 | Counters (`counters.py`) | Edit/Write while terminal | PreToolUse hook | `permissionDecision:deny`; a suspended/hard_terminated task cannot keep editing |
 | Architecture-contract gate (`arch_contract_<platform>.py`) | Inner convergence point (explicit) | Script | Blocker exit + 越权日志; stays inner. Python/Web also run a type-check (pyright / tsc); Go's type-check is the compiler (`go build`/`go vet`). Detection is recursive (root OR nested); a nested frontend/backend is gated per-marker-dir. |

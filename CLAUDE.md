@@ -75,7 +75,7 @@ A skill's touch points span many files. Map the surface (Explore subagents, targ
 
 ## 9. Commit only when asked; follow the repo's convention
 
-Observe the existing commit format and message style. Here: `parallel-dev:` prefix, direct-to-main, descriptive body, `Co-Authored-By` trailer. Do not auto-commit or auto-push. One coherent commit per logical change.
+Observe the existing commit format and message style. Here: `parallel-dev:` prefix, direct-to-main, descriptive body, `Co-Authored-By` trailer. Do not auto-commit or auto-push. One coherent commit per logical change. Commit granularity follows the logical change, never a skill's internal workflow staging (queue items / convergence rounds batch into the enclosing logical change). Commit messages carry business considerations (problem / why / tradeoffs); process metadata (item IDs, ring verdicts, DoD refs) belongs in run-records, not git history.
 
 ## 10. Write skill docs for the AI agent as the first reader
 

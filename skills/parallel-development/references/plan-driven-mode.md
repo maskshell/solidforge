@@ -189,11 +189,11 @@ Queue format: each item may carry `open_decisions:
 
 Committing is otherwise a hidden per-stage human stall. Make it a frozen run-level policy instead — decided once at `loop_state.py init --commit <policy>`, applied by the orchestrator at convergence:
 
-- `auto-per-stage` (default): on a **feature branch** (never `main`), one commit per converged stage — per queue item in plan-driven mode (after `complete`), per converged task in single-task mode (after `mark-converged`). Message templated from context (blueprint ref / item_id / what converged). No confirmation.
+- `auto-per-stage` (default): on a **feature branch** (never `main`), one commit per converged stage — per converged task in single-task mode (after `mark-converged`); in plan-driven mode, per LOGICAL CHANGE, not per queue item: a plan's items usually batch into ONE commit (code+docs+records together, or code / records as two), because queue-item completion state lives in the run-record, never in git history. The message carries BUSINESS content (problem → change → tradeoffs → docs); loop metadata (item_id, outer-ring verdicts, DoD refs) stays out of commit messages. No confirmation.
 - `manual`: the orchestrator does not commit; the user commits (legacy behavior).
 - `none`: no commits.
 
-Safety: the commit fires ONLY at convergence (inner + outer rings clean), so broken/WIP code is never committed; and it lands on a feature branch, so it is reversible and reviewable. The default policy **authorizes autonomous commits for the skill's runs**, overriding the usual "commit only when asked" default; set `--commit manual` to opt out.
+Safety: the commit fires ONLY at convergence (inner + outer rings clean), so broken/WIP code is never committed; and it lands on a feature branch, so it is reversible and reviewable. The default policy **authorizes autonomous commits for the skill's runs**, overriding the usual "commit only when asked" default; set `--commit manual` to opt out. A per-stage commit may itself be STRATIFIED — a pure-format `style:` commit isolated ahead of the logic commit when the stage touched legacy-unformatted files: see [commit-stratification.md](commit-stratification.md).
 
 ## Honesty: an L3 semantic router over the L4 per-task kernel
 

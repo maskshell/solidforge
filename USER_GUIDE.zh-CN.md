@@ -239,7 +239,7 @@ python3 <plugin-root>/skills/parallel-development/infra/scripts/hetero_review.py
 
 **收敛环，简述。** 每个条目运行至双环皆净：
 
-- **内环**（确定性）：**fast gate**（lint/format）是 PostToolUse 钩子，**每次编辑**触发；在**内环收敛点**，架构契约门（分层 / 依赖 / 并发）→ 供应链门（泄露密钥 + 依赖漏洞）→ 测试门（失败测试 + AC→test-name 映射 + 覆盖率）→ API 契约门（前端↔后端，混合仓库）各跑一次。完整集合见 [install.md](skills/parallel-development/references/install.md)「每个门做什么」。真实违规阻塞；缺失工具降级为覆盖率注记（绝不静默绿）。
+- **内环**（确定性）：**fast gate**（lint/format；format 失败阻塞时采用提交分层补救——纯格式变更隔离为独立 `style:` 提交，逻辑 diff 保持可审）是 PostToolUse 钩子，**每次编辑**触发；在**内环收敛点**，架构契约门（分层 / 依赖 / 并发）→ 供应链门（泄露密钥 + 依赖漏洞）→ 测试门（失败测试 + AC→test-name 映射 + 覆盖率）→ API 契约门（前端↔后端，混合仓库）各跑一次。完整集合见 [install.md](skills/parallel-development/references/install.md)「每个门做什么」。真实违规阻塞；缺失工具降级为覆盖率注记（绝不静默绿）。
 - **外环**（AI）：独立评审者对照冻结意图蓝图（用例 + 验收标准 + NFR）检查 diff——它抓到仅读代码 LLM 看不到的漂移。
 
 **断路器。** 不同触发，不同动作（优先级：硬终止 > 升级 > 降级 > 挂起）：同一根因指纹 ≥ N=3 → **升级**（→ 外环）；内环迭代 ≥ M=8 → **降级**（→ 收窄范围）→ 预算 ≥ 80% 时**挂起**（→ 你）；**步上限 → 硬终止**（*能力*信号——`step-capped` → `not-yet`）；**token / 时间 / 成本上限 → 硬终止**（*资源*守卫——`resource-capped` → 能力上 `inconclusive`）。PreToolUse 钩子（`counters.py`）在状态进入终态后**拒绝**编辑——环无法冲过断路器；它是物理拦截，不是提示建议。

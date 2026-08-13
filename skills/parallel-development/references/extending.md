@@ -28,7 +28,7 @@ The authoritative list is `infra/test/platforms.json` — the checker verifies e
 | 0 | registry | `infra/test/platforms.json` | add a language entry (marker_file, extension, l4_file, arch_script, arch_config, install_token, desc_keywords, parallel_markers, role_markers). This single entry drives the checker — no other step is complete until the checker passes. |
 | 1 | L4 (new) | `references/<lang>-patterns.md` | detection marker, toolchain commands, parallel-conflict scenarios, and an `## Architecture-Contract Gate (<lang>)` section naming `arch_contract_<lang>.py` |
 | 2 | infra | `hooks/lib/detect_toolchain.py` | a `<LANG>_EXTS` set + a `classify()` branch returning `"<lang>"` |
-| 3 | infra | `hooks/fast_gate.py` | `check_<lang>()` (cheap per-file check) AND an explicit `elif platform == "<lang>":` branch (see trap below) |
+| 3 | infra | `hooks/fast_gate.py` | `check_<lang>()` (cheap per-file check) AND an explicit `elif platform == "<lang>":` branch (see trap below); if the check is FORMAT-emitting, its `tool_name` MUST also be added to the format tuple in the guidance split (`"ruff format"`/`"google-java-format"`/`"gofmt"`/`"rustfmt"` today) so the commit-stratification guidance fires — lint-emitting checks get fix-in-ring ([commit-stratification.md](commit-stratification.md)) |
 | 4 | infra | `scripts/arch_contract_<lang>.py` (new) | reuse the 越权日志 JSON schema (`infra/schemas/violation-log.schema.json`: `{gate, passed, coverage[], findings[{severity, rule, file, line, detail, suggestion}]}`) + Blocker exit; pick the language's deterministic arch tools. `infra/test/smoke_gates.py` validates the new gate's output against the schema. |
 | 5 | infra | `templates/<lang-config>` + `arm.py` `ARCH_CONFIGS` | the language's arch-contract config template; append a `(filename, predicate)` tuple to `ARCH_CONFIGS`. The predicate reuses `detect_<lang>()` (same signal `prepare_tools` uses), so the config copies iff the project is detected as that language. |
 | 6 | install | `install/arm.py` | `detect_<lang>()` (marker file) + a `prepare_tools` branch (dep-manager add OR system-toolchain instruction) |
@@ -98,6 +98,7 @@ Run both checks whenever a language is added or the infra is refactored.
 10. `detect_toolchain.classify()` maps the language's extensions to `"<lang>"`.
 11. `fast_gate.py` has an EXPLICIT `elif platform == "<lang>":` branch (not the implicit else).
 12. `templates/<lang-config>` exists and is referenced by `ARCH_CONFIGS`.
+13. If the language's fast-gate check is FORMAT-emitting, its `tool_name` is in the guidance-split format tuple (`fast_gate.py`, next to the stratification comment) — a miss silently degrades format failures to fix-in-ring guidance (the behavioral case in `smoke_gates.py` pins only the ruff pair; the tuple is a shadow enumeration, guarded by this checklist item).
 
 ### Loading-chain (per language, per decision point)
 

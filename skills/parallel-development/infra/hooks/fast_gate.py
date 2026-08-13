@@ -193,6 +193,21 @@ def main():
         "Breaker=OK: fix in the inner ring and re-run; do NOT proceed to the arch-contract gate while red.",
     )
 
+    # Option C (fast-gate-format-advisory-design.md §4): lint and format are both
+    # Blockers, but a FORMAT failure's remediation STRATIFIES — the reformat churn
+    # is isolated into a standalone style: commit (references/commit-stratification.md,
+    # C-pre) instead of being inline-rewritten into the logic diff, so the logic diff
+    # stays reviewable in MR/PR. Lint failures keep the fix-in-ring remediation above.
+    if tool_name in ("ruff format", "google-java-format", "gofmt", "rustfmt"):
+        guidance = (
+            "Format check failed — STRATIFY if the file is legacy-unformatted (the "
+            "reformat churn would drown your logic diff): run the formatter on this "
+            "file, commit the pure-format change as a standalone `style:` commit "
+            "(references/commit-stratification.md, C-pre), then redo the logic edit "
+            "on top. If your own edit introduced the drift on an already-formatted "
+            "file, fix it inline instead. "
+        ) + guidance
+
     reason = f"Fast-gate failed ({tool_name}) on {rel}: {msg}. {guidance}" + (
         f" [{breaker_reason}]" if breaker_reason and action != "ok" else ""
     )
