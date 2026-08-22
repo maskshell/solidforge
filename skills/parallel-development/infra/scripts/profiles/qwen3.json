@@ -3,11 +3,11 @@
   "_provider": "qwen3",
   "env": {
     "ANTHROPIC_BASE_URL": "https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic",
-    "ANTHROPIC_MODEL": "qwen3.7-max",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "qwen3.6-flash",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "qwen3.7-max",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "qwen3.7-max",
-    "CLAUDE_CODE_SUBAGENT_MODEL": "qwen3.7-max"
+    "ANTHROPIC_MODEL": "qwen3.8-max",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "qwen3.7-flash",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "qwen3.8-max",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "qwen3.8-max",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "qwen3.8-max"
   },
-  "model": "qwen3.7-max"
+  "model": "qwen3.8-max"
 }

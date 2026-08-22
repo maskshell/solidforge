@@ -24,7 +24,7 @@ The research / Explore fan-out tier is cost-dominated (multi-source gathering, b
 ```bash
 claude -p --settings profiles/deepseek.json --model flash \
   --output-format json --permission-mode bypassPermissions \
-  --no-session-persistence --max-budget-usd <cap> \
+  --no-session-persistence --max-budget-usd <cap> --max-turns <cap> \
   --allowedTools "WebSearch WebFetch Read Grep Glob" \
   -p "<research prompt>"
 ```
@@ -52,10 +52,16 @@ different-family runs as a non-interactive Claude Code subprocess spawned by `in
 
 ```bash
 claude -p --settings profiles/<backend>.json --model <alias> \
-  --output-format json --json-schema <violation-log.schema.json> \
+  --output-format stream-json --verbose --include-partial-messages \
+  --json-schema <violation-log.schema.json> \
   --permission-mode bypassPermissions --no-session-persistence \
-  --max-budget-usd <cap> [-p "<adversarial prompt>"]
+  --max-budget-usd <cap> --max-turns <cap> [-p "<adversarial prompt>"]
 ```
+
+(The argv is built by `_claude_argv` — the wrapper's FLAG-SURFACE MANIFEST is the
+authority. The stream mode emits a progress heartbeat to STDERR every 30s and the
+result carries `provider_runs[]` telemetry; stdout stays the single result JSON.
+`--no-stream` restores the legacy json envelope. ADR #52.)
 
 The subprocess inherits SKILL.md / hooks / Skills / MCP — the skill substrate is NOT stranded. Provider config is process-level (`--settings`), so the different-family backend crosses providers without an aggregator proxy. The wrapper drives `loop_state` truthfully around the subprocess (ADR #39, ADR #40 (g)). See [convergent-loop.md](convergent-loop.md) § different-family adversarial review for the multi-round debate loop + cap + termination semantics.
 
@@ -68,8 +74,13 @@ The subprocess inherits SKILL.md / hooks / Skills / MCP — the skill substrate 
 - **Provider selection**: `--profile deepseek` (a NAME, not a path) or `export HETERO_PROFILE=deepseek`. Default `deepseek`.
 - **Add a provider** (zero code change): drop `profiles/<name>.json` with routing only + `export <UPPERCASE_NAME>_ANTHROPIC_AUTH_TOKEN=...` → `hetero_review.py --profile <name>` works. See `profiles/qwen3.json` for a worked example.
 - **Dual-/multi-different-family** (extensibility): `--profile deepseek,qwen3` runs each backend independently and merges findings (omit `--profile` to fall back to `HETERO_PROFILE` from `<project>/.env.solidforge` / env, default `deepseek` — a hardcoded `--profile` silently drops other configured providers, ADR #48/#5) (each finding tagged with its `provider` for N-way reconciliation). Pick two providers NEITHER of which is the orchestrator's primary — e.g. in a GLM-orchestrated project, `deepseek` + `qwen3` (BigModel is same-family there, so it is not a true different-family in that project).
-- Set `--budget-usd` with headroom (default 4.0, under the global 5.0 cap) — it is a runaway backstop, NOT real cost: for non-Anthropic backends the API returns tokens only (no price field), so CC's USD is structurally disconnected from provider spend (ADR #42; the earlier "over-reports vs DeepSeek cache-aware billing" framing, ADR #40 (h)(i), understated this to a DeepSeek quirk). The reliable provider-independent bounds are CC's turn limit + `step_cap_S`. A cold multi-tool review is token-heavy regardless, so keep headroom; if a review still trips the cap it DEGRADES (verdict stays pass/rewrite from the other providers; ADR #41), not rewrites.
-- **Subprocess timeout**: `--timeout <seconds>` (default 600, or `$HETERO_TIMEOUT`). The opus-tier alias on a cold large diff (the deepseek profile maps `opus`/`sonnet` → `deepseek-v4-pro[1m]`, the 1M-context model) can exceed 600s and return a `hetero-subprocess-timeout` malformation. For a known-cold large review: raise `--timeout` (e.g. 1200–1800s) to keep the pro tier, OR drop to `--model haiku` (→ `deepseek-v4-flash`) for that call. Do NOT remap the profile alias to dodge a timeout — cold-start is transient (DeepSeek auto-caches ~99% after the first call; ADR #40 (h)(i)), and a global alias remap permanently sacrifices review depth on warm calls (ADR #43). Set `HETERO_TIMEOUT` in `.env.solidforge` to fix the cap per-project.
+- Set `--budget-usd` as a COARSE breaker (default 12.0) — NOT real cost: for non-Anthropic backends the API returns tokens only (no price field), so CC's USD is structurally disconnected from provider spend (ADR #42; and CC v2.1.238 prices unrecognized models at premium fallback rates — measured $0.24 for ONE tiny turn — so the old default 4.0 held only ~16 tiny turns of headroom; ADR #42 amendment). If a review still trips the cap it DEGRADES (verdict stays pass/rewrite from the other providers; ADR #41), not rewrites — except the stream-byte cap, which MALFORMS loudly (a runaway stream is the 2026-08-21 incident class; ADR #52).
+- The reliable provider-independent bounds, in firing order (ADR #52):
+  - `--max-turns` — default 60, or `$HETERO_MAX_TURNS`; print-mode CC has NO default turn limit
+  - `--max-stream-bytes` — default 64MiB, or `$HETERO_MAX_STREAM_BYTES`
+  - the wall-clock `--timeout` (ADR #43)
+  - `step_cap_S` globally (the loop's own step accounting)
+- **Subprocess timeout**: `--timeout <seconds>` (default 600, or `$HETERO_TIMEOUT`). A cold large diff can exceed 600s and return a `hetero-subprocess-timeout` malformation. For a known-cold large review: raise `--timeout` (e.g. 1200–1800s). Do NOT remap a profile alias to dodge a timeout — cold-start is transient (DeepSeek auto-caches ~99% after the first call; ADR #40 (h)(i)), and a global alias remap permanently sacrifices review depth on warm calls (ADR #43; the ONE measured exception: the deepseek profile's pro→flash demotion, ADR #53 — persistent pathology, not transient cold-start). Set `HETERO_TIMEOUT` in `.env.solidforge` to fix the cap per-project. While a subprocess runs, the wrapper heartbeats to stderr every 30s (elapsed / stream bytes / assistant events / the RESOLVED model / idle) — a live stream and a hang are distinguishable without socket forensics (ADR #52).
 
 ## Reconciliation (same-family + different-family findings)
 
@@ -87,7 +98,7 @@ The subprocess inherits SKILL.md / hooks / Skills / MCP — the skill substrate 
 - Opt-in item (high-stakes): same-family + different-family × ≤ cap rounds + reconciliation.
 - Deterministic stages, author, research: unchanged (same-family) except the opt-in research-tier routing (Phase 3, P3-1).
 
-Note (ADR #42 / #41): `--budget-usd` is a runaway breaker, not an accounting figure — for non-Anthropic backends CC's `total_cost_usd` is structurally fictional (the API returns tokens, not price; the earlier "over-reports vs DeepSeek cache-aware billing" framing, ADR #40 (h)(i), was a DeepSeek-specific understatement of a general truth). It defaults to 4.0 (headroom under the global 5.0 cap); the reliable provider-independent bounds are CC's turn limit + `step_cap_S`; DeepSeek auto-caches (~99% hit rate via its own Context Caching — Phase 0 RESULT). A review that still trips the cap DEGRADES (`degraded:true`, persisted `hetero-degraded-error_max_budget_usd` fingerprint), not rewrites.
+Note (ADR #42 / #41 / #52): `--budget-usd` is a runaway breaker, not an accounting figure — for non-Anthropic backends CC's `total_cost_usd` is structurally fictional (the API returns tokens, not price; the earlier "over-reports vs DeepSeek cache-aware billing" framing, ADR #40 (h)(i), was a DeepSeek-specific understatement of a general truth). It defaults to 12.0 — CC v2.1.238 prices unrecognized models at premium fallback rates (measured $0.24 for one tiny turn), so the cap fires on a mismeasure (ADR #42 amendment); the reliable provider-independent bounds are the wrapper's `--max-turns` + `--max-stream-bytes` + `--timeout` + `step_cap_S` (ADR #52); DeepSeek auto-caches (~99% hit rate via its own Context Caching — Phase 0 RESULT). A review that still trips the cap DEGRADES (`degraded:true`, persisted `hetero-degraded-error_max_budget_usd` fingerprint), not rewrites.
 
 ## Out of scope
 

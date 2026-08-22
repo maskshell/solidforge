@@ -51,16 +51,39 @@ it). The TOKEN vars ARE shared (same provider → same credential).
 ## Optional — the timeout (`HETERO_DOC_TIMEOUT`)
 
 `HETERO_DOC_TIMEOUT` sets the per-subprocess wall-clock cap (seconds) for
-`hetero_doc_review.py`. Default `600`. The opus-tier alias on a cold large doc (the deepseek
-profile maps `opus`/`sonnet` → `deepseek-v4-pro[1m]`, the 1M-context model) can exceed 600s
+`hetero_doc_review.py`. Default `600`. A cold large doc can exceed 600s
 and return a `hetero-subprocess-timeout` malformation. For a known-cold large review: raise
-it (e.g. `1200`) to keep the pro tier, OR drop to `--model haiku` (→ `deepseek-v4-flash`)
-for that call. Do NOT remap the profile alias to dodge a timeout — cold-start is transient
+it (e.g. `1200`). Do NOT remap a profile alias to dodge a timeout — cold-start is transient
 (DeepSeek auto-caches ~99% after the first call), and a global alias remap permanently
-sacrifices review depth on warm calls (ADR #43). `HETERO_DOC_TIMEOUT` is SEPARATE from pd's
+sacrifices review depth on warm calls (ADR #43; the one MEASURED exception: the deepseek
+profile's pro→flash demotion, ADR #53 — persistent pathology, not transient cold-start;
+all deepseek tiers now map to `deepseek-v4-flash[1m]`). `HETERO_DOC_TIMEOUT` is SEPARATE from pd's
 `HETERO_TIMEOUT` (mirrors the `HETERO_DOC_PROFILE` / `HETERO_PROFILE` split).
 
 - `HETERO_DOC_TIMEOUT=1200` (example — raise for cold large docs)
+
+## Optional — the run guards (`HETERO_DOC_MAX_TURNS` / `HETERO_DOC_MAX_STREAM_BYTES`)
+
+Two wrapper-side caps with sane defaults — set them only for an unusual doc regime
+(ADR #52):
+
+- `HETERO_DOC_MAX_TURNS` — hard cap on the review subprocess's agentic turns.
+  Default `60`. Print-mode Claude Code has NO default turn limit; tripping the cap
+  DEGRADES honestly (`error_max_turns`, ADR #41) — the same-family leg stands.
+- `HETERO_DOC_MAX_STREAM_BYTES` — runaway breaker on the accumulated stream
+  (bytes, including token-delta partial events). Default `67108864` (64MiB).
+  Tripping it MALFORMS loudly (`hetero-stream-bytes-cap`) — the 2026-08-21
+  incident class (a provider-side endless stream otherwise burns the full
+  wall-clock cap invisibly).
+
+While a review runs, the wrapper emits a progress heartbeat line to stderr every
+30s (`{"type":"hetero-heartbeat",...}` — elapsed / stream bytes / assistant events / the
+RESOLVED model name / idle seconds). stdout stays the single result JSON. The
+result also carries a `provider_runs[]` array (resolved model / assistant events /
+bytes / elapsed per provider), so a post-hoc reader answers "which model actually ran,
+and was the stream alive?" from the record alone. The `--no-stream` CLI flag
+restores the legacy single-envelope json spawn — the documented fallback if a
+Claude Code upgrade breaks the stream-json surface.
 
 ## Adding a custom third-party provider (zero code change)
 

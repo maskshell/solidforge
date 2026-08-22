@@ -69,6 +69,7 @@ REQUIRED_FILES = {
     "infra/test/disconnect_check.py": "this gate (self)",
     "infra/test/findings_shape_check.py": "the findings shape-contract gate",
     "infra/test/convergence_policy_check.py": "the offline convergence-policy gate",
+    "infra/test/hetero_doc_guards.py": "the different-family substrate guard gate (ADR #52)",
     "infra/test/lint_self.py": "the dogfood lint gate",
     "infra/test/plugin_layout.py": "the plugin-layout gate",
     "infra/test/dogfood.py": "the dogfood convergence-loop gate (skip path)",

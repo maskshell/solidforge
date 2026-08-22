@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """verdict.py — the two-field verdict-emitter (iteration I6).
 
-Aggregates the inner ring (constraints_check I3 / research_constraints I4) and the outer ring (plan_reviewer I5 findings) into a spec run-record with exactly two verdict fields, kept structurally isolated (arch-design §5):
+Aggregates the inner ring (constraints_check I3 / research_constraints I4) and the outer ring (plan_reviewer I5 findings) into a spec run-record with exactly two verdict fields, kept structurally isolated (ADR #11; arch-design §5 is the requirement source):
 
   - process_converged (process axis): high confidence, convergeable. true iff the inner ring passed AND the outer ring has no Blocker.
   - rightness (outcome axis): the CONSTANT 'human_confirm_required'. The outcome axis (is the artifact 'right') is out of this skill's scope — always human.
@@ -22,7 +22,7 @@ sys.path.insert(0, HERE)
 
 RIGHTNESS = "human_confirm_required"  # the outcome-axis constant — NEVER depends on process_converged
 
-CAVEAT = "rightness is human_confirm_required by design (outcome axis); a green process_converged is NOT outcome-axis success — do not misread the two (field isolation, arch-design §5)"
+CAVEAT = "rightness is human_confirm_required by design (outcome axis); a green process_converged is NOT outcome-axis success — the two fields are structurally isolated; do not misread one as the other"
 
 
 def _blockers(findings):

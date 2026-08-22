@@ -1,6 +1,6 @@
 # hetero_doc_review.py — divergence log (CSR-I3, Phase-A interface-compat)
 
-> Authority: `docs/proposal.md` §5 / F3 (Phase-A compatibility constraint), §9 Q3 (no
+> Authority: `docs/proposal.md` §5 (the Phase-A compatibility constraint, per finding F3 recorded in `docs/proposal.convergence.md`), §9 Q3 (no
 > loop_state dependency); `docs/iteration-plan.md` §CSR-I3 (Phase-A compat constraint).
 >
 > Purpose: list EVERY intentional divergence from `parallel-development`'s
@@ -11,27 +11,28 @@
 >
 > Source file baseline: `skills/parallel-development/infra/scripts/hetero_review.py` as of
 > commit `e40f328` (the copy-pattern source — rule 7). Line counts are NOT tracked here —
-> they drift on any reformat (csr-doc-1 caught a stale 955/930 vs actual 954/928). Re-derive
+> they drift on any reformat (csr-doc-1 caught a stale logged-vs-actual count pair). Re-derive
 > structural compatibility via the preserved-signature table + the divergence list below,
 > not line counts. (Net delta is negative — loop_state driving was removed, change #4.)
 
-## Preserved function-signature CONTRACT (Phase-A compat — proposal §5 / F3)
+## Preserved function-signature CONTRACT (Phase-A compat — proposal §5 / finding F3)
 
 The following signatures are preserved EXACTLY (interface-level, not implementation).
 Phase-B B1 (pd imports this substrate) / B3 (shared lib) can rely on them.
 
 | Function | Preserved signature | Body status |
 | --- | --- | --- |
-| `_materialize_profile` | `(name) -> <temp-path-str>` | near-verbatim (temp suffix + error message adapted — see change #0c) |
-| `_claude_argv` | `(profile, model, schema_json, prompt, budget_usd, allowed_tools, observe_hooks) -> list[str]` | verbatim (same flag surface, CC v2.1.201) |
-| `run_claude` | `(argv, timeout_s, dry_run, dry_findings, dry_malform=False, dry_budget=False) -> dict` | signature preserved; DEGRADE handling EXACT (ADR #41); ADDED the `_stdout_indicates_success` success-quirk guard before the substrate-error parse (see minor divergence); docstring annotations adapted |
+| `_materialize_profile` | `(name) -> <temp-path-str>` | near-verbatim (temp suffix + error message adapted — see the minor-divergence bullets) |
+| `_claude_argv` | `(profile, model, schema_json, prompt, budget_usd, allowed_tools, observe_hooks, max_turns=40, stream=True) -> list[str]` | extended ADDITIVELY by the ADR #52 shared substrate extension (trailing kwargs — pre-#52 positional callers stay source-compatible); flag surface per the CC v2.1.238 manifest |
+| `run_claude` | `(argv, timeout_s, dry_run, dry_findings, dry_malform=False, dry_budget=False, guards=None) -> dict` | signature extended ADDITIVELY (`guards` kwarg, ADR #52 — stream telemetry + byte cap, passes through to the fallback retry); DEGRADE handling EXACT (ADR #41); ADDED the `_stdout_indicates_success` success-quirk guard before the substrate-error parse (see minor divergence); docstring annotations adapted |
 | `_parse_cc_substrate_error` | `(raw) -> (subtype\|None, errors[list])` | verbatim (ADR #41 — preserved EXACTLY) |
 | `_validate_findings_shape` | `(obj) -> str` (malformation fingerprint, '' on success) | signature preserved; validation LOGIC diverges — see change #3 |
 
 Also preserved verbatim (not in the explicit contract list, but part of the substrate):
 
 - `_load_dotenv` / `_load_dotenv_file` / `_project_root_for_env` / `_ENV_VAR_RE` / `_expand_env_values` / `_resolve_token_var` — provider-template + token-injection pattern (ADR #40).
-- `_parse_json_return` / `_parse_stream_json` / `_extract_text` / `_try_json` / `_extract_json_object` / `_JSON_FENCE_RE` — fence-aware JSON parse.
+- `_parse_json_return` / `_parse_stream_json` / `_extract_text` / `_try_json` / `_extract_json_object` / `_JSON_FENCE_RE` — fence-aware JSON parse (`_parse_stream_json` gained the ADR #52 partial-event prefix skip, both sides).
+- `_run_streamed` / `_emit_heartbeat` / `HEARTBEAT_INTERVAL_S` / `_PARTIAL_EVENT_PREFIX` — NEW shared substrate functions (ADR #52): incremental Popen stream read, stderr heartbeat, resolved-model capture, byte-cap breaker.
 - `DEGRADABLE_CC_SUBTYPES` — frozenset of recoverable CC subtypes (ADR #41), byte-identical.
 - `_read_schema` — trivial schema reader.
 - The FLAG-SURFACE MANIFEST docstring block — structure preserved; the `--json-schema` line names `doc-findings.schema.json` (was `violation-log.schema.json`) — faithful doc-adaptation, not a drift.
@@ -78,7 +79,8 @@ The doc domain does NOT drive pd's `loop_state` state machine. The CSR-I4 conver
 - DELETED: `_run_loop_state`, `LOOP_STATE_PY` constant, `drive_lifecycle` function + its call.
 - DELETED: the `glob` import (was only used inside `drive_lifecycle` for run-record path resolution).
 - The wrapper now runs ONE 异源 review and PRINTS a clean result dict:
-  `{verdict, degraded, degraded_providers, findings_count, findings, coverage, malformation, providers}`.
+  `{verdict, degraded, degraded_providers, findings_count, findings, coverage, malformation, providers}`
+  (pre-ADR-#52 shape — the shared substrate extension below later added `provider_runs`).
 - The `notes` field (pd feeds it to loop_state `record-outer`) and `run_record` field are DROPPED from the result.
 
 ### Change 5 — module docstring updated
@@ -97,10 +99,42 @@ The doc domain does NOT drive pd's `loop_state` state machine. The CSR-I4 conver
 - `_load_dotenv` docstring reframed to host-generic language (was pd's "Solid Forge vars" / "arm-provisioned default" — solidforge-centric wording in portable code). The BODY is unchanged (still reads `<cwd>/.env.solidforge` then `<cwd>/.env`, CWD-based — portable: csr reads the invoking project's env). The provisioning model + custom-provider guide live in `references/install.md`.
 - `run_claude` ADDED the `_stdout_indicates_success(raw)` guard before the substrate-error parse: a non-zero exit WITH a success envelope (CC `subtype:"success"`) short-circuits to the normal parse — the result is usable. Surfaced by the CSR-I6 dogfood on a long doc (a CC backend quirk: `subtype:"success"` + `is_error:true` + non-zero exit; the wrapper had malformationed `hetero-cc-error:success`, discarding the result). ADR #41 DEGRADE handling unchanged (a genuinely-degraded/error envelope still degrades/malforms). pd's copy does NOT have this guard yet — candidate B2 pattern-refresh if pd hits the same quirk on its domain. The `run_claude` SIGNATURE is unchanged (preserved-contract).
 
+## Shared substrate extension (ADR #52, 2026-08-21) — csr-first port
+
+The bounded-turns + streamed-observability extension originated in CSR (the
+2026-08-21 third-party incident was a csr invocation) and ports to pd's
+`hetero_review.py` IDENTICALLY — the csr→pd direction again (ADR #45's shim
+precedent; the ORIGINAL copy was pd→csr at CSR-I3), same rule-7 lockstep.
+NO new divergence is introduced; the shared
+surface (both copies, equivalent modulo the documented domain divergences):
+
+- `_claude_argv` always passes `--max-turns` (default 60; env
+  `HETERO_DOC_MAX_TURNS` / pd `HETERO_MAX_TURNS`) — print-mode CC has NO default
+  turn limit; the hit DEGRADES (`error_max_turns`, ADR #41).
+- DEFAULT spawn = stream-json read incrementally (Popen + reader threads):
+  `--verbose` (required by `-p + stream-json` since CC v2.1.238) +
+  `--include-partial-messages` (token deltas → liveness BEFORE a message
+  completes). stderr heartbeat every 30s; the first assistant event's
+  `message.model` is captured as the resolved model.
+- `--max-stream-bytes` runaway breaker (default 64MiB; env
+  `HETERO_DOC_MAX_STREAM_BYTES` / pd `HETERO_MAX_STREAM_BYTES`; trip =
+  malformation `hetero-stream-bytes-cap`, NOT degradable). `--no-stream`
+  restores the legacy single-envelope json spawn (output-surface fallback).
+- Result gains `provider_runs[]` (name / model / assistant_events / stream_bytes /
+  elapsed_s, + `cc_stderr_tail` when present — CC's stderr was previously
+  discarded).
+- `--budget-usd` default 4.0 → 12.0 (ADR #42 amendment: CC v2.1.238 prices
+  unrecognized models at premium fallback rates — measured $0.24 per tiny turn —
+  so the cap is a coarse breaker on a mismeasure; the old "headroom under the
+  global 5.0 cap" rationale presumed real USD, which ADR #42 already established
+  is fictional for non-Anthropic backends).
+- `_run_claude_once` / `run_claude` gain a trailing `guards=None` kwarg
+  (ADDITIVE — positional compatibility preserved per the contract table above).
+
 ## Supporting infra created alongside the wrapper (rule 7 — mirror the exemplar)
 
 - `infra/scripts/profiles/deepseek.json` — sanitized copy of pd's `profiles/deepseek.json` (routing-only, no secret). The `_comment` cites CSR-I3 / rule 7 (copy-pattern) and notes DeepSeek's auto-cache rate (cold-start transient; ADR #43).
-- `../../ruff.toml` (skill root) — MIRRORED VERBATIM from `skills/parallel-development/ruff.toml`: selects `E4/E7/E9/F` only (real bug-catchers, no style churn), ignores E501. Necessary so the substrate (which deliberately uses `try/except/pass` and an `if/else` for the ADR #41 fingerprint logic, exactly like pd's source) lints under the SAME standard as its pd source. The repo-root `pyproject.toml` selects the broader `E/F/W/I/UP/B/SIM` set; this per-skill override is deliberate and matches pd exactly. Do NOT "widen" it without re-deriving the rule-7 rationale.
+- `../../ruff.toml` (skill root) — mirrors pd's `skills/parallel-development/ruff.toml` `[lint]` rule set: selects `E4/E7/E9/F` only (real bug-catchers, no style churn), ignores E501. Necessary so the substrate (which deliberately uses `try/except/pass` and an `if/else` for the ADR #41 fingerprint logic, exactly like pd's source) lints under the SAME standard as its pd source. The repo-root `pyproject.toml` selects the broader `E/F/W/I/UP/B/SIM` set; this per-skill override is deliberate and matches pd exactly. Do NOT "widen" it without re-deriving the rule-7 rationale.
 - `open(..., "r", encoding="utf-8")` → `open(..., encoding="utf-8")` at 4 sites (`_read_schema`, `_load_prior`, `_load_dotenv_file`, `_materialize_profile`). Behavior-preserving (read is the default); the UP015 lint is enforced under the repo-root config but not under the per-skill override — this cleanup keeps the file clean under EITHER config.
 
 ## Verification (CSR-I3 DoD)
