@@ -12,7 +12,12 @@ scenarios, and the Architecture-Contract Gate. Rust uses `backend-developer`
 | `Cargo.toml` with `[workspace]` | Cargo workspace | `cargo build` (per-member via `-p`) | `cargo test -p <member>` |
 
 Toolchain via `rustup`. Edition (`2021` / `2024`) is declared in `Cargo.toml`
-(`[package].edition`); the fast gate passes `--edition 2021` as a safe default.
+(`[package].edition`, or inherited via `edition.workspace = true` from the
+workspace root's `[workspace.package]`); the fast gate DERIVES `--edition` from
+the checked file's nearest manifest (`_rust_edition`, ADR #54 — a hardcoded
+edition parsed 2024-only syntax with 2021 grammar and false-positived every
+edit on edition-2024 projects), falling back to `2021` only when no manifest
+declares one.
 
 ## Toolchain Commands
 
