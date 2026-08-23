@@ -144,6 +144,8 @@ Transitions: **L2→L3** is *hardcoded flow control → state-machine flow contr
 
 ### The orthogonal axis — verification-source decoupling (different-family)
 
+*(The position paper developing this frame is vendored at [docs/papers/](docs/papers/README.md).)*
+
 Specification Gaming is defended NOT by climbing L1–L4 but along a **second, orthogonal axis**: from **same-family** verification (the agent's own tests — shares the coder's blind spot) to an **different-family oracle** (an external source whose blind-spot set differs). This is **NOT L5** — numbering it so fakes same-axis progression; it is a different kind of lever. The **self-certification paradox**: an agent verifying itself with its own tests is self-certifying — verifier + verified share the blind spot, so a stronger agent still cannot catch spec-gaming. The oracle must be external.
 
 Two failure shapes, two defenses:

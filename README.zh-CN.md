@@ -100,6 +100,10 @@ Solid Forge 不重复实现已有官方维护插件（`claude-plugins-official`�
 - **playwright-test** — E2E 必需。为三个 `playwright-test-*` 代理的 `mcp__playwright-test__*` 工具驱动。
 - **ast-grep** — 可选。自动化代码评审模式（也可用作 `@ast-grep/cli` CLI，MCP 是两条路径之一）。
 
+## 论文
+
+立场论文《Specification Gaming as an Orthogonal Failure Axis in Autonomous Coding Loops》（自主编码循环中作为正交失效轴的规格博弈）已 vendored 于 [docs/papers/](docs/papers/)——文本权威 + PDF + LaTeX 源 + 其自身的收敛/验证溯源记录。它对本工作区两处承重：[USER_GUIDE 验证模型](USER_GUIDE.zh-CN.md)背后的正交轴框架（同源 vs 异源 oracle），以及 `primary-source-verification` 技能的起源——论文自身的跨源评审放过了引用误归因、仅被独立的一手来源抽查捕获，该技能正是为关闭这一缺口而生。快照由 canonical 知识库显式同步管理、绝不静默漂移（[docs/papers/README.md](docs/papers/README.md)）。
+
 ## 目录结构
 
 ```text

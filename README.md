@@ -101,6 +101,10 @@ Referenced by `parallel-development` (blueprint-crafting is MCP-free). Not bundl
 - **playwright-test** — REQUIRED for E2E. Powers the three `playwright-test-*` agents' `mcp__playwright-test__*` tools.
 - **ast-grep** — OPTIONAL. Automated code-review patterns (also usable as the `@ast-grep/cli` CLI, so the MCP is one of two paths).
 
+## Paper
+
+The position paper *Specification Gaming as an Orthogonal Failure Axis in Autonomous Coding Loops* is vendored at [docs/papers/](docs/papers/) — text authority + PDF + LaTeX + its own convergence/verification trails. It is load-bearing for this workspace twice over: the orthogonal-axis frame (same-family vs different-family oracle) behind the [USER_GUIDE verification model](USER_GUIDE.md), and the origin of `primary-source-verification` — the paper's own cross-source-review pass let citation misattributions slip that only independent primary-source spot-checks caught, which is exactly the gap that skill closes. The snapshot is sync-managed from the canonical knowledge base, never drifted silently ([docs/papers/README.md](docs/papers/README.md)).
+
 ## Layout
 
 ```text
