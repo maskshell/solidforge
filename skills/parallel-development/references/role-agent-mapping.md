@@ -54,7 +54,7 @@ Define interfaces between components
 Make technical decisions
 Evaluate architectural trade-offs
 
-> **"design" is a three-role fork** (disambiguation in [external-skills.md](external-skills.md)): bare "design" / "system design" / "design architecture" → `architect` (software-architecture design, the default above). "design the UI" / "visual design" / "design tokens" / "配色" / "视觉设计" → `/impeccable` (UI/UX design — produces + governs the frozen `DESIGN.md`; via its `asset-producer` subagent + `init`/`shape`/`critique` commands). "build"/ "implement" the frontend → `frontend-developer` (frontend development).
+> **"design" is a three-role fork** (disambiguation in [external-skills.md](external-skills.md)): bare "design" / "system design" / "design architecture" → `solidforge:architect` (software-architecture design, the default above). "design the UI" / "visual design" / "design tokens" / "配色" / "视觉设计" → `/impeccable` (UI/UX design — produces + governs the frozen `DESIGN.md`; via its `asset-producer` subagent + `init`/`shape`/`critique` commands). "build"/ "implement" the frontend → `solidforge:frontend-developer` (frontend development).
 
 ### Detailed Designer
 
@@ -227,7 +227,7 @@ Requirements:
 
 #### Python Prompt Templates
 
-Standardized prompts for common Python development tasks. Use these as the `prompt` parameter when assigning `backend-developer` agents for Python work.
+Standardized prompts for common Python development tasks. Use these as the `prompt` parameter when assigning `solidforge:backend-developer` agents for Python work.
 
 FastAPI endpoint implementation:
 
@@ -367,14 +367,14 @@ MCP Dependency: Requires `mcp__playwright-test` (Web). No MCP dependency for XCU
 Automatic Fallback Behavior:
 
 1. Check if Playwright MCP is available (Web) or if `xcodebuild` is available (iOS)
-2. If available: Use `playwright-test-planner` -> `playwright-test-generator` -> `playwright-test-healer` workflow (Web); or use `solidforge:ios-tester` for XCUITest UI/E2E + `solidforge:ios-developer` for XCTest unit (iOS)
-3. If not available: Notify user about missing MCP/toolchain and fall back to `tester` agent for manual test writing
+2. If available: Use `solidforge:playwright-test-planner` -> `solidforge:playwright-test-generator` -> `solidforge:playwright-test-healer` workflow (Web); or use `solidforge:ios-tester` for XCUITest UI/E2E + `solidforge:ios-developer` for XCTest unit (iOS)
+3. If not available: Notify user about missing MCP/toolchain and fall back to `solidforge:tester` agent for manual test writing
 
 Agents:
 
-- `playwright-test-planner` - Explore app UI and create test plans
-- `playwright-test-generator` - Generate Playwright tests from plans
-- `playwright-test-healer` - Debug and fix failing tests
+- `solidforge:playwright-test-planner` - Explore app UI and create test plans
+- `solidforge:playwright-test-generator` - Generate Playwright tests from plans
+- `solidforge:playwright-test-healer` - Debug and fix failing tests
 
 Triggers:
 English: "E2E test", "browser test", "playwright", "generate E2E tests", "fix test"
@@ -408,13 +408,13 @@ Suggest improvements
 
 Agent: `solidforge:security-specialist`
 
-Purpose: Dedicated outer-ring security review beyond `code-reviewer`'s incidental OWASP coverage
+Purpose: Dedicated outer-ring security review beyond `solidforge:code-reviewer`'s incidental OWASP coverage
 
 Triggers:
 English: "security review", "OWASP", "auth review", "authorization review", "threat model", "secret scan", "vulnerability assessment", "pre-production security"
 Chinese: "安全审查", "安全评估", "威胁建模", "漏洞扫描", "权限审查"
 
-> **vs `code-reviewer`**: `code-reviewer` handles incidental security within general code review. Route to `security-specialist` for dedicated security review (pre-production security pass, auth/authz design, threat model, secret audit, IaC security). It is strictly **outer-ring** — it does NOT duplicate the inner-ring deterministic gates (`semgrep_adapter`, `license_adapter`/Trivy, `arch_contract_deps`, `iac_adapter`/Checkov); it triages their output and covers what they miss (logic flaws, access-control design, cross-file secret flows).
+> **vs `solidforge:code-reviewer`**: `solidforge:code-reviewer` handles incidental security within general code review. Route to `solidforge:security-specialist` for dedicated security review (pre-production security pass, auth/authz design, threat model, secret audit, IaC security). It is strictly **outer-ring** — it does NOT duplicate the inner-ring deterministic gates (`semgrep_adapter`, `license_adapter`/Trivy, `arch_contract_deps`, `iac_adapter`/Checkov); it triages their output and covers what they miss (logic flaws, access-control design, cross-file secret flows).
 
 Example tasks:
 OWASP Top 10 / auth-authz review before production

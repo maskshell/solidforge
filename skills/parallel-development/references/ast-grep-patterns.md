@@ -479,7 +479,7 @@ Phase 6: Integration & Review
 Web (Vue/React):
 
 ```markdown
-Task(code-reviewer): Review AppHeader implementation
+Task(solidforge:code-reviewer): Review AppHeader implementation
   - Use ast-grep to validate structure patterns
   - Check for banned patterns (any, console.log, etc.)
   - Verify naming conventions
@@ -488,7 +488,7 @@ Task(code-reviewer): Review AppHeader implementation
 iOS (Swift/SwiftUI):
 
 ```markdown
-Task(code-reviewer): Review SwiftUI feature implementation
+Task(solidforge:code-reviewer): Review SwiftUI feature implementation
   - Check for try! and fatalError in production code
   - Validate [weak self] in closures
   - Detect DispatchQueue.main.async that should use @MainActor
@@ -498,7 +498,7 @@ Task(code-reviewer): Review SwiftUI feature implementation
 Python:
 
 ```markdown
-Task(code-reviewer): Review Python feature implementation
+Task(solidforge:code-reviewer): Review Python feature implementation
   - Check for mutable default arguments ([], {}, set())
   - Detect bare except: and silent exception swallowing
   - Flag eval() and exec() usage
@@ -514,7 +514,7 @@ Phase 1: Analysis
 Web:
 
 ```markdown
-Task(architect): Analyze codebase for refactoring opportunities
+Task(solidforge:architect): Analyze codebase for refactoring opportunities
   - Use ast-grep to find duplicate code structures
   - Identify components with similar patterns
   - Report consolidation opportunities
@@ -523,7 +523,7 @@ Task(architect): Analyze codebase for refactoring opportunities
 iOS:
 
 ```markdown
-Task(architect): Analyze Swift codebase for refactoring opportunities
+Task(solidforge:architect): Analyze Swift codebase for refactoring opportunities
   - Use ast-grep to find missing @MainActor annotations
   - Detect force-unwrap and force-try patterns
   - Identify empty catch blocks swallowing errors
@@ -533,7 +533,7 @@ Task(architect): Analyze Swift codebase for refactoring opportunities
 Python:
 
 ```markdown
-Task(architect): Analyze Python codebase for refactoring opportunities
+Task(solidforge:architect): Analyze Python codebase for refactoring opportunities
   - Detect mutable default arguments
   - Find bare except: and silent error swallowing
   - Flag wildcard imports

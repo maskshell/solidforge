@@ -18,7 +18,7 @@ When the project is iOS, skip the rest of this file and use `ios-patterns.md` di
 
 MCP Requirement: This workflow uses Playwright MCP tools.
 
-Fallback: If Playwright MCP is not available, fall back to `tester` agent.
+Fallback: If Playwright MCP is not available, fall back to `solidforge:tester` agent.
 
 ## Contents
 
@@ -60,7 +60,7 @@ Seed test requirements:
 
 ## Phase 3: Planning with Real Browser (Sequential)
 
-Role: E2E Test Engineer → `playwright-test-planner`
+Role: E2E Test Engineer → `solidforge:playwright-test-planner`
 
 Tasks:
 
@@ -72,14 +72,14 @@ Tasks:
   - Persistence verification scenarios
 
 ```text
-Task(playwright-test-planner): Create test plan for [feature]
+Task(solidforge:playwright-test-planner): Create test plan for [feature]
 ```
 
 Output: Test plan markdown file
 
 ## Phase 4: Test Generation (Sequential)
 
-Role: E2E Test Engineer → `playwright-test-generator`
+Role: E2E Test Engineer → `solidforge:playwright-test-generator`
 
 Tasks:
 
@@ -88,7 +88,7 @@ Tasks:
 - Save tests to appropriate files
 
 ```text
-Task(playwright-test-generator): Generate tests from [test-plan-file]
+Task(solidforge:playwright-test-generator): Generate tests from [test-plan-file]
 ```
 
 Requirements for generated tests:
@@ -103,13 +103,13 @@ Output: Playwright test files
 
 ## Phase 5: Feature Implementation (Parallel when possible)
 
-Role: Developer → `frontend-developer` or `backend-developer`
+Role: Developer → `solidforge:frontend-developer` or `solidforge:backend-developer`
 
 GREEN Phase: Implement feature to pass E2E tests
 
 ## Phase 6: Test Execution & Healing (Sequential)
 
-Role: E2E Test Engineer → `playwright-test-healer`
+Role: E2E Test Engineer → `solidforge:playwright-test-healer`
 
 Tasks:
 
@@ -119,7 +119,7 @@ Tasks:
 - Verify fixes
 
 ```text
-Task(playwright-test-healer): Run and fix tests for [test-file]
+Task(solidforge:playwright-test-healer): Run and fix tests for [test-file]
 ```
 
 ### Fail-Fast Integration
@@ -198,16 +198,16 @@ Step 2: Seed Test Setup
 - Ensure tests/seed.spec.ts exists
 
 Step 3: Planning (RED phase)
-Task(playwright-test-planner): Create test plan for login feature
+Task(solidforge:playwright-test-planner): Create test plan for login feature
 
 Step 4: Test Generation (RED phase)
-Task(playwright-test-generator): Generate login tests from plan
+Task(solidforge:playwright-test-generator): Generate login tests from plan
 
 Step 5: Implementation (GREEN phase)
-Task(frontend-developer): Implement login page to pass tests
+Task(solidforge:frontend-developer): Implement login page to pass tests
 
 Step 6: Test Execution & Healing
-Task(playwright-test-healer): Run and fix failing login tests
+Task(solidforge:playwright-test-healer): Run and fix failing login tests
 ```
 
 Output:

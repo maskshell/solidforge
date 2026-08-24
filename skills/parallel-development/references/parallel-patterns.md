@@ -165,7 +165,7 @@ Web example:
 {
   "files_touched": ["src/auth/login.ts", "src/auth/login.test.ts"],
   "depends_on": ["task-42"],
-  "agent_type": "frontend-developer"
+  "agent_type": "solidforge:frontend-developer"
 }
 ```
 
@@ -175,7 +175,7 @@ iOS example:
 {
   "files_touched": ["Sources/Features/LoginView.swift", "Tests/LoginViewTests.swift"],
   "depends_on": [],
-  "agent_type": "ios-developer",
+  "agent_type": "solidforge:ios-developer",
   "metadata": {
     "prompt": "iOS SwiftUI developer, implement LoginView with @MainActor ViewModel"
   }

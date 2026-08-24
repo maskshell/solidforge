@@ -8,17 +8,17 @@ Before executing any phase, detect the project type to route to the correct tool
 
 | Project Type | Detected By | Test Framework | Developer Role |
 | --- | --- | --- | --- |
-| Web (Vue/React/Node) | `package.json`, no `.xcodeproj` | Jest/Vitest | `frontend-developer` / `backend-developer` |
-| iOS (Swift/SwiftUI) | `*.xcodeproj` or `Package.swift` | XCTest | `ios-developer` (impl + unit), `ios-tester` (XCUITest E2E) |
-| Rust | `Cargo.toml` | cargo test | `backend-developer` |
-| Go | `go.mod` | go test | `backend-developer` |
-| Python | `pyproject.toml` | pytest | `backend-developer` |
+| Web (Vue/React/Node) | `package.json`, no `.xcodeproj` | Jest/Vitest | `solidforge:frontend-developer` / `solidforge:backend-developer` |
+| iOS (Swift/SwiftUI) | `*.xcodeproj` or `Package.swift` | XCTest | `solidforge:ios-developer` (impl + unit), `solidforge:ios-tester` (XCUITest E2E) |
+| Rust | `Cargo.toml` | cargo test | `solidforge:backend-developer` |
+| Go | `go.mod` | go test | `solidforge:backend-developer` |
+| Python | `pyproject.toml` | pytest | `solidforge:backend-developer` |
 
 The phases below apply to all project types. The specific tools and agent assignments adapt based on the detected project type.
 
 ## Phase 0: Intent Freeze (Sequential)
 
-Role: Planner (`requirements-manager`)
+Role: Planner (`solidforge:requirements-manager`)
 
 Freeze a narrow Intent Blueprint: the acceptance criteria = the existing tests that lock current behavior (Phase 2 produces them), and the NFR = "behavior unchanged, structure improved." The blueprint anchors the Phase 4 diff-to-blueprint check so a refactor cannot silently change behavior. See [intent-blueprint.md](intent-blueprint.md).
 
@@ -32,7 +32,7 @@ Task: Analyze current structure, plan refactoring
 
 ## Phase 2: Ensure Test Coverage (Sequential)
 
-Role: Test Engineer → `tester` (Web/Backend) or `ios-developer` with XCTest prompt (iOS)
+Role: Test Engineer → `solidforge:tester` (Web/Backend) or `solidforge:ios-developer` with XCTest prompt (iOS)
 
 Memory: follow [memory-protocol.md](memory-protocol.md). Store: test coverage gaps identified.
 
@@ -46,7 +46,7 @@ RED Phase (if needed):
 
 ## Phase 3: Refactoring (Parallel when safe)
 
-Role: Developer — `frontend-developer` / `backend-developer` (Web), or `ios-developer` (iOS Swift/SwiftUI)
+Role: Developer — `solidforge:frontend-developer` / `solidforge:backend-developer` (Web), or `solidforge:ios-developer` (iOS Swift/SwiftUI)
 
 Memory: follow [memory-protocol.md](memory-protocol.md). Search: "design patterns SOLID". Store: refactored module changes and improvements.
 
@@ -57,16 +57,16 @@ For independent files/modules:
 Web:
 
 ```text
-Task(developer): Refactor module A (keep tests green)
-Task(developer): Refactor module B (keep tests green)
-Task(developer): Refactor module C (keep tests green)
+Task(solidforge:frontend-developer or solidforge:backend-developer): Refactor module A (keep tests green)
+Task(solidforge:frontend-developer or solidforge:backend-developer): Refactor module B (keep tests green)
+Task(solidforge:frontend-developer or solidforge:backend-developer): Refactor module C (keep tests green)
 ```
 
 iOS:
 
 ```text
-Task(ios-developer with Swift/SwiftUI prompt): Refactor LoginViewModel (keep XCTest green)
-Task(ios-developer with Swift/SwiftUI prompt): Refactor UserService actor (keep XCTest green)
+Task(solidforge:ios-developer with Swift/SwiftUI prompt): Refactor LoginViewModel (keep XCTest green)
+Task(solidforge:ios-developer with Swift/SwiftUI prompt): Refactor UserService actor (keep XCTest green)
 ```
 
 Continuously run Phase 2 tests after each change. If tests fail → revert change, investigate, re-apply fix. For iOS, `swift test --filter TargetName` allows running only the relevant test target to validate each refactored module independently.
@@ -78,7 +78,7 @@ After Phase 3 refactoring completes, enter the dual-ring Convergent Fix Loop (se
 - Inner ring — Fast Gate: type check, lint, full test suite. With the opt-in infra installed, per-file checks also run as a PostToolUse hook. Red → revert/fix, re-run; short-circuit, do not enter the outer ring.
 - Inner ring — Architecture-Contract Gate (at convergence): codable architecture contracts. This is where refactoring most often catches regressions (a refactor must not introduce a circular dependency or break layer isolation). Blocker → fix inner, re-run.
 - Gate附加条件: coverage ≥ threshold, no skip/ignore, flaky stabilized, test set not shrunk (behavior must be preserved — no deleting tests).
-- Outer ring: independent `code-reviewer` subagent on the final Diff against the Intent Blueprint. Dual-line check (semantic + diff-to-blueprint), structured findings with line numbers. For refactoring, the intent line verifies behavior is preserved while structure improved.
+- Outer ring: independent `solidforge:code-reviewer` subagent on the final Diff against the Intent Blueprint. Dual-line check (semantic + diff-to-blueprint), structured findings with line numbers. For refactoring, the intent line verifies behavior is preserved while structure improved.
   - iOS: review for Swift Concurrency violations, missing `[weak self]`, `try!` in production code, and MainActor isolation issues. Use ast-grep Swift patterns from [ast-grep-patterns.md](ast-grep-patterns.md).
 - Verdict dispatch: pass → converge; semantic issue → rewrite; intent drift (behavior changed) → hard rollback + reverse prompt; blueprint defect → revision channel.
 - Circuit breaker is a state machine (Thrashing N=3 / cap M=8 / budget T,W,C → degrade/escalate/suspend/hard-terminate), not a flat iteration count.

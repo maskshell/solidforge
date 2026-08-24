@@ -37,9 +37,9 @@ mcp__graphiti__add_memory(name="Documentation Updated: [file]", episode_body="Ch
 For independent docs:
 
 ```text
-Task(documentation-writer): Update implementation status
-Task(documentation-writer): Update test coverage matrix
-Task(documentation-writer): Update project tracker
+Task(solidforge:documentation-writer): Update implementation status
+Task(solidforge:documentation-writer): Update test coverage matrix
+Task(solidforge:documentation-writer): Update project tracker
 ```
 
 Verify all updated docs are complete and accurate. If gaps found → return to Phase 1 for additional analysis.
