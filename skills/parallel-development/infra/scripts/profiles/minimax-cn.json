@@ -1,16 +1,16 @@
 {
-  "_comment": "Provider template — FILENAME=ROUTE (minimax -> minimax-cn: the credential+endpoint channel; token var derives from it). `_family` = MODEL LINEAGE (minimax) — the same/different-family judgment unit (model-routing.md). `model` = the pinned per-generation id, never part of the filename. Route: the CN platform endpoint (api.minimaxi.com — the sk-cp- key format's home; distinct from the international route). Renamed minimax -> minimax-cn per FILENAME=ROUTE; _token_env bridges the pre-existing CC-convention var (no credential migration). ",
-  "_provider": "minimax",
+  "_comment": "Provider template — FILENAME=ROUTE (minimax -> minimax-cn: the credential+endpoint channel; token var derives from it). `_family` = MODEL LINEAGE (minimax) — the same/different-family judgment unit (model-routing.md). `model` = the pinned per-generation id, never part of the filename. Route: the CN platform endpoint (api.minimaxi.com — the sk-cp- key format's home; distinct from the international route). Renamed minimax -> minimax-cn per FILENAME=ROUTE; _token_env bridges the pre-existing CC-convention var (no credential migration). See model-routing.md. ADR #40.",
+  "_provider": "minimax-cn",
   "env": {
     "ANTHROPIC_BASE_URL": "https://api.minimaxi.com/anthropic",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "MiniMax-M3[1m]",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "MiniMax-M3[1m]",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "MiniMax-M3[1m]",
     "ANTHROPIC_MODEL": "MiniMax-M3[1m]",
-    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "1000000"
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "1000000",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL": "MiniMax-M3[1m]"
   },
   "model": "MiniMax-M3[1m]",
-  "hasCompletedOnboarding": true,
   "_family": "minimax",
   "_token_env": "MINIMAX_ANTHROPIC_AUTH_TOKEN"
 }
