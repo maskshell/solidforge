@@ -43,7 +43,7 @@ reads that project's `.env`. CWD-based = portable.
 runs independently; findings merged + tagged with `provider`):
 
 - `HETERO_DOC_PROFILE=deepseek` (default)
-- `HETERO_DOC_PROFILE=deepseek,qwen3` (dual-different-family)
+- `HETERO_DOC_PROFILE=deepseek,qwen-token-plan-cn` (dual-different-family)
 
 csr's profile selector is SEPARATE from pd's `HETERO_PROFILE` (the two skills do not share
 it). The TOKEN vars ARE shared (same provider → same credential).
@@ -121,7 +121,8 @@ collapse to `_` before uppercasing.
 | profile filename | token env var |
 | --- | --- |
 | `deepseek.json` | `DEEPSEEK_ANTHROPIC_AUTH_TOKEN` |
-| `qwen3.json` | `QWEN3_ANTHROPIC_AUTH_TOKEN` |
+| `qwen-token-plan-cn.json` | `QWEN_TOKEN_PLAN_CN_ANTHROPIC_AUTH_TOKEN` |
+| `aliyun-bailian.json` | `ALIYUN_BAILIAN_ANTHROPIC_AUTH_TOKEN` |
 | `openai-compat.json` | `OPENAI_COMPAT_ANTHROPIC_AUTH_TOKEN` |
 
 Override the var name via the profile's optional `_token_env` field (rarely needed — e.g.

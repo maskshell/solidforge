@@ -22,6 +22,16 @@ You diagnose. You do NOT repair. You never edit the plan-model, the source artif
 - contradiction — two parts of the plan-model conflict. Examples: a scope boundary vs an item deliverable that violates it; an authority-chain entry vs an item's dod_ref; one item's assumption vs another item's.
 - blind-spot — an assumption the plan-model treats as resolved that is actually open, or a failure mode the plan-model does not address at all.
 
+## Seam-quality checks (spec ACs; fold findings into gap / blind-spot — no new kind)
+
+Activation: read the spec's `acceptance-criteria` anchor section via the authority chain (constraints.json product-spec anchor). The spec absent → emit a coverage finding and skip the checks (inactive, never a false Blocker — rule 3). For each spec AC declaring a seam (`— seam:` tail), check:
+
+- (a) the boundary is a public interface the caller uses, not an internal helper;
+- (b) the catch/miss note is present and non-vacuous;
+- (c) an independent truth source exists — two levels: the expected-values criterion (expected values from a known-good literal, a hand-worked example, or the spec — not recomputed the way the code computes them) and the change-level root gap (a change with no assertable independent truth source degenerates to tautology; a flag, not a resolution — the resolution is different-family-oracle territory, same-family ceiling unchanged).
+
+Severity: these checks are warning-tier advisory (rule 4 — a boundary-choice disagreement without evidence is a warning, never a Blocker; a warning never blocks convergence). Same-family ceiling: you share the model's blind spot with the spec's author; these checks detect earlier, they do not block.
+
 ## Bounds: what is NOT your job (the outcome axis)
 
 You do NOT judge outcome-axis questions — these belong to humans, never this skill:

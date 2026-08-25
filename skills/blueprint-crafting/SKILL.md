@@ -56,7 +56,7 @@ Run in order; do not wait for the user between steps.
 
 3. `python3 infra/scripts/produce.py plan-model.json --out-dir docs/` → runs the inner ring + freeze; prints `process_converged` (false until the outer ring is supplied) and writes `<name>.queue.md` + `.run-record.json`. Fix any named inner Blocker (anchor / authority / ODP) and re-run.
 
-4. Spawn `solidforge:plan-reviewer`; save its findings to `findings.json`; re-run `python3 infra/scripts/produce.py plan-model.json --outer findings.json --out-dir docs/` → `process_converged=true` on a clean outer ring.
+4. Spawn `solidforge:plan-reviewer` (pass the spec via the authority chain so the seam-quality checks are active — the spec absent → the checks degrade to a coverage note); save its findings to `findings.json`; re-run `python3 infra/scripts/produce.py plan-model.json --outer findings.json --out-dir docs/` → `process_converged=true` on a clean outer ring.
 
 If memory says the docs were already converged, read the frozen `.run-record.json` / `.queue.md` to judge whether re-converge is needed — the verdict lives in the run-record, not in the infra source.
 
@@ -121,6 +121,12 @@ python3 skills/blueprint-crafting/infra/test/lint_self.py          # dogfood: li
 ## Coordination with parallel-development
 
 - **Handshake**: the executable subset of the plan-model (`item_id / seq / depends_on / dod_ref`) is round-trip-compatible with `plan_queue.py`'s Phase −1 frozen queue. NOT globally isomorphic — upstream-only metadata is tagged and ignored downstream; downstream-only `blueprint_subset` is left empty / "downstream-filled" (ADR #1).
+- **Spec AC seam (Option A, bc ADR #2)**: the spec's acceptance-criteria entries carry `— seam: <public-boundary-name>` tails (AC-ENTRY shape defined in [arch-design.md](docs/arch-design.md) §3 product spec); parallel-development LATCHES the declared seam at Phase-0 derivation (derive only when absent — its `intent-blueprint.md` rich path).
+- **Spec re-open (pd wrong-seam escalation)**: when parallel-development escalates a declared-but-wrong seam (its blueprint-defect flag or its pre-freeze refusal report, naming the spec AC), the frozen spec re-enters this skill's convergence loop as a REVISION, with three stated semantics —
+  1. **TRIGGER**: a pd-side wrong-seam escalation naming the spec AC.
+  2. **RE-OPEN**: the existing run-record gains a re-open entry in its `coverage`/`caveats` string-array fields (the schema is closed; no schema change); the FULL loop re-runs on the corrected spec — re-normalize (corrected spec markdown → regenerated plan-model.json; `produce.py` takes an already-authored plan-model, not the spec), `produce.py` re-runs, convergence re-checks; the spec version bump rides a `spec-version:` line at the spec top (the convention this clause introduces — bc's docs carry no frontmatter today; the CONSUMER is the pd re-latch agent reading the spec text).
+  3. **PROPAGATION**: the corrected spec propagates to the running pd task via its authority_chain re-read at the re-latch. Structural invariant: the correction is seam-local — the re-frozen `.queue.md` must be structurally identical; if the re-convergence diverges structurally, pd's queue Revision Channel + `plan_queue.py sync` is the named fallback (pd's path, not this skill's).
+  A refactoring spec's ACs DECLARE the seam from the locked tests' observed boundary (the spec-declares principle extended — not pd's derive fallback).
 - **Coupling mode (independence)**: this skill copies `parallel-development`'s patterns (disconnect_check, schema/validator, plan-queue parse) and does NOT import its code (workspace rule 7). Deleting `parallel-development/` leaves this skill working standalone.
 - **files_touched boundary**: this skill owns `blueprint-crafting/`; it does not write into `parallel-development/`. The two couple via an artifact (the frozen plan-model), not via file mutation.
 
