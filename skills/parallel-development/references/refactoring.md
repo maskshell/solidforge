@@ -71,6 +71,14 @@ Task(solidforge:ios-developer with Swift/SwiftUI prompt): Refactor UserService a
 
 Continuously run Phase 2 tests after each change. If tests fail → revert change, investigate, re-apply fix. For iOS, `swift test --filter TargetName` allows running only the relevant test target to validate each refactored module independently.
 
+**Wide-refactor carve-out — expand-contract** (ADR #56). A mechanical change whose blast radius spans the codebase (rename a column, change a shared symbol type) cannot be vertically sliced — no slice independently greens. Decompose as expand-contract instead:
+
+- **Expand**: new form coexists with the old; nothing breaks.
+- **Migrate**: batch call-site migration by package/dir, each batch one unit, all blocked by expand; CI stays green because the old form still exists.
+- **Contract**: delete the old form after no callers remain; blocked by all migrate batches.
+
+Horizontal slicing is legal WITHIN the blast radius (one batch per package); it stays illegal ACROSS layers. Expand-contract is the seam idea serialized: the new form introduced at expand IS the new seam, migration proceeds along it. Routing pointer, binary: with a plan @ref (a bc-authored expand-contract iteration plan, or a user-provided one), plan-driven mode carries the CI-green guarantee (the plan queue's `depends_on` carries the expand→migrate→contract blocking edges — see [plan-driven-mode.md](plan-driven-mode.md) Phase −1); for a plain conversational wide-refactor request with no plan, the expand-contract sequence is a Phase-3 advisory note (batches run unsequenced, the CI-green guarantee is LOST — honest coverage note) and the orchestrator surfaces the plan option to the user (bc authoring the plan, then pd executing it) rather than silently choosing — the orchestrator does NOT self-author the plan (plan authoring is out of pd's scope per the Scope Guard).
+
 ## Phase 4: Verification (Sequential) — Convergent Fix Loop
 
 After Phase 3 refactoring completes, enter the dual-ring Convergent Fix Loop (see [convergent-loop.md](convergent-loop.md)):

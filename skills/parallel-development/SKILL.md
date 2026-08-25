@@ -14,7 +14,7 @@ description: |
 2. GREEN - Implement minimum code (make tests pass)
 3. REFACTOR - Improve while tests pass
 
-TDD is the default for new features and bug fixes. Exploration, prototyping, and minor tweaks to already-tested code may skip the RED phase.
+TDD is the default for new features and bug fixes. Exploration, prototyping, and minor tweaks to already-tested code may skip the RED phase. Tests are written at the AC's seam — the public boundary the caller actually uses, never against internals (see [feature-dev.md](references/feature-dev.md) Phase 4 + [intent-blueprint.md](references/intent-blueprint.md) "AC seam field"; ADR #56).
 
 ### Self-run the relevant test each GREEN (agent behavior, not enforced)
 

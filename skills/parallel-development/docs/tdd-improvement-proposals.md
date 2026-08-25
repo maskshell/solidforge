@@ -1,6 +1,8 @@
 # TDD improvement proposals (review-converged)
 
 > Status: **PROPOSALS — not yet implemented.** Review-converged: the initial 6 proposals were reviewed, found to (a) have per-proposal gaps and (b) **omit the Specification-Gaming orthogonal axis** (ADR #38). Revised into two layers: same-source (blocks simple AI traps, has a hard ceiling) vs 异源 (defends test-quality spec gaming). Grounded in fedaot-wiki `ai-assisted-code-quality` + the current parallel-dev TDD state.
+>
+> Continuation: P7–P9 (seam doctrine + tracer-bullet-first decomposition + review-axis ODP) live in [tdd-seam-tracer-bullet.proposal.md](tdd-seam-tracer-bullet.proposal.md) — csr-converged 2026-08-24 (6 rounds, substantive_converged: true) and LANDED; see ADR #56.
 
 ## Context: parallel-dev TDD state today
 

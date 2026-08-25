@@ -4,11 +4,11 @@
   "env": {
     "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "GLM-4.7-Air",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "GLM-5.2[1M]",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "GLM-5.2[1M]",
-    "ANTHROPIC_MODEL": "GLM-5.2[1M]",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "GLM-5.3[1M]",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "GLM-5.3[1M]",
+    "ANTHROPIC_MODEL": "GLM-5.3[1M]",
     "CLAUDE_CODE_SUBAGENT_MODEL": "GLM-4.7-Air",
     "CLAUDE_FAST_MODEL": "GLM-4.7-Air"
   },
-  "model": "GLM-5.2[1M]"
+  "model": "GLM-5.3[1M]"
 }

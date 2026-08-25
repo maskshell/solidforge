@@ -30,7 +30,7 @@ Tasks:
 - Analyze user requirements
 - Check memory for similar past features
 - Identify acceptance criteria
-- Break down into subtasks
+- Break down into subtasks — first a thin vertical slice through all layers (the tracer bullet), then extend ([plan-driven-mode.md](plan-driven-mode.md) Phase −1, capability 8)
 - Identify dependencies
 
 Output: Task breakdown with dependencies
@@ -70,6 +70,19 @@ Output: Step-by-step plan
 ## Phase 4: Test Writing — RED Phase (Sequential)
 
 Sequential — tests define interface contracts that implementations must satisfy. All test files are written in this phase before any implementation begins in Phase 5. This ordering is important because the tests define the API contracts that parallel agents independently implement against — if tests and implementation were written simultaneously, agents would have no shared contract to converge on.
+
+Before writing any test, each AC's seam is fixed per the blueprint (see [intent-blueprint.md](intent-blueprint.md) "AC seam field"; ADR #56):
+
+1. **Test only at the AC's seam, read from the blueprint.** The seam is the substitution point: where behavior can change without editing the code (Feathers: "a place where you can alter behavior in your program without editing in that place", *Working Effectively with Legacy Code* 2004 ch.4). The test observes the AC's public boundary THROUGH the seam. The boundary is the public interface the caller actually uses (public fn / endpoint / UI event), never an internal helper. Read the seam from the blueprint's AC line (frozen at Phase 0; the RED phase consumes it, it does not renegotiate it); only if the AC line carries no seam, identify one here and note the degrade (intent-blueprint.md "AC seam field"). Feathers enumerates three seam types:
+
+   | Seam type | Mechanism | Examples |
+   | --- | --- | --- |
+   | object seam | interface/DI substitution | Rust traits, Java interfaces, Python protocols |
+   | link seam | module/link-time substitution | linker substitution |
+   | preprocessing seam | build-time substitution | conditional compilation |
+
+   The doctrine picks by language among object and link seams ONLY — preprocessing seams are scoped out (build configuration, not behavior under test); a language whose only seam mechanism is conditional-compilation-style preprocessing is outside this doctrine's coverage, stated honestly (ADR #56). Each seam has an enabling point — the seam says where behavior can change, the enabling point says who decides which variant is used. The test sets the enabling point to inject the variant under test.
+2. Do not write: implementation-coupled tests (renaming an internal fn breaks the test with no behavior change; mocking own modules' internals; asserting call counts; using db queries to verify instead of the interface); tautological assertions (expected value computed the same way as the code — the expected value must come from an independent truth source: a known-good literal, a hand-worked example, the spec). The third anti-pattern — test-batch horizontal slicing (all tests first, then all code) — is solidforge's DELIBERATE Phase-4 exception: the RED batch is the parallel-contract design (tests = the shared API contracts parallel implementers converge against). Rejected with rationale, recorded in ADR #56 — not imported, not silent.
 
 Role: Test Engineer → `solidforge:tester` (Web/Backend) or `solidforge:ios-developer` for Swift Testing / XCTest unit + `solidforge:ios-tester` for XCUITest (iOS)
 

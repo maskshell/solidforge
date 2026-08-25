@@ -52,7 +52,7 @@ Graded extraction — latch structure where present, semantic-infer where not:
 | Prose deps ("前置/并发/不相交文件"); mermaid graphs; absent deps | **Semantic-infer** (low confidence — flag it) |
 | Freeform scope text | **Semantic-summarize** |
 
-Six capabilities the real plan formats force (calibrated against `docs/iteration-plan.md`, `docs/renderer-richness-plan.md`, and a Cursor `.plan.md`):
+Eight capabilities the real plan formats force (calibrated against `docs/iteration-plan.md`, `docs/renderer-richness-plan.md`, and a Cursor `.plan.md`):
 
 1. **Plan-native grain.** Do NOT canonicalize grain. An iteration-plan yields `I0..I17`; a feature plan yields `Coder-L/M/E/G`; a Cursor plan yields work packages like `foundation-i0-i2`. `item_id` stays plan-native.
 2. **`dod_ref` resolution.** Per-item DoD frequently lives OUTSIDE the plan — in a referenced blueprint (AC-0..5) or a master plan's 验证闸口. Follow the reference chain; record the resolved pointer, not a copy.
@@ -61,6 +61,14 @@ Six capabilities the real plan formats force (calibrated against `docs/iteration
 5. **Authority chain.** Record "冲突以 X 为准" rules in the queue header so later conflicts resolve deterministically.
 6. **Single source of truth for the rubric.** The queue references the blueprint/master-plan for DoD; it does not restate it.
 7. **Open Decision Points (ODP) register.** Surface every point where the plan requires a choice, split into resolve-now (decided at the checkpoint) and deferred (pegged to a later item's outcome). See Open Decision Points below.
+8. **Tracer-bullet-first decomposition** (doctrine, not a gate — L3 semantic, checkpoint-surfaced; ADR #56). For end-to-end feature plans, the first wave (`parallel_group` wave-1) is a thin vertical slice through ALL layers (minimal path through schema/API/UI/tests — the upload→parse→store→display minimum). Later items extend on that skeleton. A tracer bullet is keepable production code, not a throwaway prototype (Hunt & Thomas, *The Pragmatic Programmer* 1999). Rationale: horizontal slicing delays feedback to the last layer, breeds abstractions no later layer uses, and defers integration testing. The shape rules bind the semantically-inferred decompositions; on LATCHED decompositions (extraction-mode table above) they are checkpoint-flagged advisory findings via the revision channel, never a silent re-split of latched grain:
+   - **Wave-1 composition**: wave-1 is the single tracer-bullet item, or items that jointly form one thin slice; nothing else rides wave-1 (an unrelated item placed beside the slice runs concurrently with, not extends on, the skeleton).
+   - **Per-item shape rules** (applied at normalization, surfaced at the checkpoint): each item is demoable/verifiable on its own — its AC subset observable without later items. Validation question: "what can be demoed when this item completes?" No answer → it is a horizontal slice, split it.
+   - **Size bound**: each item fits ONE Coder fresh context — the Coder is a fresh subagent per item ([convergent-loop.md](convergent-loop.md)), so the item-size bound maps directly to the executor's context capacity.
+   - **AC-subset isolation**: an item's AC subset does not reach into other items' territory.
+   - **Skip slicing** when the whole change fits one context window — slicing is pure overhead then.
+   - **Wide-refactor exception**: a mechanical change whose blast radius spans the codebase cannot be vertically sliced (no slice independently greens) — decompose as expand-contract instead ([refactoring.md](refactoring.md) Phase 3, ADR #56).
+   - **Default-mode reachability** (rule 8): [feature-dev.md](feature-dev.md) Phase 1 "Break down into subtasks" is the default (non-plan-driven) decomposition decision point — it cross-refs this doctrine so the thin-slice-first rule is reachable where default-mode decomposition happens.
 
 ## Queue format
 

@@ -36,7 +36,7 @@ Role: Test Engineer → `solidforge:tester` (Web/Backend) or `solidforge:ios-dev
 
 Memory: follow [memory-protocol.md](memory-protocol.md). Store: regression test case and expected result.
 
-Write the regression test first (TDD) -- the test must reproduce the bug before the fix exists.
+Write the regression test first (TDD) -- the test must reproduce the bug before the fix exists. Write it at the bug's seam — the public boundary the caller exercises, never an internal helper (see [feature-dev.md](feature-dev.md) Phase 4; ADR #56).
 
 RED Phase - Write test that reproduces the bug:
 
