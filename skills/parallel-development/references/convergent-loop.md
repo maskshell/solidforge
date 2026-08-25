@@ -110,7 +110,7 @@ The orchestrator calls `loop_state.py bump-iteration` at the start of each inner
 
 > **Inline mode is NOT exempt from bookkeeping (ADR #39).** When the orchestrator runs the inner ring directly (the trivial-edit / tight-coupling / skill-self-maintenance carve-out, ADR #14), it STILL drives `bump-iteration` / `gate-fail` / `snapshot` every round. Inline exempts WHERE the edit happens, not WHETHER the bookkeeping happens — otherwise the run record's `steps.inner` under-reports (a 5-item inline plan once showed `steps.inner=0` despite real inner work). With the discipline, `steps.inner=0` cleanly means "the loop was never engaged". The DoD signal stays the outer review (ADR #16); this is telemetry discipline, not a gate.
 
-Breaker trigger conditions (any one fires; priority hard-terminate > escalate > degrade/suspend):
+Breaker trigger conditions (any one fires; priority hard-terminate > escalate > degrade/suspend). PRECONDITION (ADR #60): the breaker applies only while a loop is RUNNING — on a terminal status (`converged` / `suspended` / `hard_terminated`) every trigger below is inert (`gate-fail` returns `ok` + `no active loop ... fingerprint recorded for audit only`), so a converged repo's leftover fingerprint counts cannot echo into later sessions' false escalates; fingerprints still record:
 
 | Condition | Action | What to do |
 | --- | --- | --- |

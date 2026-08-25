@@ -295,6 +295,41 @@ def scenario_f_upstream_carried():
     )
 
 
+def scenario_g_breaker_inert_when_converged():
+    # ADR #60 (observed 2026-08-25 in this repo): a converged loop's stale
+    # fingerprint counts escalated EVERY later session's fast-gate block —
+    # the hook cited a 2026-08-22 hetero_review.py fingerprint nobody had
+    # touched in days. The breaker must be inert once the loop is terminal:
+    # gate-fail still records (audit) but returns ok + a no-active-loop
+    # reason. The inner_running escalate (the real signal this protects) is
+    # pinned by the pre-converge phase.
+    d = tempfile.mkdtemp(prefix="pdrun_g_")
+    ls(["init", "--task-id", "probeG"], d)
+    fp = "app/old.py:ruff:unused import"
+    actions = [ls(["gate-fail", fp], d).get("action") for _ in range(3)]
+    assert actions[-1] == "escalate", (
+        f"G: inner_running 3x same fingerprint must escalate, got {actions}"
+    )
+    ls(["record-outer", "--verdict", "pass"], d)
+    ls(["mark-converged"], d)
+    fourth = ls(["gate-fail", fp], d)
+    assert fourth.get("action") == "ok", (
+        f"G: converged-state gate-fail must be breaker-inert, got {fourth}"
+    )
+    assert "no active loop" in fourth.get("reason", ""), fourth
+    # The fingerprint still RECORDS for audit (count incremented), and the
+    # pre-converge counts are untouched — nothing was deleted (rule 3).
+    state = json.load(
+        open(os.path.join(d, ".claude", "parallel-dev", "loop-state.json"))
+    )
+    entry = [
+        e
+        for e in state["inner"]["fingerprint_log"]
+        if e["fingerprint"] == "app/old.py:ruff:unused import"
+    ][0]
+    assert entry["count"] == 4, f"G: audit count must reach 4, got {entry}"
+
+
 def main():
     print("run_record:")
     failures = []
@@ -305,6 +340,7 @@ def main():
         scenario_d_not_yet_step_capped,
         scenario_e_dod_guard_and_backstop,
         scenario_f_upstream_carried,
+        scenario_g_breaker_inert_when_converged,
     )
     for fn in scenarios:
         try:
