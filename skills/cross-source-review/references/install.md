@@ -118,12 +118,16 @@ The token var is derived BY CONVENTION from the profile filename:
 `<UPPERCASE-FILENAME>_ANTHROPIC_AUTH_TOKEN`. Non-alphanumeric chars in the filename
 collapse to `_` before uppercasing.
 
-| profile filename | token env var |
-| --- | --- |
-| `deepseek.json` | `DEEPSEEK_ANTHROPIC_AUTH_TOKEN` |
-| `qwen-token-plan-cn.json` | `QWEN_TOKEN_PLAN_CN_ANTHROPIC_AUTH_TOKEN` |
-| `aliyun-bailian.json` | `ALIYUN_BAILIAN_ANTHROPIC_AUTH_TOKEN` |
-| `openai-compat.json` | `OPENAI_COMPAT_ANTHROPIC_AUTH_TOKEN` |
+| profile filename (ROUTE) | `_family` (FAMILY) | token env var |
+| --- | --- | --- |
+| `deepseek.json` | deepseek | `DEEPSEEK_ANTHROPIC_AUTH_TOKEN` |
+| `bigmodel.json` | glm | `BIGMODEL_ANTHROPIC_AUTH_TOKEN` |
+| `minimax-cn.json` | minimax | `MINIMAX_CN_ANTHROPIC_AUTH_TOKEN` (bridged to `MINIMAX_ANTHROPIC_AUTH_TOKEN` via `_token_env` — the pre-existing var) |
+| `qwen-token-plan-cn.json` | qwen | `QWEN_TOKEN_PLAN_CN_ANTHROPIC_AUTH_TOKEN` |
+| `qwen-bailian.json` | qwen | `QWEN_BAILIAN_ANTHROPIC_AUTH_TOKEN` |
+| `openai-compat.json` | (user-set) | `OPENAI_COMPAT_ANTHROPIC_AUTH_TOKEN` |
+
+**Naming — the three-level doctrine** (the profile FILENAME names the credential+endpoint ROUTE; the `_family` field names the MODEL LINEAGE — the same/different-family judgment unit; the `model` field is the pinned per-generation id, never part of the filename). One family rides many routes (qwen: token-plan subscription + bailian pay-per-use; glm: the BigModel endpoint — zai/bigmodel/zhipu are one lineage); a multi-family route's `_family` names the PINNED model's lineage. Pick review routes across FAMILIES, not across routes of one family. Full doctrine: parallel-development's model-routing.md.
 
 Override the var name via the profile's optional `_token_env` field (rarely needed — e.g.
 a profile that must read a non-conventional var).

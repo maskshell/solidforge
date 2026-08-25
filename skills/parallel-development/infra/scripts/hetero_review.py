@@ -84,8 +84,8 @@ PROVIDER-TEMPLATE + TOKEN-INJECTION PATTERN:
                                `${...}` token ceremony — drop in a template + set one
                                env var, that's it.
   token-var convention — `<UPPERCASE-FILENAME>_ANTHROPIC_AUTH_TOKEN` (deepseek ->
-                               `DEEPSEEK_ANTHROPIC_AUTH_TOKEN`, qwen3 ->
-                               `QWEN3_ANTHROPIC_AUTH_TOKEN`). Override with the
+                               `DEEPSEEK_ANTHROPIC_AUTH_TOKEN`, qwen-token-plan-cn ->
+                               `QWEN_TOKEN_PLAN_CN_ANTHROPIC_AUTH_TOKEN`). Override with the
                                template's optional `_token_env` for a non-convention name.
   --profile <name[,name2...]> or $HETERO_PROFILE — select provider(s); comma-list
                                = dual-/multi-different-family (each backend runs independently,
@@ -301,7 +301,7 @@ def _load_prior(prior_arg):
 # + model aliases) — NO secret, NO `${...}` token ceremony. The auth token is read
 # at runtime from the env var DERIVED BY CONVENTION from the filename:
 # `<UPPERCASE-FILENAME>_ANTHROPIC_AUTH_TOKEN` (deepseek -> DEEPSEEK_ANTHROPIC_AUTH_TOKEN,
-# qwen3 -> QWEN3_ANTHROPIC_AUTH_TOKEN). The wrapper injects it as ANTHROPIC_AUTH_TOKEN
+# qwen-token-plan-cn -> QWEN_TOKEN_PLAN_CN_ANTHROPIC_AUTH_TOKEN). The wrapper injects it as ANTHROPIC_AUTH_TOKEN
 # into a THROWAWAY temp settings file passed to `claude -p` (CC does NOT expand
 # ${VAR} itself — verified CC v2.1.201). A template may override the var name via an
 # optional `_token_env` field; other `${VAR}` refs (non-token fields) still expand.
@@ -375,7 +375,7 @@ def _resolve_token_var(name, template):
 
     Override: the template's optional `_token_env` field. Default (convention):
     `<UPPERCASE-FILENAME>_ANTHROPIC_AUTH_TOKEN` — e.g. `deepseek` ->
-    `DEEPSEEK_ANTHROPIC_AUTH_TOKEN`, `qwen3` -> `QWEN3_ANTHROPIC_AUTH_TOKEN`,
+    `DEEPSEEK_ANTHROPIC_AUTH_TOKEN`, `qwen-token-plan-cn` -> `QWEN_TOKEN_PLAN_CN_ANTHROPIC_AUTH_TOKEN`,
     `openai-compat` -> `OPENAI_COMPAT_ANTHROPIC_AUTH_TOKEN`. The convention lets a user
     drop in `profiles/<name>.json` with ROUTING ONLY (no `_token_env`, no `${...}`) and
     the wrapper resolves the token var from the filename — zero ceremony per provider.
