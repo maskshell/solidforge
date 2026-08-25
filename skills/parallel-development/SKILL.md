@@ -12,7 +12,8 @@ description: |
 
 1. RED - Write tests first (expect failure)
 2. GREEN - Implement minimum code (make tests pass)
-3. REFACTOR - Improve while tests pass
+
+REFACTOR is deliberately NOT a step of the per-task cycle. Refactoring runs as the optional post-convergence tail ([feature-dev.md](references/feature-dev.md) Phase 7) or as its own workflow ([refactoring.md](references/refactoring.md)) with the converged suite as its safety net — this matches the operational shape and the external evidence that review and refactoring work better as separate sessions (ADR #56).
 
 TDD is the default for new features and bug fixes. Exploration, prototyping, and minor tweaks to already-tested code may skip the RED phase. Tests are written at the AC's seam — the public boundary the caller actually uses, never against internals (see [feature-dev.md](references/feature-dev.md) Phase 4 + [intent-blueprint.md](references/intent-blueprint.md) "AC seam field"; ADR #56).
 

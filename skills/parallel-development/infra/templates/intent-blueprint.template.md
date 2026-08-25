@@ -31,7 +31,7 @@ System-level hard constraints (performance, external dependencies, capacity). Fl
 
 ## Acceptance-Criteria -> Test Mapping
 
-Declared at RED phase. Maps each AC to the executable test(s) that verify it. The value is a test name or nodeid (e.g. `test_user_registration`, `tests/test_auth.py::test_user_registration`), NOT a bare file path — the test-name set gate (arch_contract_tests) verifies each mapped test exists in the per-language collected set, so the value must be a name the collector emits. One bullet per test; multiple bullets may share an AC id (each name collected). Comma-listing multiple names on one line is NOT supported (it would be read as one name). Section is optional: when absent, the gate degrades to a count + coverage note.
+Declared at RED phase (the section is APPEND-ONLY post-freeze — `blueprint_guard.py` admits added bullets and denies removals/renames/anything outside the section; ADR #58). Maps each AC to the executable test(s) that verify it. The value is a test name or nodeid (e.g. `test_user_registration`, `tests/test_auth.py::test_user_registration`), NOT a bare file path — the test-name set gate (arch_contract_tests) verifies each mapped test exists in the per-language collected set, so the value must be a name the collector emits. One bullet per test; multiple bullets may share an AC id (each name collected). Comma-listing multiple names on one line is NOT supported (it would be read as one name). Section is optional: when absent, the gate degrades to a count + coverage note.
 
 - AC-1 -> tests/test_auth.py::test_user_registration
 - AC-2 -> test_login_redirect

@@ -3,6 +3,8 @@
 
 Runs after every Edit/Write. Performs only single-file, ms~sec checks (lint / format). The heavier type-check / full-suite / architecture-contract checks belong to the arch-contract gate at the inner convergence point, NOT here.
 
+SCOPE (ADR #59): files OUTSIDE the project root (CLAUDE_PROJECT_DIR-or-cwd) are NOT gated — silent pass, no fingerprint, no breaker. Out-of-repo scratch (e.g. /tmp diagnostics written while driving another harness) never enters the diff the outer ring reviews, so linting it is out-of-contract over-reach with a real cost: scratch-file findings fed the thrashing breaker and escalated spurious inner->outer handoffs (the observed 2026-07-07 dogfood). NOT enforced beyond the root check: symlinks crossing the root boundary resolve to their target's side.
+
 On failure: records the error fingerprint via loop_state.py (Thrashing feed), queries the breaker state, and emits a structured `decision:block` so Claude self-corrects on the next turn and the orchestrator treats the result as "inner red — short-circuit, do not enter the outer ring."
 
 Tool missing or not configured → silent pass (exit 0). Never hard-errors.
@@ -222,11 +224,26 @@ def check_web(file_path):
     return True, None
 
 
+def _in_project_root(file_path):
+    """True iff file_path sits under the project root (ADR #59 scope). On any
+    path-comparison failure, gate it anyway — conservative (a false lint beats
+    a silent skip)."""
+    try:
+        root = os.path.abspath(dt.project_root())
+        target = os.path.abspath(file_path)
+        return os.path.commonpath([root, target]) == root
+    except ValueError:
+        return True
+
+
 def main():
     payload = dt.read_payload()
     file_path = (payload.get("tool_input") or {}).get("file_path")
     if not file_path:
         sys.exit(0)
+
+    if not _in_project_root(file_path):
+        sys.exit(0)  # out-of-repo scratch: not the convergence target (ADR #59)
 
     platform = dt.classify(file_path)
     if platform is None:

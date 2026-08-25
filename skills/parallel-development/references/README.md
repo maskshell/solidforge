@@ -64,10 +64,10 @@ All workflows start with Phase 0 (Intent Freeze) and end with the dual-ring Conv
 
 ## Quick Reference
 
-All workflows follow TDD pattern:
+All workflows follow the TDD pattern (RED→GREEN per task; REFACTOR runs post-convergence, not per task):
 
 - **RED** - Write tests first (expect failure)
 - **GREEN** - Implement code to pass tests
-- **REFACTOR** - Improve code while keeping tests green
+- **REFACTOR** - Post-convergence tail or its own [refactoring.md](refactoring.md) workflow, with the converged suite green as its safety net
 
 See [SKILL.md](../SKILL.md) for quick start guide.

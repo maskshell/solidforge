@@ -83,6 +83,7 @@ Before writing any test, each AC's seam is fixed per the blueprint (see [intent-
 
    The doctrine picks by language among object and link seams ONLY — preprocessing seams are scoped out (build configuration, not behavior under test); a language whose only seam mechanism is conditional-compilation-style preprocessing is outside this doctrine's coverage, stated honestly (ADR #56). Each seam has an enabling point — the seam says where behavior can change, the enabling point says who decides which variant is used. The test sets the enabling point to inject the variant under test.
 2. Do not write: implementation-coupled tests (renaming an internal fn breaks the test with no behavior change; mocking own modules' internals; asserting call counts; using db queries to verify instead of the interface); tautological assertions (expected value computed the same way as the code — the expected value must come from an independent truth source: a known-good literal, a hand-worked example, the spec). The third anti-pattern — test-batch horizontal slicing (all tests first, then all code) — is solidforge's DELIBERATE Phase-4 exception: the RED batch is the parallel-contract design (tests = the shared API contracts parallel implementers converge against). Rejected with rationale, recorded in ADR #56 — not imported, not silent.
+3. **Record the AC→test mapping into the blueprint once the tests stabilize.** Add one `- AC-x -> <test-name>` bullet per test under the blueprint's `## Acceptance-Criteria -> Test Mapping` section (the names the per-language collector emits). This is the ONE edit a frozen blueprint accepts post-freeze: `blueprint_guard.py` allows append-only mapping edits and denies everything else (ADR #58) — no removals, no renames (a wrong bullet corrects via the Revision Channel), nothing outside the section. Recording the mapping arms the test-name set gate (Blocks a deleted mapped test) and gives each GREEN iteration its unambiguous test→impl link ([SKILL.md](../SKILL.md) "Self-run the relevant test each GREEN").
 
 Role: Test Engineer → `solidforge:tester` (Web/Backend) or `solidforge:ios-developer` for Swift Testing / XCTest unit + `solidforge:ios-tester` for XCUITest (iOS)
 
@@ -197,6 +198,6 @@ Tasks:
 - Update project tracker
 - Document technical debt
 
-REFACTOR Phase (optional): After tests pass, refactor code while keeping tests green.
+REFACTOR Phase (optional, post-convergence): After the Convergent Fix Loop converges (not per GREEN task — ADR #56), refactor code while keeping the converged suite green. A dedicated restructuring that needs its own RED/GREEN scaffolding routes to [refactoring.md](refactoring.md) instead.
 
 Verify documentation completeness. If gaps found, return to update.

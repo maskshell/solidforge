@@ -769,6 +769,49 @@ def smoke_fast_gate_guidance():
     print("  fast-gate guidance: PASS (lint→fix-in-ring; format→stratify)")
 
 
+def smoke_fast_gate_scope():
+    # ADR #59 (the open item #4 of the 2026-07-07 hetero wrapper dogfood): a
+    # lint-dirty file OUTSIDE the project root must be a silent no-op — no
+    # block, no fingerprint, no breaker feed. Scratch files (e.g. /tmp
+    # diagnostics) never enter the diff the outer ring reviews; their findings
+    # fed the thrashing breaker and escalated spurious inner->outer handoffs.
+    # In-repo lint-dirty files keep blocking (the same hook, same session).
+    if not have("ruff"):
+        print("  fast-gate scope: SKIP (ruff not installed)")
+        return
+    hook = os.path.join(ROOT, "infra", "hooks", "fast_gate.py")
+    d = tempfile.mkdtemp(prefix="pdsmoke_fgs_")
+    env = dict(os.environ, CLAUDE_PROJECT_DIR=d)
+    inside = os.path.join(d, "inside.py")  # F401 unused import
+    write(inside, "import os\n")
+    outside_dir = tempfile.mkdtemp(prefix="pdsmoke_fgs_out_")
+    outside = os.path.join(outside_dir, "scratch.py")  # same lint error
+    write(outside, "import os\n")
+
+    def run_hook(path):
+        return subprocess.run(
+            ["python3", hook],
+            input=json.dumps({"tool_input": {"file_path": path}}),
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=120,
+        )
+
+    out_proc = run_hook(outside)
+    assert out_proc.returncode == 0 and not out_proc.stdout.strip(), (
+        f"out-of-repo file must be a silent no-op: rc={out_proc.returncode} "
+        f"stdout={out_proc.stdout!r}"
+    )
+    in_proc = run_hook(inside)
+    assert in_proc.stdout.strip(), (
+        f"in-repo lint-dirty file must still block: rc={in_proc.returncode} "
+        f"stdout={in_proc.stdout!r}"
+    )
+    assert json.loads(in_proc.stdout).get("decision") == "block", in_proc.stdout
+    print("  fast-gate scope: PASS (out-of-repo silent; in-repo still blocks)")
+
+
 def smoke_rust_edition():
     # tianwang-waf handoff (2026-08-22): the hook hardcoded `--edition 2021` and
     # false-positived EVERY edit on edition-2024 projects (gate red while
@@ -908,6 +951,7 @@ def main():
         smoke_license,
         smoke_iac,
         smoke_fast_gate_guidance,
+        smoke_fast_gate_scope,
         smoke_rust_edition,
     ):
         try:

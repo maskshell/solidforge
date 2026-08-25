@@ -26,6 +26,7 @@ python3 skills/parallel-development/infra/test/plan_queue_detect.py  # rich-path
 python3 skills/parallel-development/infra/test/hetero_review_wiring.py  # different-family wrapper ↔ loop_state + adversarial-stalemate round-trip (ADR #40)
 python3 skills/parallel-development/infra/test/drift_check.py             # rule-7 boilerplate drift (advisory; design-pattern-review-value.md D3)
 python3 skills/parallel-development/infra/test/adapter_shape_check.py     # *_adapter.py violation-log shape contract (blocker)
+python3 skills/parallel-development/infra/test/blueprint_guard_carveout.py  # frozen-blueprint mapping carve-out (ADR #58)
 ```
 
 Run the relevant subset at minimum; run the full set before commit. Tests skip gracefully when external tools (cargo, mvn, npm, checkstyle) are absent.

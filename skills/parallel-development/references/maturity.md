@@ -52,7 +52,7 @@ Evidence — each named L4 mechanism, present, where:
 | L4 mechanism (named by the model) | Present | Where |
 | --- | --- | --- |
 | Deep runtime binding | yes | Hooks wired to real Edit/Write: `fast_gate.py` (PostToolUse), `counters.py` + `blueprint_guard.py` (PreToolUse). Opt-in install makes them hook-enforced, not advisory. |
-| Proactive test self-verification | yes | TDD is the default (RED→GREEN→REFACTOR); flaky stabilization + coverage threshold; gate附加条件 blocks "delete the failing test". |
+| Proactive test self-verification | yes | TDD is the default (RED→GREEN per task; REFACTOR is the post-convergence tail); flaky stabilization + coverage threshold; gate附加条件 blocks "delete the failing test". |
 | Memory pruning for token efficiency | yes | Context folding + `loop_state.py summary`; error fingerprints are normalized (shifting line numbers stripped) so the log stays compact. |
 | Intent anchor against drift | yes | [intent-blueprint.md](intent-blueprint.md) frozen blueprint, three-layer read-only guard, diff-to-blueprint, hard rollback + reverse prompt. |
 | External state machine forces convergence | yes — and physically | `loop_state.py`: priority breakers `hard-terminate > escalate > degrade > suspend > ok` (fingerprint ≥ N=3 → escalate; inner iteration ≥ M=8 → degrade, suspend if budget ≥80%; token/time/cost cap → hard-terminate). `counters.py` PreToolUse **DENIES** edits once the status is terminal — the loop cannot thrash past the breaker at all. |
@@ -96,7 +96,7 @@ Regression red lines (removing any one drops a level — do not):
 - The terminal-state deny hook (`counters.py` PreToolUse DENY).
 - Context folding at the inner→outer transition.
 - The frozen intent anchor + diff-to-blueprint + hard rollback ([intent-blueprint.md](intent-blueprint.md)).
-- TDD as the default (RED→GREEN→REFACTOR).
+- TDD as the default (RED→GREEN per task; REFACTOR as the post-convergence tail, ADR #56).
 - The dual ring (deterministic inner + semantic outer).
 
 Definition of done for a maturity-preserving change: the red lines above are all intact, this self-assessment table still matches the code on disk, and `infra/test/disconnect_check.py` is green.
