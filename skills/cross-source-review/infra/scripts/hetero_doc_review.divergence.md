@@ -131,6 +131,31 @@ surface (both copies, equivalent modulo the documented domain divergences):
 - `_run_claude_once` / `run_claude` gain a trailing `guards=None` kwarg
   (ADDITIVE — positional compatibility preserved per the contract table above).
 
+## csr-only extension (ADR #61, 2026-08-27) — run-progress sidecar tee (`--progress-file`)
+
+csr-FIRST, NOT ported to pd's `hetero_review.py` — a REAL divergence until a
+candidate port lands (ADR #52's precedent: csr-first extensions record their
+csr→pd port status here). Surface:
+
+- `--progress-file <path>` CLI flag: leg boundaries (`hetero-leg-start` /
+  `hetero-leg-end`) + streamed heartbeats (`hetero-heartbeat`) ALSO append as
+  JSONL to the given path, in addition to the UNCHANGED stderr heartbeat
+  (ADR #52). The different-family leg of a csr run is then externally observable
+  even while its stdout/stderr sit inside the invoking session's pending tool
+  call.
+- Module-global `_PROGRESS_PATH` + `_progress_append` — deliberately NOT a
+  `run_claude` / `_run_streamed` kwarg, so the preserved-signature CONTRACT
+  table above stays byte-true (an additive kwarg would also have worked; the
+  global avoids re-opening the contract for a csr-only concern). `_emit_heartbeat`
+  gained a sidecar tee call; its signature is unchanged.
+- BEST-EFFORT by contract: OSError caught, warned once on stderr, never fails
+  the review (observability must not become a new failure axis).
+- The orchestrator half (`csr_progress.py` append/status + the SKILL.md
+  Run-progress sidecar vocabulary) is csr-domain only — no pd counterpart.
+- pd port candidacy: pd's convergence loop has the same external-opacity shape;
+  porting = the same ~40-line block + pd's own orchestrator-side contract
+  (a pd-side decision to make when wanted — NOT silently assumed here).
+
 ## Supporting infra created alongside the wrapper (rule 7 — mirror the exemplar)
 
 - `infra/scripts/profiles/deepseek.json` — sanitized copy of pd's `profiles/deepseek.json` (routing-only, no secret). The `_comment` cites CSR-I3 / rule 7 (copy-pattern) and notes DeepSeek's auto-cache rate (cold-start transient; ADR #43).

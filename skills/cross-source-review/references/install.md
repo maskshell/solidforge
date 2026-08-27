@@ -85,6 +85,13 @@ and was the stream alive?" from the record alone. The `--no-stream` CLI flag
 restores the legacy single-envelope json spawn — the documented fallback if a
 Claude Code upgrade breaks the stream-json surface.
 
+The run-progress sidecar (ADR #61) extends this observability OUTSIDE the invoking
+session: pass `--progress-file <path>` and the wrapper appends its leg boundaries +
+heartbeats as JSONL there too (best-effort — an unwritable path warns once and never
+fails the review); the csr orchestrator writes the round-level events via
+`csr_progress.py` (append/status, pure stdlib). An external terminal then watches a
+live run with `csr_progress.py status <run-dir> --watch 5`.
+
 ## Adding a custom third-party provider (zero code change)
 
 csr ships `infra/scripts/profiles/deepseek.json`. Add another provider by dropping a
@@ -149,6 +156,8 @@ csr reads the token from shell / `.env` / `.env.solidforge`, INJECTS it as
   graceful-skips schema validation if absent, with an honest coverage note). The solidforge
   dev workspace ships jsonschema via `uv sync` (dev deps, fix C) — the SKIP note appears
   only in environments without it.
+- The run-progress sidecar (`csr_progress.py`) — pure stdlib; the orchestrator's
+  append/status calls run wherever the invoking session runs, no arming.
 - **Record schema version note (fix A / ADR #3)**: records produced before the retention
   fix (round `findings` + `dispositions` required) no longer validate against the current
   `convergence-record.schema.json`. Historical counts-only records (e.g. any emitted before

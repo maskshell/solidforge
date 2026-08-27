@@ -541,6 +541,42 @@ def _claude_argv(
     return argv
 
 
+# Run-progress sidecar (ADR #61): when --progress-file is given, this wrapper's
+# leg boundaries + heartbeats ALSO land as JSONL in that file — the external
+# observability contract, extending the ADR #52 stderr heartbeat (which lives
+# inside the invoking session's captured tool call) to any outside observer.
+# BEST-EFFORT by contract: an observability failure NEVER kills the review —
+# OSError is caught, warned ONCE on stderr, and the run continues. The append
+# helper is deliberately self-contained (rule 7 — the wrapper does NOT import
+# csr_progress; each script stays independently deployable).
+_PROGRESS_PATH = None
+_PROGRESS_WARNED = False
+
+
+def _progress_append(event_type, **fields):
+    global _PROGRESS_WARNED
+    if not _PROGRESS_PATH:
+        return
+    event = {
+        "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "type": event_type,
+        **fields,
+    }
+    try:
+        parent = os.path.dirname(os.path.abspath(_PROGRESS_PATH))
+        os.makedirs(parent, exist_ok=True)
+        with open(_PROGRESS_PATH, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(event, ensure_ascii=False) + "\n")
+            fh.flush()
+    except OSError as exc:
+        if not _PROGRESS_WARNED:
+            print(
+                f"warning: progress file unwritable ({exc}); continuing without it",
+                file=sys.stderr,
+            )
+            _PROGRESS_WARNED = True
+
+
 def _emit_heartbeat(provider, tele):
     """One progress line to STDERR (stdout stays the single result JSON). The
     heartbeat is the wrapper's liveness contract (ADR #52): an outer orchestrator
@@ -567,6 +603,18 @@ def _emit_heartbeat(provider, tele):
         ),
         file=sys.stderr,
         flush=True,
+    )
+    # ADR #61 sidecar tee: the same heartbeat lands in the progress file too.
+    _progress_append(
+        "hetero-heartbeat",
+        provider=provider,
+        elapsed_s=round(tele["elapsed_s"], 1),
+        stream_bytes=tele["stream_bytes"],
+        events=tele["events"],
+        assistant_events=tele["assistant_events"],
+        model=tele["model"],
+        idle_s=round(tele["idle_s"], 1),
+        killed=tele["killed"],
     )
 
 
@@ -1228,6 +1276,14 @@ def main():
         "observability.",
     )
     ap.add_argument(
+        "--progress-file",
+        default="",
+        help="Run-progress sidecar (ADR #61): append this leg's boundary events "
+        "(hetero-leg-start/-end) + streamed heartbeats as JSONL to this path, in "
+        "addition to the stderr heartbeat. Best-effort — an unwritable path warns "
+        "once and never fails the review.",
+    )
+    ap.add_argument(
         "--round-index",
         type=int,
         default=1,
@@ -1267,6 +1323,10 @@ def main():
         help="Schema JSON passed via --json-schema (default: doc-findings.schema.json).",
     )
     args = ap.parse_args()
+    # Run-progress sidecar (ADR #61): module-global, NOT a run_claude kwarg, so the
+    # preserved function-signature contract (divergence.md) stays untouched.
+    global _PROGRESS_PATH
+    _PROGRESS_PATH = args.progress_file or None
     # The offline knobs (--dry-run-malform / --dry-run-budget) imply --dry-run — without
     # this, --dry-run-budget alone would skip run_claude's canned branch and fall through to
     # subprocess.run(None). Same footgun pre-existed in pd for --dry-run-malform; carried over.
@@ -1337,6 +1397,7 @@ def main():
             if args.no_stream
             else {"provider": name, "max_stream_bytes": args.max_stream_bytes}
         )
+        _progress_append("hetero-leg-start", round=args.round_index, provider=name)
         try:
             rc = run_claude(
                 None if argv is None else argv,
@@ -1353,6 +1414,20 @@ def main():
                     os.unlink(tmp_path)
                 except OSError:
                     pass
+        _progress_append(
+            "hetero-leg-end",
+            round=args.round_index,
+            provider=name,
+            outcome=(
+                "ok"
+                if rc["ok"]
+                else ("degraded" if rc["error_subtype"] else "malformed")
+            ),
+            findings=len((rc["findings"] or {}).get("findings", [])) if rc["ok"] else 0,
+            model=rc.get("model"),
+            elapsed_s=rc.get("elapsed_s"),
+            degraded=bool(rc["error_subtype"]),
+        )
         findings_obj = rc["findings"]
         pf = (findings_obj or {}).get("findings", []) if rc["ok"] else []
         if len(provider_names) > 1:
