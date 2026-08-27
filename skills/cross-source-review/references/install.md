@@ -90,7 +90,10 @@ session: pass `--progress-file <path>` and the wrapper appends its leg boundarie
 heartbeats as JSONL there too (best-effort — an unwritable path warns once and never
 fails the review); the csr orchestrator writes the round-level events via
 `csr_progress.py` (append/status, pure stdlib). An external terminal then watches a
-live run with `csr_progress.py status <run-dir> --watch 5`.
+live run with `csr_progress.py status <run-dir> --watch 5`. The orchestrating
+session itself also narrates one condensed status line to its conversation every
+~2 minutes while a leg runs (ADR #62 — zero-interaction reporting; the sidecar is
+the data source).
 
 ## Adding a custom third-party provider (zero code change)
 

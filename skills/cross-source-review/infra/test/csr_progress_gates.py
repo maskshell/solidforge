@@ -26,6 +26,10 @@ model call (rule 4) — the wrapper half runs via --dry-run / a faked stream chi
   8. enumeration-sync — divergence log records --progress-file;
      disconnect_check REQUIRED_FILES + SKILL.md/install.md self-check lists
      carry the two new files (rule 5).
+  9. narration-contract — SKILL.md's step-2 different-family bullet launches the
+     wrapper as a BACKGROUND task with stderr captured to wrapper.stderr + a
+     ~2-minute poll narration loop (ADR #62 zero-interaction in-session
+     reporting); the workspace ADR log carries #62.
 
 Usage:
     python3 infra/test/csr_progress_gates.py
@@ -111,7 +115,7 @@ def _skill_vocabulary(skill_text):
 
 
 def run():
-    """Nine checks (incl. the RUNNING render variant). Returns (findings, coverage)."""
+    """Ten checks (incl. the RUNNING render variant). Returns (findings, coverage)."""
     coverage = [
         "csr-progress-gates (BLOCKER, rule 4 codifiable): the ADR #61 run-progress "
         "observability contract — registry sync, append shape, status render, "
@@ -459,6 +463,46 @@ def run():
         "install.md observability section",
         findings,
         coverage,
+    )
+
+    # --- check 9: in-session narration contract (ADR #62) ----------------
+    # Scoped to the step-2 DIFFERENT-FAMILY BULLET (not the whole file): the
+    # narration contract is an instruction AT that decision point — presence
+    # elsewhere would not make the protocol fire (placement-true check).
+    adr_log = _read(
+        os.path.join(
+            os.path.dirname(ROOT),
+            "parallel-development",
+            "references",
+            "design-decisions.md",
+        )
+    )
+    bullet = re.search(
+        r"- Run the \*\*different-family leg\*\*(.*?)(?=\n   - |\n3\. )",
+        skill_text,
+        re.DOTALL,
+    )
+    bullet_text = bullet.group(0) if bullet else ""
+    ok9 = (
+        bool(bullet)
+        and "run_in_background" in bullet_text
+        and "wrapper.stderr" in bullet_text
+        and "csr_progress.py status" in bullet_text
+        and "## 62." in (adr_log or "")
+    )
+    _check(
+        "narration-contract",
+        ok9,
+        "step-2 different-family bullet: background launch / wrapper.stderr "
+        "capture / status narration / ADR #62 cross-ref — some missing",
+        "the zero-interaction reporting contract lives in the step-2 "
+        "different-family bullet (ADR #62): background launch + poll ~2min + "
+        "one condensed status line per poll + wrapper.stderr on a pre-leg "
+        "fail-fast; static presence only — whether the orchestrator actually "
+        "narrates is outer-ring + live-dogfood territory",
+        findings,
+        coverage,
+        file_="SKILL.md",
     )
 
     return findings, coverage
