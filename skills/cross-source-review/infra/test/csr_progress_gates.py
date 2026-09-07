@@ -28,8 +28,12 @@ model call (rule 4) — the wrapper half runs via --dry-run / a faked stream chi
      carry the two new files (rule 5).
   9. narration-contract — SKILL.md's step-2 different-family bullet launches the
      wrapper as a BACKGROUND task with stderr captured to wrapper.stderr + a
-     ~2-minute poll narration loop (ADR #62 zero-interaction in-session
-     reporting); the workspace ADR log carries #62.
+     ~2-minute poll narration loop whose FIRST line per leg hands the human the
+     runs/LATEST watch pointer (ADR #62 zero-interaction + the 2026-09-07
+     observability-affordance pointer); the workspace ADR log carries #62.
+ 10. latest-pointer — csr_progress.py's run-start append atomically keeps
+     runs/LATEST (relative symlink) pointed at the newest run dir; other event
+     types never touch it (behavioral).
 
 Usage:
     python3 infra/test/csr_progress_gates.py
@@ -488,13 +492,15 @@ def run():
         and "run_in_background" in bullet_text
         and "wrapper.stderr" in bullet_text
         and "csr_progress.py status" in bullet_text
+        and "runs/LATEST" in bullet_text  # watch-pointer first-narration (2026-09-07)
         and "## 62." in (adr_log or "")
     )
     _check(
         "narration-contract",
         ok9,
         "step-2 different-family bullet: background launch / wrapper.stderr "
-        "capture / status narration / ADR #62 cross-ref — some missing",
+        "capture / status narration / runs/LATEST watch pointer / ADR #62 "
+        "cross-ref — some missing",
         "the zero-interaction reporting contract lives in the step-2 "
         "different-family bullet (ADR #62): background launch + poll ~2min + "
         "one condensed status line per poll + wrapper.stderr on a pre-leg "
@@ -504,6 +510,59 @@ def run():
         coverage,
         file_="SKILL.md",
     )
+
+    # --- check 10: runs/LATEST stable pointer (observability affordance) ----
+    # The run-start append atomically points <runs-dir>/LATEST at the run dir
+    # (relative symlink); non-run-start appends never touch it; failures are
+    # best-effort (never abort the append).
+    with tempfile.TemporaryDirectory() as td:
+        runs_dir = os.path.join(td, "runs")
+        run_a = os.path.join(runs_dir, "20260907-aaa-slug")
+        run_b = os.path.join(runs_dir, "20260907-bbb-slug")
+        os.makedirs(run_a, exist_ok=True)
+        os.makedirs(run_b, exist_ok=True)
+        pa = _append(
+            CSR_PROGRESS,
+            os.path.join(run_a, "progress.jsonl"),
+            "run-start",
+            {"artifact": "x.md", "tier": "short", "cap": "2"},
+        )
+        latest = os.path.join(runs_dir, "LATEST")
+        ok10a = (
+            pa.returncode == 0
+            and os.path.islink(latest)
+            and os.path.realpath(latest) == os.path.realpath(run_a)
+        )
+        # a same-family-spawn (non-run-start) append must NOT repoint
+        _append(
+            CSR_PROGRESS,
+            os.path.join(run_b, "progress.jsonl"),
+            "same-family-spawn",
+            {"round": "1"},
+        )
+        ok10b = os.path.realpath(latest) == os.path.realpath(run_a)
+        # a LATER run-start repoints atomically
+        _append(
+            CSR_PROGRESS,
+            os.path.join(run_b, "progress.jsonl"),
+            "run-start",
+            {"artifact": "y.md", "tier": "short", "cap": "2"},
+        )
+        ok10c = os.path.realpath(latest) == os.path.realpath(run_b)
+        ok10 = ok10a and ok10b and ok10c
+        _check(
+            "latest-pointer",
+            ok10,
+            f"runs/LATEST behavior: created-on-run-start={ok10a} "
+            f"untouched-by-other-events={ok10b} repointed-by-later-run-start={ok10c}",
+            "csr_progress.py append --type run-start keeps runs/LATEST (relative "
+            "symlink, atomic replace) pointed at the newest run — the stable "
+            "human-facing watch path (SKILL.md sidecar section + step-2 first "
+            "narration); best-effort: a failed pointer never aborts the append",
+            findings,
+            coverage,
+            file_="infra/scripts/csr_progress.py",
+        )
 
     return findings, coverage
 

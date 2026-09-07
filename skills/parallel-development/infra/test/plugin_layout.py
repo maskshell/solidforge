@@ -159,6 +159,18 @@ def t_hooks_json():
 def t_arm_tools_command():
     print("commands/arm-tools.md:")
     check("arm-tools.md exists", os.path.exists(ARM_TOOLS_MD), f"create {ARM_TOOLS_MD}")
+    # prompt-arguments-wired (node-bin adoption T6): a command that declares
+    # argument-hint must reference $ARGUMENTS in its body — otherwise the typed
+    # flags ride only on CC's implicit append (pi's substituteArgs dropped them
+    # entirely; the wiring makes the channel declared + guardable).
+    for cmd_md in sorted(glob.glob(os.path.join(PLUGIN_ROOT, "commands", "*.md"))):
+        body = open(cmd_md, encoding="utf-8").read()
+        check(
+            f"{os.path.basename(cmd_md)} wires $ARGUMENTS "
+            "(argument-hint declared, body must consume it)",
+            "argument-hint" not in body or "$ARGUMENTS" in body,
+            "reference $ARGUMENTS near the top and parse flags from that line",
+        )
 
 
 def t_agents():

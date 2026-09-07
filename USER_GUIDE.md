@@ -212,6 +212,8 @@ Then `implement …` as usual — the loop detects the committed config and runs
 
 A tool that's absent skips with a coverage note — never a silent pass. `--scaffold-configs` scaffolds the **first three** (Vale / Semgrep / Spectral); Checkov / OASDiff / Trivy arm by installing the tool + writing its config yourself (the gate auto-detects it).
 
+**Project-local gate tools are opt-in (trust boundary).** Gates resolve tools from PATH only, by default — a repo-committed `node_modules/.bin` or `.venv/bin` tool is never executed without an explicit per-project opt-in: `SF_PROJECT_NODE_BIN=1` (node_modules/.bin, with symlink containment) or `SF_PROJECT_VENV_TOOLS=1` (local venv bins; an activated venv is already on PATH and needs nothing). PATH always wins over both. Version-coupled tools (`vitest`, `tsc`): the project's pinned copy runs under the node opt-in when no PATH copy shadows it. Consequently the arm-tools status report shows project-local tools as `absent (gate degrades)` until you opt in — the report states what the gates can actually execute, not what is merely installed.
+
 ### Frontend with design governance (Impeccable)
 
 1. One-time: `/impeccable init` → author a `DESIGN.md` (design tokens, component inventory, a11y targets).

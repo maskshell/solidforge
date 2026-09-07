@@ -214,11 +214,10 @@ def check_web(file_path):
     )
     if not has_cfg:
         return True, None
-    local = os.path.join(root, "node_modules", ".bin", "eslint")
-    tool = local if os.path.exists(local) else dt.which_any("eslint")
+    tool = dt.resolve_tool("eslint")
     if not tool:
         return True, None
-    rc, out = run_quiet([tool, "--no-error-on-unmatched-pattern", file_path])
+    rc, out = run_quiet(tool + ["--no-error-on-unmatched-pattern", file_path])
     if rc not in (0, None):
         return False, ("eslint", out)
     return True, None
@@ -277,6 +276,10 @@ def main():
     action = "ok"
     breaker_reason = ""
     try:
+        if not ls:
+            raise FileNotFoundError(
+                "loop_state not resolvable (fail-closed, no project-dir fallback)"
+            )
         proc = subprocess.run(
             ["python3", ls, "gate-fail", fingerprint],
             capture_output=True,

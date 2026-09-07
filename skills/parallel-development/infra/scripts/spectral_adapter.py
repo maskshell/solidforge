@@ -122,14 +122,19 @@ def have(cmd):
 
 
 def resolve_spectral(root):
-    """The armed Spectral CLI. Local install (node_modules/.bin) first, then global on PATH.
-    Returns the argv-list to invoke, or None when not armed (npx fetch-on-demand is NOT armed)."""
-    local_bin = os.path.join(root, "node_modules", ".bin", "spectral")
-    if os.path.isfile(local_bin):
-        return [local_bin]
-    if have("spectral"):
-        return ["spectral"]
-    return None
+    """The armed Spectral CLI, via the canonical resolver (hooks/lib
+    detect_toolchain.resolve_tool): PATH-wins; node_modules/.bin only under
+    SF_PROJECT_NODE_BIN=1 with containment (2026-09-06, node-bin adoption A3).
+    Returns the argv-list to invoke, or None when not armed (npx
+    fetch-on-demand is NOT armed). Lazy import mirrors the idiom this change-set standardizes."""
+    lib = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "hooks", "lib"
+    )
+    if lib not in sys.path:
+        sys.path.insert(0, lib)
+    import detect_toolchain as dt
+
+    return dt.resolve_tool("spectral", root=root)
 
 
 def resolve_ruleset(root):
@@ -243,7 +248,7 @@ def main():
     spectral = resolve_spectral(root)
     if not spectral:
         coverage.append(
-            "spectral-openapi: Spectral not armed (`spectral` not on PATH) — run "
+            "spectral-openapi: Spectral not armed (`spectral` not resolved (PATH, or node_modules/.bin under SF_PROJECT_NODE_BIN=1)) — run "
             "`brew install spectral-cli` (or `npm i -g @stoplight/spectral-cli`). Gate skipped (no-op)."
         )
         emit([], coverage)

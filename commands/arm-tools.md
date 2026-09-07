@@ -1,15 +1,19 @@
 ---
 description: Arm the current project for Solid Forge — provision arch-configs, optional gate dev-deps, constitution, templates, gitignore; report gate status + LSP advisory. Layer 2 (explicit per-project opt-in; plugins do not mutate host-project build files, so this is a command, not enable).
-argument-hint: "[--with-tools [--lang python|web|rust|swift|java]] [--scaffold-configs [vale,semgrep,spectral]] [--revert [--apply]]"
+argument-hint: "[--with-tools [--lang python|web|rust|swift|java|go]] [--scaffold-configs [vale,semgrep,spectral]] [--revert [--apply]]"
 ---
 
 # arm-tools — arm a project for Solid Forge
+
+Invocation arguments (substituted by Claude Code — the typed argument string; empty when invoked bare) — typed flags on this line are authoritative; parse the flags below from it:
+
+`$ARGUMENTS`
 
 You are arming the project at `$CLAUDE_PROJECT_DIR` (or the current working directory) for the Solid Forge convergence loop. This is **Layer 2** — the explicit, per-project provisioning step. Layer 1 (enabling the `solidforge` plugin) already activated the hooks + agents + skills; this command provisions the **project-side** files the gates and loop need.
 
 ## Step 1 — run the arming script
 
-Run exactly one command. If the user passed `--with-tools` (or asked to install/add the gate tools), append `--with-tools`; otherwise omit it.
+Run exactly one command. If the invocation-arguments line above carries `--with-tools` (or the user asked to install/add the gate tools), append `--with-tools`; otherwise omit it. Likewise honor `--scaffold-configs`, `--revert [--apply]`, and `--lang` from that line when present.
 
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/skills/parallel-development/infra/install/arm.py" --with-tools
@@ -17,7 +21,7 @@ python3 "${CLAUDE_PLUGIN_ROOT}/skills/parallel-development/infra/install/arm.py"
 
 (Without `--with-tools`: `python3 "${CLAUDE_PLUGIN_ROOT}/skills/parallel-development/infra/install/arm.py"`.)
 
-For a polyglot repo where the user wants only ONE language's gate tools, append `--lang <python|web|rust|swift|java>` (only valid with `--with-tools`; default = all detected ecosystems). Example — arm only Python: `python3 "${CLAUDE_PLUGIN_ROOT}/skills/parallel-development/infra/install/arm.py" --with-tools --lang python`
+For a polyglot repo where the user wants only ONE language's gate tools, append `--lang <python|web|rust|swift|java|go>` (only valid with `--with-tools`; default = all detected ecosystems). Example — arm only Python: `python3 "${CLAUDE_PLUGIN_ROOT}/skills/parallel-development/infra/install/arm.py" --with-tools --lang python`
 
 If the user wants external-tool configs scaffolded (Vale prose-lint / Semgrep SAST / Spectral OpenAPI), append `--scaffold-configs [vale,semgrep,spectral]` (bare flag = all three; comma-list = subset; independent of `--with-tools`). These are NOT language-bound — opt in explicitly. When `vale` is scaffolded and `vale` is on `$PATH`, arming also runs `vale sync` to fetch the style packages (the Vale gate no-ops without them).
 

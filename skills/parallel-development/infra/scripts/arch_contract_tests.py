@@ -526,15 +526,18 @@ def _is_python(root):
 
 
 def check_pytest(root, findings, coverage):
-    if not have("pytest"):
-        coverage.append("pytest: not installed — Python test gate skipped")
+    pytest = _resolve("pytest", root)
+    if not pytest:
+        coverage.append(
+            "pytest: not resolved — Python test gate skipped (PATH, or the local venv bins under SF_PROJECT_VENV_TOOLS=1)"
+        )
         return
     fd, jp = tempfile.mkstemp(suffix=".json")
     os.close(fd)
     try:
         rc, _out, err = run(
-            [
-                "pytest",
+            pytest
+            + [
                 "--json-report",
                 f"--json-report-file={jp}",
                 "-q",
@@ -572,18 +575,29 @@ def check_pytest(root, findings, coverage):
             pass
 
 
-def _resolve_vitest(root):
-    """Resolve vitest: project-local node_modules/.bin/vitest first, else PATH.
+def _resolve(name, root):
+    """Canonical tool resolution via hooks/lib/detect_toolchain.resolve_tool:
+    PATH-wins; project-local bins only under their explicit opt-ins
+    (SF_PROJECT_NODE_BIN / SF_PROJECT_VENV_TOOLS) with node containment
+    (2026-09-06, node-bin adoption A3). Lazy import mirrors the lazy-import idiom this change-set standardizes."""
+    lib = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "hooks", "lib"
+    )
+    if lib not in sys.path:
+        sys.path.insert(0, lib)
+    import detect_toolchain as dt
 
-    Mirrors _resolve_tsc (arch_contract_web.py). vitest is version-coupled to the
-    project (v1/v2/v3 config API differ), so the project's PINNED version must run —
-    a bare `vitest` on PATH would version-diverge. Local-first also avoids a false-skip
-    when vitest is a devDep but not installed globally (node_modules/.bin is not on PATH).
-    """
-    local = os.path.join(root, "node_modules", ".bin", "vitest")
-    if os.path.exists(local):
-        return [local]
-    return ["vitest"] if have("vitest") else None
+    return dt.resolve_tool(name, root=root)
+
+
+def _resolve_vitest(root):
+    """Resolve vitest via the canonical resolver (PATH-wins). vitest is
+    version-coupled to the project (v1/v2/v3 config API differ), so the
+    project's PINNED version should run: set SF_PROJECT_NODE_BIN=1 and it
+    resolves from node_modules/.bin when no PATH copy shadows it — the
+    version-coupling trade-off recorded in design-decisions.md ADR #64
+    (supersedes this resolver's former unconditional local-first)."""
+    return _resolve("vitest", root)
 
 
 def check_vitest(root, findings, coverage):
@@ -593,7 +607,7 @@ def check_vitest(root, findings, coverage):
     vitest = _resolve_vitest(root)
     if not vitest:
         coverage.append(
-            "vitest: not installed (no node_modules/.bin/vitest and `vitest` not on PATH) "
+            "vitest: not resolved (PATH, or node_modules/.bin under SF_PROJECT_NODE_BIN=1) "
             "— Web test gate skipped (install: `npm i -D vitest`)"
         )
         return
@@ -830,9 +844,13 @@ def _at(root, rel):
 
 def _run_collect_pytest(root):
     """`pytest --collect-only -q` -> (names, coverage_note_or_None)."""
-    if not have("pytest"):
-        return [], "pytest collect: not installed — skipped"
-    rc, out, _err = run(["pytest", "--collect-only", "-q"], cwd=root, timeout=300)
+    pytest = _resolve("pytest", root)
+    if not pytest:
+        return (
+            [],
+            "pytest collect: not resolved (PATH, or the local venv bins under SF_PROJECT_VENV_TOOLS=1) — skipped",
+        )
+    rc, out, _err = run(pytest + ["--collect-only", "-q"], cwd=root, timeout=300)
     if rc is None:
         return [], "pytest collect: invocation failed — skipped"
     return collect_pytest_names(out or ""), None
@@ -867,7 +885,10 @@ def _run_collect_vitest(root):
         return [], None
     vitest = _resolve_vitest(root)
     if not vitest:
-        return [], "vitest collect: not installed — skipped"
+        return (
+            [],
+            "vitest collect: not resolved (PATH, or node_modules/.bin under SF_PROJECT_NODE_BIN=1) — skipped",
+        )
     rc, out, _err = run([*vitest, "list"], cwd=root, timeout=300)
     if rc is None:
         return [], "vitest collect: invocation failed — skipped"
@@ -911,15 +932,20 @@ def collect_all_test_names(root):
 
 def _run_coverage_pytest(root):
     """`coverage run -m pytest` + `coverage report` -> (percent, note_or_None)."""
-    if not (have("coverage") and have("pytest")):
-        return None, "coverage: coverage.py/pytest absent — install pytest-cov"
+    coverage_tool = _resolve("coverage", root)
+    pytest_tool = _resolve("pytest", root)
+    if not (coverage_tool and pytest_tool):
+        return (
+            None,
+            "coverage: coverage.py/pytest not resolved (PATH, or the local venv bins under SF_PROJECT_VENV_TOOLS=1) — install pytest-cov",
+        )
     # try/finally so the .coverage artifact (written by `coverage run` to cwd by
     # default — NOT gitignored in the host repo) is removed even on timeout/parse-miss.
     # Mirrors _run_coverage_go's pattern.
     prof = os.path.join(root, ".coverage")
     try:
         rc, _out, _err = run(
-            ["coverage", "run", "-m", "pytest", "-q", "--no-header"],
+            coverage_tool + ["run", "-m", "pytest", "-q", "--no-header"],
             cwd=root,
             timeout=600,
         )
@@ -927,10 +953,12 @@ def _run_coverage_pytest(root):
             return None, "pytest coverage: invocation failed — skipped"
         if rc == 124:
             return None, "pytest coverage: timed out — skipped"
-        _rc, out, _e = run(["coverage", "report"], cwd=root, timeout=120)
+        _rc, out, _e = run(coverage_tool + ["report"], cwd=root, timeout=120)
         pct = parse_coverage_pytest(out or "")
         return pct, (
-            None if pct is not None else "pytest coverage: no TOTAL line parsed"
+            None
+            if pct is not None
+            else "pytest coverage: no TOTAL line parsed (coverage and pytest must come from the same environment)"
         )
     finally:
         try:
@@ -994,7 +1022,10 @@ def _run_coverage_vitest(root):
         return None, None
     vitest = _resolve_vitest(root)
     if not vitest:
-        return None, "vitest coverage: vitest absent — skipped"
+        return (
+            None,
+            "vitest coverage: vitest not resolved (PATH, or node_modules/.bin under SF_PROJECT_NODE_BIN=1) — skipped",
+        )
     rc, out, _err = run([*vitest, "run", "--coverage"], cwd=root, timeout=600)
     if rc is None:
         return None, "vitest coverage: invocation failed — skipped"

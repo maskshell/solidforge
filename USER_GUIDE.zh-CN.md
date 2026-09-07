@@ -186,6 +186,7 @@ Solid Forge 接入了**部分**异源 oracle（下方可选异源扩展）——
 - **最关键组合**：`/solidforge:arm-tools --with-tools`——默认武装给规则（架构配置）；`--with-tools` 给引擎（门 dev 依赖）。第一方门（fast-gate、arch-contract、supply-chain、test）要真正触发两者都需要。项目已有门工具时（如 `pyproject.toml` 里已有 ruff），裸 `/solidforge:arm-tools`（仅规则）即可。
 - `--scaffold-configs` 只 scaffold **Vale / Semgrep / Spectral**。Checkov / OASDiff / Trivy 的武装方式是自行安装工具 + 写配置（门自动检测）。
 - 插件更新后重跑 `/solidforge:arm-tools` 以重预置架构配置 / 宪法 / 模板（技能文本变了时；你的编辑保留）。
+- **项目本地门工具是 opt-in 的（信任边界）**：门默认只从 PATH 解析——仓库可提交的 `node_modules/.bin` / `.venv/bin` 工具须经 `SF_PROJECT_NODE_BIN=1`（含符号链接 containment）/ `SF_PROJECT_VENV_TOOLS=1`（已激活的 venv 本就在 PATH 上，无需 opt-in）才被执行；PATH 恒赢。版本耦合工具（`vitest`、`tsc`）：无 PATH 副本遮挡时，node opt-in 下运行项目锁定版本。因此 arm-tools 状态报告在 opt-in 前把项目本地工具列为 `absent (gate degrades)`——报告陈述门实际能执行什么，而非仅仅是装了什么。
 - 异源扩展的 `.env.solidforge.example` 由默认武装预置；`cp` 为 `.env.solidforge` + 填 token 以启用异源（见[异源](#异源different-family对抗评审正交轴杠杆)）。
 - 完整权威列表：[install.md](skills/parallel-development/references/install.md) 第 2 层。
 

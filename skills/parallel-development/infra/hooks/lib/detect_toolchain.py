@@ -70,15 +70,43 @@ def which_any(*candidates):
     return None
 
 
-def resolve_tool(name):
+def resolve_tool(name, root=None):
     """Return an argv prefix to run a tool: [<resolved-path>] or None.
-    Checks PATH first, then the project's local virtualenv bins (.venv/venv/env).
-    Lets gates find tools installed as project dev deps even when the venv is not
-    'active' on PATH."""
+
+    PATH only, by default (2026-09-03 security fix, backported from the pi
+    port — solidforge-pi ledger SECURITY OUTFLOW): the project-venv fallback
+    executed whatever binary a repo had committed under .venv/venv/env — a
+    hostile repo could plant an executable and have the gate run it with the
+    user's full privileges, with no prior code exec (the fallback armed
+    exactly in the state where the tool is absent from PATH). Opt back in
+    explicitly per-project when you actually rely on project-local dev-dep
+    tooling and trust the repo:
+      SF_PROJECT_VENV_TOOLS=1  -> .venv/venv/env python bins (0.2.4 semantics)
+      SF_PROJECT_NODE_BIN=1    -> node_modules/.bin (2026-09-06, mirrors pi 0.2.7)
+
+    The node branch carries a containment hard stop: a .bin entry whose
+    realpath ESCAPES node_modules/ (symlink to code outside the declared
+    trust boundary) is refused even under the opt-in. PATH always wins.
+    `root` (optional, for callers that know the target project — arm.py's
+    positional path) defaults to project_root(). POSIX layout only
+    (bin/, .bin/ — Windows Scripts//.cmd shims are out of scope, as in 0.2.4).
+    """
     p = _shutil_which(name)
     if p:
         return [p]
-    root = project_root()
+    root = root or project_root()
+    if os.environ.get("SF_PROJECT_NODE_BIN") == "1":
+        cand = os.path.join(root, "node_modules", ".bin", name)
+        if os.path.exists(cand):
+            node_modules = os.path.realpath(os.path.join(root, "node_modules"))
+            real = os.path.realpath(cand)
+            if real == node_modules or real.startswith(node_modules + os.sep):
+                return [cand]
+            # escaping symlink — outside the declared trust boundary; refuse
+            # (fall through to the venv branch — a separate opt-in channel)
+            # even though the node opt-in is set
+    if os.environ.get("SF_PROJECT_VENV_TOOLS") != "1":
+        return None
     for venv in (".venv", "venv", "env"):
         cand = os.path.join(root, venv, "bin", name)
         if os.path.exists(cand):
@@ -135,11 +163,17 @@ def deny_block(reason):
 
 
 def loop_state_path():
-    """Locate loop_state.py: dev location first (sibling scripts/ dir), then the
-    installed project location."""
+    """Locate loop_state.py: dev/package location only (sibling scripts/ dir).
+
+    The old fallback executed loop_state.py from the PROJECT's
+    .claude/parallel-dev/scripts/ — executing project-committed code with user
+    privileges, dormant only because the plugin layout happened to satisfy the
+    primary path. Fail closed (None) instead: accounting is best-effort, code
+    execution from the project dir is not an acceptable fallback.
+    (2026-09-03 security fix, backported from the pi port.)
+    """
     here = os.path.dirname(os.path.abspath(__file__))  # .../hooks/lib
     dev = os.path.normpath(os.path.join(here, "..", "..", "scripts", "loop_state.py"))
     if os.path.exists(dev):
         return dev
-    root = os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd()
-    return os.path.join(root, ".claude", "parallel-dev", "scripts", "loop_state.py")
+    return None

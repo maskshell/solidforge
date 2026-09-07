@@ -67,13 +67,20 @@ def have(cmd):
 
 
 def tool_present(project_dir, name):
-    """True if a tool is reachable: on PATH OR in the project's local venv bin."""
-    if have(name):
-        return True
-    for venv in (".venv", "venv", "env"):
-        if os.path.exists(os.path.join(project_dir, venv, "bin", name)):
-            return True
-    return False
+    """True if the GATES can actually run this tool — resolve_tool's trust
+    model is the single source of truth (PATH; project-local bins only under
+    their explicit opt-ins SF_PROJECT_VENV_TOOLS / SF_PROJECT_NODE_BIN, with
+    node containment). `project_dir` is threaded through as resolve_tool's
+    root so the positional-arg path (cwd ≠ target) reports against the SAME
+    project the tools install into. The old unconditional venv check reported
+    tools the 0.2.4+ gates would refuse to execute — a silent-green of its
+    own (2026-09-06, node-bin adoption A2; mirrors pi's landed shape)."""
+    lib = os.path.join(INFRA_ROOT, "hooks", "lib")
+    if lib not in sys.path:
+        sys.path.insert(0, lib)
+    import detect_toolchain as _dt
+
+    return _dt.resolve_tool(name, root=project_dir) is not None
 
 
 def run_cwd(argv, cwd, timeout=600):
@@ -280,6 +287,8 @@ def _toolchain_note_lines(project_dir, lang=None):
         TOOLCHAIN_HEADING,
         "",
         "The convergence-loop gates degrade gracefully and never report a silent green when a tool is absent. To arm them on a new machine or in CI, restore/install the gate tools for the ecosystems this project uses:",
+        "",
+        "Project-local installs (node_modules/.bin, the local venv bins) count as present only under their opt-ins — SF_PROJECT_NODE_BIN=1 / SF_PROJECT_VENV_TOOLS=1 (PATH always wins; the arm report and gate coverage notes state what the gates can actually execute).",
         "",
     ]
     emitted = False
@@ -923,6 +932,11 @@ def lsp_advisory(project_dir):
 
 def report_gates(project_dir):
     print("\nToolchain / gate status:")
+    print(
+        "  (project-local resolution is probed at the PROJECT ROOT only — in nested-marker "
+        "layouts the gate coverage notes are authoritative; the depcruise npx arm is not "
+        "modeled here)"
+    )
     checks = [
         ("python3 (required)", have("python3"), True),
         ("ruff (Python fast gate)", tool_present(project_dir, "ruff"), False),
@@ -955,6 +969,11 @@ def report_gates(project_dir):
         ("npm audit (Web supply-chain)", have("npm"), False),
         ("cargo-audit (Rust supply-chain)", have("cargo-audit"), False),
         ("pytest (Python test gate)", tool_present(project_dir, "pytest"), False),
+        (
+            "coverage (Python coverage gate)",
+            tool_present(project_dir, "coverage"),
+            False,
+        ),
         ("vitest (Web test gate)", tool_present(project_dir, "vitest"), False),
         ("mvn / gradle (Java build + test)", have("mvn") or have("gradle"), False),
         ("javac (Java type gate)", have("javac"), False),
@@ -987,7 +1006,7 @@ def absent_tool_hint(absent_labels, with_tools):
     """Surface missing gate tools (notably the type/supply-chain/test tools that may be new since an older install). Returns the hint text, or None when nothing is absent or --with-tools already provisions/prints install commands."""
     if with_tools or not absent_labels:
         return None
-    return "Some gate tools are absent (see status above) — including tools that may be new since your last install (type / supply-chain / test). Re-run with --with-tools to provision project-local tools (pip-audit, pytest-json-report, vitest, ...) and to print install commands for system tools (gitleaks, cargo-audit, cargo-nextest)."
+    return "Some gate tools are absent (see status above) — including tools that may be new since your last install (type / supply-chain / test). Re-run with --with-tools to provision project-local tools (pip-audit, pytest-json-report, vitest, ...) and to print install commands for system tools (gitleaks, cargo-audit, cargo-nextest). NB: project-local installs (node_modules/.bin, the local venv bins) only count as present under their opt-ins — SF_PROJECT_NODE_BIN=1 / SF_PROJECT_VENV_TOOLS=1 (PATH always wins; the report shows what the gates can actually execute)."
 
 
 # --- --revert: inverse of THIS script's provisioning (dry-run default, --apply) ---

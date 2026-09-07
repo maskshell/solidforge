@@ -1,0 +1,743 @@
+{
+ "artifact": "docs/sf-project-node-bin-adoption.md",
+ "authority_ref": "solidforge-pi/docs/outflow/sf-project-node-bin-handoff.md + cited CC/pi code anchors + run-dir evidence captures",
+ "size_tier": "long",
+ "cap": 7,
+ "rounds": [
+  {
+   "round": 1,
+   "same_source_findings": 7,
+   "hetero_findings": 3,
+   "hetero_degraded": false,
+   "blockers": 3,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r1-same-F1",
+     "severity": "blocker",
+     "kind": "citation-error",
+     "location": "2.2 / 3 (A3) / 5 (T2)",
+     "evidence": "CLAIM: Section 2.2 enumerates exactly four ad-hoc local-first node_modules/.bin resolution sites (fast_gate.py:217-218, arch_contract_web.py:70-78, :167, :202-204) and A3 claims collapsing these four 'closes the residual execute-repo-committed-binary hole 489b217 missed; single source of truth'. :: EVIDENCE: The same resolution shape exists in at least three more gate sites the doc never mentions: (a) /Users/solosus/dev/ws-ai/solidforge/skills/parallel-development/infra/scripts/spectral_adapter.py:124-132 — resolve_spectral: 'Local install (node_modules/.bin) first, then global on PATH', local_bin = os.path.join(root, \"node_modules\", \".bin\", \"spectral\"), returned before have(\"spectral\"); no opt-in, no containment. (b) /Users/solosus/dev/ws-ai/solidforge/skills/parallel-development/infra/scripts/arch_contract_tests.py:575-586 — _resolve_vitest: docstring 'Resolve vitest: project-local node_modules/.bin/vitest first, else PATH. Mirrors _resolve_tsc (arch_contract_web.py)' — the doc lists _resolve_tsc but omits its own declared mirror. (c) /Users/solosus/dev/ws-ai/solidforge/skills/parallel-development/infra/scripts/arch_contract_python.py:83-97 — a SECOND private resolve_tool (PATH then unconditional venv scan of .venv/venv/env) used at lines 156/192/307 for lint-imports, pylint, pyright. After A1-A3 land as scoped, spectral/vitest still prefer repo-committed node_modules/.bin over PATH, and the Python arch-contract gate still executes repo-committed .venv binaries. A3's headline rationale ('closes the hole') is false as scoped; the section-5 acceptance probe (planted node_modules/.bin/eslint + .venv/bin/ruff) exercises only fast_gate/web paths and would pass green while the same class stays live in the missed sites — a silent-green of the plan's own security claim.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r1-same-F2",
+     "severity": "blocker",
+     "kind": "structural-gap",
+     "location": "2.1 (row 2) / 3 (A2) / 5 (T3)",
+     "evidence": "CLAIM: Section 2.1 attributes the 'own unconditional venv scan (pi bug #2's shape)' to arm.py tool_present alone, and the plan fixes exactly that one site (A2/T3). :: EVIDENCE: arm.py:69-76 does carry that shape (verified: 'for venv in (\".venv\", \"venv\", \"env\")' with no opt-in), but it is not the only one: arch_contract_python.py:83-97 defines its own resolve_tool with the identical unconditional venv scan — 'p = which(name) ... for venv in (\".venv\", \"venv\", \"env\"): cand = os.path.join(root, venv, \"bin\", name); if os.path.exists(cand): return [cand]' — and unlike arm.py post-A2 it would remain permanently un-gated (it never consults SF_PROJECT_VENV_TOOLS or any opt-in). The unconditional-venv-exec class the commit title 'PATH-only tool resolution' claims closed therefore survives at line 83 even after the full plan, and the doc's verification section never detected it. This is the same defect class the doc was written to close, missed by the doc's own sweep.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r1-same-F3",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "1 / 2.1 (row 6) / 3 (A4)",
+     "evidence": "CLAIM: The ported test file has '6 cases: PATH-only default, node opt-in, escaping-symlink refusal, PATH-wins, venv opt-in regression x2', and section 2.1 marks 'pi shipped what handoff section 2 describes' as confirmed. :: EVIDENCE: Read /Users/solosus/dev/ws-ai/solidforge-pi/skills/parallel-development/infra/test/detect_toolchain_test.py in full: it executes 10 checks, not 6 — 7 in main() (PATH-only default; SF_PROJECT_NODE_BIN resolves; in-tree symlink resolves; escaping symlink refused; PATH wins; venv resolves under opt-in; venv ignored without opt-in) plus 3 arm.tool_present checks in arm_tool_present_truth() (absent without opt-in, present under opt-in, root threading cwd!=target). The enumeration also omits case 2b (in-tree .bin symlink resolution), which the file itself calls 'the DOMINANT npm shape' and a containment-regression sentinel — semantically load-bearing for the A1 port. The handoff carried the same '6 cases' text and the artifact copied it as 'confirmed' without counting.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r1-same-F4",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "8 (Sources) / 2.1 (row 6)",
+     "evidence": "CLAIM: pi landed implementation includes 'solidforge-pi/skills/parallel-development/prompts/arm-tools.md' and 'pi prompts/arm-tools.md wires ARGUMENTS'. :: EVIDENCE: The cited path does not exist: Grep on /Users/solosus/dev/ws-ai/solidforge-pi/skills/parallel-development/prompts/arm-tools.md returns 'Path does not exist'. Glob over the pi repo finds the file at /Users/solosus/dev/ws-ai/solidforge-pi/prompts/arm-tools.md (repo-root prompts/, not under skills/parallel-development/). The underlying claim is true at the correct path — line 8 reads: Invocation arguments ... `${ARGUMENTS:-<none passed>}` — but the section-8 anchor as written is unverifiable by any reader who follows it.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r1-same-F5",
+     "severity": "warning",
+     "kind": "authority-chain-break",
+     "location": "2.3 / 3 (A5)",
+     "evidence": "CLAIM: Verbatim CC-docs quote: 'When no placeholder receives an argument, Claude Code appends them as `ARGUMENTS: <value>`.' used to downgrade the $ARGUMENTS item from bug fix to P3 optional hardening. :: EVIDENCE: The quote is load-bearing and unverifiable from the artifact or either repo: the doc itself states 'Behavior NOT confirmed on CC', so the downgrade verdict rests entirely on this external sentence (https://code.claude.com/docs/en/slash-commands). If CC does not implicitly append typed arguments, silent flag-drop is live on CC too and A5 becomes a P1 bug fix, inverting the priority and the ADR obligation in section 6 ('wired for robustness, not as a bug fix'). No web-fetch capability in this review environment; the quote could not be checked against the cited page. The local half of 2.3 (zero $ARGUMENTS occurrences in commands/arm-tools.md; argument-hint at line 3) verified exactly.",
+     "suggestion": "escalate"
+    },
+    {
+     "defect_id": "r1-same-F6",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "2.2",
+     "evidence": "CLAIM: 'That framing is wrong for CC in both directions.' :: EVIDENCE: [note-class in the leg's own output] Overstated against the doc's own evidence: section 2.1 row 3 confirms the handoff's symptom direction still holds for arm.py's report on CC (planted node_modules/.bin/eslint -> tool_present=False). The handoff framing is wrong only for the web-gate execution paths (2.2's four sites), not 'in both directions' repo-wide; arm.py's invisibility is real until A2 lands. Internal tension between 2.1 row 3 and 2.2's universal phrasing.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r1-same-F7",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "5 (T2)",
+     "evidence": "CLAIM: Replace '_resolve_tsc (lines 202-204)'. :: EVIDENCE: [note-class in the leg's own output] Anchor start is correct (def _resolve_tsc at arch_contract_web.py:202) but the function body extends to line 207 ('return [\"tsc\"] if have(\"tsc\") else None'); 202-204 covers only def + docstring + first body line. Cosmetic range truncation, same pattern as the accurate 70-78 and 217-218 anchors elsewhere in the doc.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r1-hetero-ts3-thread-ambiguous",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "section 5 / T3",
+     "evidence": "Doc section 5 T3: \"T3 (A2): `infra/install/arm.py` `tool_present` — import + call `resolve_tool` (thread `project_dir` as `root`), drop the private venv scan.\" Canonical `resolve_tool` (skills/parallel-development/infra/hooks/lib/detect_toolchain.py:73) signature is `def resolve_tool(name):` — no `root` parameter; root is computed internally via `project_root()` at line 90. The implementer has at least three plausible paths the doc does not disambiguate: (a) modify the signature to add `root` (breaking change for every other caller in `dt`); (b) set `CLAUDE_PROJECT_DIR` in arm.py before calling; (c) rely on `project_root()`'s cwd fallback (which may diverge from arm.py's `project_dir`). Section 2.1 row 3 implies live reproduction set up a temp project — a step that depends on the chosen threading mechanism. The doc never specifies which mechanism A2 will use, leaving the implementer to guess a load-bearing implementation choice.",
+     "suggestion": "Specify the threading mechanism explicitly: either \"add a `root` kwarg to `resolve_tool` (defaulting to `None` → current `project_root()` behavior)\" or \"arm.py exports `project_dir` via `CLAUDE_PROJECT_DIR` before the call, no signature change\"."
+    },
+    {
+     "defect_id": "r1-hetero-gates-refuse-vs-no-opt-in",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "section 2.1 row 4 vs section 2.2 paragraph 1",
+     "evidence": "Section 2.1 row 4 (titled \"tool_present-vs-gate mismatch for venv tools (status says present, gates refuse)\"): the live reproduction shows `tool_present`=True and canonical `resolve_tool`=None without opt-in — framed as \"gates refuse\". Section 2.2 first paragraph (verified against the file at skills/parallel-development/infra/scripts/arch_contract_python.py:83-97, which has no `SF_PROJECT_VENV_TOOLS` check): \"those gates never routed through `resolve_tool` at all — they carry their own ad-hoc resolution that prefers `node_modules/.bin` (or `.venv/bin`) over PATH, with no opt-in and no containment.\" Same paragraph later: \"(The handoff's invisibility framing DOES hold for arm.py's STATUS REPORT until A2 lands — section 2.1 row 3; the two directions are distinct.)\" In CC's CURRENT state, the gates' ad-hoc resolvers (private `resolve_tool` at arch_contract_python.py:83-97, plus the other six sites) execute `.venv/bin/lint-imports` unconditionally — they do NOT refuse. The \"gates refuse\" claim in section 2.1 row 4 actually describes the canonical `detect_toolchain.resolve_tool`'s behavior (which IS what A2+A3 will route gates through AFTER the adoption). Section 2.1 is labeled as current-state verification; section 2.2 also describes current-state gate behavior. The two sections disagree on what the gates do today.",
+     "suggestion": "Either (a) re-label section 2.1 row 4 as \"tool_present-vs-canonical-resolve_tool mismatch\" (drop \"gates\"), or (b) move the row to a new \"post-adoption behavior change\" section. Add a row stating the CURRENT CC gate execution (ad-hoc) does NOT refuse — only the post-A2/A3 behavior does."
+    },
+    {
+     "defect_id": "r1-hetero-cross-repo-and-web-coverage",
+     "severity": "coverage",
+     "kind": "citation-error",
+     "location": "section 1 (10-check enumeration), section 2.1 row 6 (pi claims), section 2.3 (CC docs quote), section 8 (pi paths)",
+     "evidence": "Doc asserts in section 1: \"the file actually executes 10 checks (csr round 1 recount): 7 in `main()` ... plus 3 in `arm_tool_present_truth()`\" — the file lives in solidforge-pi, not solidforge. Section 2.1 row 6 claims \"pi `resolve_tool` has the `SF_PROJECT_NODE_BIN` branch + containment + PATH-wins; pi `tool_present` routes through `resolve_tool`; pi `prompts/arm-tools.md` wires ARGUMENTS\" — verified against the pi repo per the doc itself, but the pi repo is outside this session's reachable workspace (cross-project boundary per CLAUDE.md cross-project rule). Section 2.3 quotes Claude Code docs verbatim (\"`$ARGUMENTS` — All arguments passed when invoking the skill. When no placeholder receives an argument, Claude Code appends them as `ARGUMENTS: <value>`.\") attributed to https://code.claude.com/docs/en/slash-commands with \"fetched 2026-09-04 by the verification session\" provenance — no fetched-content capture, hash, or commit-hash reference is provided. Section 8 enumerates pi paths (e.g. `solidforge-pi/skills/parallel-development/infra/scripts/arch_contract_web.py:71-73,167-168,202-203`) that this session cannot verify. Per workspace rule 3 (\"never silently green — state coverage gaps honestly\"), these are coverage disclosures — the doc's claims are unverifiable from the doc alone. The same-family leg (F3 disposition \"section 1 recounts 10 checks incl. in-tree-symlink case\"; F5 disposition \"quote provenance added\") recorded fixes but did not capture the underlying file content or fetched-source text, so this review cannot audit the fixes either.",
+     "suggestion": "Either (a) inline-fetch and attach the pi file's `main()` and `arm_tool_present_truth()` bodies verbatim, plus the URL-fetched CC docs substitutions table excerpt, into the doc or its run record so a reviewer can audit; or (b) explicitly downgrade these claims to \"verified by the verification session — content not captured\" and accept the un-auditability."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r1-same-F1",
+     "action": "fixed",
+     "note": "inventory 4->7 sites (table with found-by credit); A3/T2/acceptance rescoped"
+    },
+    {
+     "defect_id": "r1-same-F2",
+     "action": "fixed",
+     "note": "site 7 in inventory; T2 deletes the private resolve_tool; T4 site-7 regression probe"
+    },
+    {
+     "defect_id": "r1-same-F3",
+     "action": "fixed",
+     "note": "section 1 recounts 10 checks incl. in-tree-symlink case; A4/T4 updated"
+    },
+    {
+     "defect_id": "r1-same-F4",
+     "action": "fixed",
+     "note": "section 8 path corrected + repo-root-prompts note"
+    },
+    {
+     "defect_id": "r1-same-F5",
+     "action": "fixed",
+     "note": "quote provenance added (fetched 2026-09-04 by the verification session, verbatim from substitutions table); orchestrator independently holds the fetched source"
+    },
+    {
+     "defect_id": "r1-same-F6",
+     "action": "fixed",
+     "note": "2.2 rephrased: execution paths vs report direction distinguished"
+    },
+    {
+     "defect_id": "r1-same-F7",
+     "action": "fixed",
+     "note": "range corrected to 202-207"
+    },
+    {
+     "defect_id": "r1-hetero-ts3-thread-ambiguous",
+     "action": "fixed",
+     "note": "fixed — T1 adopts pi signature resolve_tool(name, root=None) (verified: CC has resolve_tool(name), pi has resolve_tool(name, root=None)); T3 calls resolve_tool(name, root=project_dir)"
+    },
+    {
+     "defect_id": "r1-hetero-gates-refuse-vs-no-opt-in",
+     "action": "fixed",
+     "note": "fixed — 2.1 row 4 relabeled tool_present-vs-CANONICAL-resolve_tool mismatch + TODAY-split note (fast_gate python branch refuses via canonical resolver; seven ad-hoc sites execute unconditionally; all gates refuse only post-A2/A3)"
+    },
+    {
+     "defect_id": "r1-hetero-cross-repo-and-web-coverage",
+     "action": "fixed",
+     "note": "carried in coverage notes + evidence captured — pi pinned at 9a3b4a5; pi test file + detect_toolchain.py + CC-docs excerpt captured to run-dir evidence/; doc provenance block states the capture"
+    }
+   ]
+  },
+  {
+   "round": 2,
+   "same_source_findings": 6,
+   "hetero_findings": 1,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r2-same-F1",
+     "severity": "blocker",
+     "kind": "citation-error",
+     "location": "2.2 (Additional fact paragraph) + 8 (pi gate-site enumeration)",
+     "evidence": "CLAIM: \"pi itself carries sites 2-7 VERBATIM in its own tree\" and section 8's evidence list \"pi's own un-collapsed gate sites: arch_contract_web.py:71-73,167-168,202-203, arch_contract_tests.py:575-587, spectral_adapter.py:124-133, arch_contract_python.py:83-97\" (site 1 / fast_gate deliberately absent from both). :: EVIDENCE: pi ALSO carries site 1 verbatim: /Users/solosus/dev/ws-ai/solidforge-pi/skills/parallel-development/infra/hooks/fast_gate.py:215-216 reads `local = os.path.join(root, \"node_modules\", \".bin\", \"eslint\")` / `tool = local if os.path.exists(local) else dt.which_any(\"eslint\")` — identical to CC site 1 (fast_gate.py:217-218). The both-repos claim's evidence enumeration is therefore 6 of 7 sites; a reader acting on section 8 (e.g. the proposed reverse-outflow note to pi) would undercount pi's residual hole by the fast_gate site. This re-introduces the same defect class round 1 blocked on (incomplete site inventory), now on the pi side. Sites 2-7 themselves verified verbatim in pi (arch_contract_web.py:70-78/167-171/202-207, arch_contract_tests.py:575-587, spectral_adapter.py:124-133, arch_contract_python.py:83 + calls at 156/192/307).",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r2-same-F2",
+     "severity": "warning",
+     "kind": "authority-chain-break",
+     "location": "2.2 (behavior-change note for sites 4-5)",
+     "evidence": "CLAIM: \"the `_resolve_tsc`/`_resolve_vitest` docstrings justify local-first by version coupling (the project's PINNED tsc/vitest must run; a PATH copy would version-diverge...)\". :: EVIDENCE: Half-unsupported. arch_contract_tests.py:578-581 (_resolve_vitest) does carry that rationale (\"vitest is version-coupled to the project (v1/v2/v3 config API differ), so the project's PINNED version must run — a bare `vitest` on PATH would version-diverge\"). But _resolve_tsc's docstring at skills/parallel-development/infra/scripts/arch_contract_web.py:203 is only \"Resolve tsc: project-local node_modules/.bin/tsc first, else PATH.\" — no version/pin/coupling/diverge language anywhere in arch_contract_web.py (grep: zero matches). The version-coupling attribution to the tsc docstring is a source claim the source does not make; ADR obligation 2 and T5's pinned-version note lean on this framing.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r2-same-F3",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "8 (pi gate-site anchors)",
+     "evidence": "CLAIM: pi's _resolve_tsc site is at `solidforge-pi/.../arch_contract_web.py:202-203`. :: EVIDENCE: In /Users/solosus/dev/ws-ai/solidforge-pi/skills/parallel-development/infra/scripts/arch_contract_web.py, lines 202-203 are only `def _resolve_tsc(root):` + its one-line docstring; the load-bearing local-first resolution body is lines 204-207 (`local = ...` / `if os.path.exists` / `return [local]` / `return [\"tsc\"] if have(\"tsc\") else None`). The doc's own CC table (row 4) anchors the byte-identical text as 202-207. The pi anchor misses the body it is cited to evidence (the other two pi anchors, 71-73 and 167-168, do cover their load-bearing lines).",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r2-same-F4",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "2.2 (opening paragraph) vs 2.2 table row 7",
+     "evidence": "CLAIM: \"they carry their own ad-hoc resolution that prefers `node_modules/.bin` (or `.venv/bin`) over PATH, with no opt-in and no containment\" (applied to all seven sites). :: EVIDENCE: Internal contradiction with the doc's own row 7 and with source: arch_contract_python.py:89-96 tries PATH FIRST (`p = which(name); if p: return [p]`) and only then scans .venv/venv/env unconditionally — it does NOT prefer .venv over PATH. Row 7 itself states the correct shape (\"PATH then UNCONDITIONAL `.venv/venv/env` scan\"). The un-gated-execution defect is real for all seven, but the local-first-over-PATH generalization is false for site 7.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r2-same-F5",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "2.3 (first bullet)",
+     "evidence": "CLAIM: \"(frontmatter has `argument-hint` only; the body's ... instruction has no declared channel for the typed flags)\". :: EVIDENCE: commands/arm-tools.md frontmatter (lines 2-3) carries TWO keys: `description:` and `argument-hint:`. \"frontmatter has `argument-hint` only\" is literally false as written (the defensible reading — the only argument-channel key is the hint — is not what the sentence says). The load-bearing claim it brackets IS verified: zero `$ARGUMENTS` occurrences in the file (read in full).",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r2-same-F6",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "Provenance (line 5)",
+     "evidence": "CLAIM: \"7 findings — 2 blockers (incomplete site inventory, section 2.2)\". :: EVIDENCE: [note-class in the leg's own output] r1-same-findings.json records the two blockers as distinct defects: F1 \"Site inventory incomplete\" (2.2/3-A3/5-T2) and F2 \"arch_contract_python.py:83-97 private resolve_tool = unconditional venv executor ... permanently un-gated under the plan as scoped\" (2.1/3-A2/5-T2). The provenance's single gloss flattens F2 into the inventory description; counts and fix statuses otherwise match the record exactly (2 blockers / 3 warnings / 2 notes, all disposed fixed).",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r2-hetero-live-repro-unverifiable",
+     "severity": "coverage",
+     "kind": "citation-error",
+     "location": "section 2.1 rows 3-4 (\"reproduced live\" / \"live reproduction\")",
+     "evidence": "Section 2.1 row 3 says \"reproduced live | temp project with executable `node_modules/.bin/eslint` → `tool_present`=False, report line 'eslint (Web gate): absent (gate degrades)'\". Section 2.1 row 4 says \"reproduced live | temp `.venv/bin/lint-imports` → `tool_present`=True while the CANONICAL `hooks/lib/detect_toolchain.resolve_tool` returns None without opt-in\". Doc provenance block (line 8) says: \"the pi test file and the fetched CC-docs excerpt are captured under `workspace/cross-source-review/runs/20260904-node-bin-adoption/evidence/`\". The evidence directory contains only `cc-docs-arguments-excerpt.txt`, `pi-commit.txt`, `pi-detect_toolchain_test.py`, `pi-detect_toolchain.py` — no temp-project test artifacts, captured stdout/stderr from arm.py, or transcript of the live reproduction. A reviewer cannot independently audit the \"reproduced live\" claim against the doc alone. Per workspace rule 3 (\\\"never silently green — state coverage gaps honestly\\\"), this is a coverage disclosure: the live-reproduction rows are static-asserted, not auditably captured.",
+     "suggestion": "Either (a) capture the live-reproduction transcripts (temp project setup + arm.py output) into the run-dir evidence/ and reference them in the doc's row 3-4 evidence column, or (b) downgrade \"reproduced live\" to \"verified by the verification session — capture not retained\" to make the audit gap explicit."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r2-same-F1",
+     "action": "fixed",
+     "note": "'sites 2-7' -> ALL SEVEN (site 1 at pi fast_gate.py:215-216); section 8 enumeration completed with site labels"
+    },
+    {
+     "defect_id": "r2-same-F2",
+     "action": "fixed",
+     "note": "attribution corrected: rationale lives in _resolve_vitest's docstring; tsc stated as fact-applicable; ADR-2 wording softened"
+    },
+    {
+     "defect_id": "r2-same-F3",
+     "action": "fixed",
+     "note": "pi anchor 202-203 -> 202-207 (and 167-168 -> 167-171 for symmetry)"
+    },
+    {
+     "defect_id": "r2-same-F4",
+     "action": "fixed",
+     "note": "opening paragraph: 'six of the seven sites prefer node_modules/.bin over PATH; site 7 tries PATH first, then unconditionally executes project-venv binaries'"
+    },
+    {
+     "defect_id": "r2-same-F5",
+     "action": "fixed",
+     "note": "'frontmatter's only argument-channel key is argument-hint'"
+    },
+    {
+     "defect_id": "r2-same-F6",
+     "action": "fixed",
+     "note": "provenance gloss expanded to name both blockers distinctly"
+    },
+    {
+     "defect_id": "r2-hetero-live-repro-unverifiable",
+     "action": "fixed",
+     "note": "carried in coverage notes + evidence captured — reproduction re-executed 2026-09-04 (post round-2 revision); transcript at evidence/live-repro-transcript.txt shows tool_present(eslint)=False + 'absent (gate degrades)' report line, tool_present(lint-imports)=True vs canonical resolve_tool None/opt-in split; doc evidence-capture bullet now lists the transcript"
+    }
+   ]
+  },
+  {
+   "round": 3,
+   "same_source_findings": 4,
+   "hetero_findings": 3,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r3-same-F1",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "provenance / Status line",
+     "evidence": "CLAIM: Status: \"csr round 2 same-family reconciled; round-2 different-family leg pending.\" (doc line 10) :: EVIDENCE: Contradicted by the run records the provenance block cites. workspace/cross-source-review/runs/20260904-node-bin-adoption/progress.jsonl shows the round-2 different-family leg RAN to completion: line 22 hetero-leg-start round 2 (23:46:23), lines 24-35 heartbeats, line 35 hetero-leg-end outcome ok findings 1 (23:51:53, 322.9s), line 36 reconcile round 2, line 37 round-end round 2. r2-hetero.json records 1 coverage finding (live-repro-unverifiable); r2-dispositions-hetero.json records its disposition: \"suggestion (a) adopted: live repro re-executed and transcript captured ... doc evidence-capture bullet now lists the transcript\". The doc ALREADY carries that leg's artifact — line 8 lists \"the section-2.1 live-reproduction transcript\" in the evidence capture — while line 10 still says the leg is pending. The provenance block also has no entry for the r2 different-family leg at all. Compounding: progress.jsonl mislabels the r2 hetero leg's own entries as \"round\": 1 (lines 23-35) vs round 2 (line 22 and both r2-hetero files), which likely produced the stale status.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r3-same-F2",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "2.1 row 4 / evidence capture (live-repro-transcript.txt)",
+     "evidence": "CLAIM: Transcript header: \"reproduces docs/sf-project-node-bin-adoption.md section 2.1 rows 3-4\"; row 4's verdict additionally claims the TODAY gates are SPLIT: \"fast_gate's python branch (which routes through the canonical resolver) refuses; the seven section-2.2 ad-hoc sites — including arch_contract_python.py's private resolver — still execute unconditionally.\" :: EVIDENCE: The transcript (evidence/live-repro-transcript.txt) only demonstrates the tool_present-vs-resolve_tool mismatch: tool_present(eslint)=False + report line (lines 20-33), tool_present(lint-imports)=True vs dt.resolve_tool None/opt-in (lines 55-57). No gate is ever invoked — the SPLIT half of row 4 (fast_gate refusing while arch_contract_python executes the planted binary) is not exercised. The split claim itself is TRUE per code I read (fast_gate.py:45 `tool = dt.resolve_tool(\"ruff\")` — canonical; arch_contract_python.py:156 `resolve_tool(\"lint-imports\")` — private, no opt-in), so this is an evidence-capture narrower than its label, not a wrong claim.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r3-same-F3",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "2.2 consequence / 3-A3 vs 5-T2",
+     "evidence": "CLAIM: A3 rationale: \"closes the residual execute-repo-committed-binary hole `489b217` missed\"; section 2.2: \"routing all seven ad-hoc sites through `resolve_tool` closes a residual security hole\". :: EVIDENCE: T2 explicitly keeps a channel that still executes project-local binaries with no opt-in and no containment: \"the `npx --no-install` fallback in `depcruise_cmd` is a PATH-family resolution and stays\" (verified at arch_contract_web.py:76-77 — `return [\"npx\", \"--no-install\", \"depcruise\"]`). `npx --no-install depcruise` prefers the project's node_modules/.bin/depcruise when locally installed, so post-A3 a repo-directed local binary remains executable through the npx fallback without SF_PROJECT_NODE_BIN=1. Section 4 (trust model) and section 7 (non-goals) record no such residual, and no ADR obligation covers it. The direct-execution class the seven sites embody is closed by A3; the closure claim as worded is broader than what T2 delivers.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r3-same-F4",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "2.2 sweep scope",
+     "evidence": "CLAIM: \"The other skills (blueprint-crafting, cross-source-review, primary-source-verification) run no project gate tooling; their infra was not swept.\" :: EVIDENCE: [note-class in the leg's own output] Stated as unqualified fact, but the run record says spot-check only: r2-same-findings.json coverage_notes — \"other-skills sweep spot-checked (grep no files), full sweep not performed\". My own grep of node_modules/.bin patterns across skills/ corroborates the claim (matches only under skills/parallel-development/), so the substance holds; only the certainty outruns the recorded evidence.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r3-hetero-site7-path-prefix-drift",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "docs/sf-project-node-bin-adoption.md §2.2 site 7 row (line 50)",
+     "evidence": "Section 2.2 inventory table, sites 1–6 cite paths with the `skills/parallel-development/infra/...` prefix (lines 44–49: `skills/parallel-development/infra/hooks/fast_gate.py:217-218`, `…/scripts/arch_contract_web.py:70-78`, `:167-171`, `:202-207`, `…/scripts/arch_contract_tests.py:575-587`, `…/scripts/spectral_adapter.py:124-133`). Site 7 row at line 50 drops the prefix: \"`infra/scripts/arch_contract_python.py:83-97`\". The file in fact lives at `/Users/solosus/dev/ws-ai/solidforge/skills/parallel-development/infra/scripts/arch_contract_python.py` (verified via directory listing), so the bare-prefix form resolves only via cwd-relative lookup; section 2.2 sites 5 and 6 sit on either side of site 7 in the same table and use the full prefix. Section 5 T2 (line 103) also uses the bare-prefix form for site 7, so the no-prefix form is internally consistent across §2.2/§5 only if read as a separate convention — which the doc never states. Result: a reader who anchors on §2.2's sites-1–6 form will read site 7's row as missing the prefix; a reader who anchors on §5's form will read sites 1–6 as over-prefixed.",
+     "suggestion": "Either align §2.2 site 7 to `skills/parallel-development/infra/scripts/arch_contract_python.py:83-97` (matching sites 1–6 in the same table) or add a one-line convention note (e.g., \"§2.2 paths are repo-rooted; §5 paths are skill-rooted\")."
+    },
+    {
+     "defect_id": "r3-hetero-readme-zh-cn-omitted-from-audit",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "docs/sf-project-node-bin-adoption.md §2.4 line 69 vs §3 A7 line 81",
+     "evidence": "Section 2.4 line 69 enumerates the facade docs that fail to mention `SF_PROJECT_VENV_TOOLS`: \"README, USER_GUIDE (both languages), and `references/install.md`\" — i.e., 4 files (README + 2× USER_GUIDE + install.md). A7 line 81 enumerates the docs the adoption must update: \"README, README.zh-CN, USER_GUIDE, USER_GUIDE.zh-CN, `references/install.md`\" — 5 files. A7 explicitly names `README.zh-CN` and `USER_GUIDE.zh-CN`; §2.4 only names \"USER_GUIDE (both languages)\" and lists README in the singular. The file `README.zh-CN.md` does exist at `/Users/solosus/dev/ws-ai/solidforge/README.zh-CN.md` (verified via directory listing alongside README.md, USER_GUIDE.md, USER_GUIDE.zh-CN.md, and skills/parallel-development/references/install.md). So §2.4's pre-existing-omission audit omitted a real, extant facade doc that A7 then correctly re-includes — the two enumerations disagree on which docs are in scope.",
+     "suggestion": "Either rewrite §2.4's enumeration to \"README (both languages), USER_GUIDE (both languages), and references/install.md\" (matching A7's 5-doc scope), or — if the intent is that README is English-only and A7 is adding README.zh-CN as new — say so explicitly."
+    },
+    {
+     "defect_id": "r3-hetero-acceptance-probes-skip-sites-2-to-6",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "docs/sf-project-node-bin-adoption.md §5 acceptance (line 109) vs T4 (line 106)",
+     "evidence": "Section 5 T4 (line 106) commits: \"extend with CC-specific cases covering the seven collapsed sites — including the in-tree `.bin` symlink resolve case … and a probe that `arch_contract_python.py` no longer executes a planted `.venv/bin/lint-imports` without `SF_PROJECT_VENV_TOOLS=1`\". The formal acceptance gate at line 109 enumerates only three planted-binary probes: \"`node_modules/.bin/eslint` (fast_gate), `.venv/bin/ruff` (resolve_tool), `.venv/bin/lint-imports` (arch_contract_python — the site-7 regression probe)\". That covers site 1 (eslint) and site 7 (lint-imports) plus a generic resolve_tool probe (ruff). The §2.2 inventory's sites 2 (`depcruise_cmd`), 3 (eslint via arch_contract_web), 4 (`_resolve_tsc`), 5 (`_resolve_vitest`), and 6 (`resolve_spectral`) have no planted-binary probe named in the Acceptance gate. A reader treating Acceptance as the formal DoD will infer probes for 2 of 7 collapsed sites, not 7 — the broader T4 commitment is not echoed in the gate.",
+     "suggestion": "Either list explicit planted-binary probes for sites 2–6 in the Acceptance line (e.g., a depcruise probe, a tsc probe, a vitest probe, a spectral probe) or generalize the Acceptance enumeration to \"planted-binary probes for each of the seven collapsed sites, named in T4\" so the gate does not silently narrow T4's commitment."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r3-same-F1",
+     "action": "fixed",
+     "note": "status line rewritten (rounds 1-3 reconciled); r2-hetero + r3-same provenance entries added"
+    },
+    {
+     "defect_id": "r3-same-F2",
+     "action": "fixed",
+     "note": "transcript header retitled to its actual content + code-anchor note for the TODAY-split"
+    },
+    {
+     "defect_id": "r3-same-F3",
+     "action": "fixed",
+     "note": "T2: npx arm gated behind SF_PROJECT_NODE_BIN=1, degrade to coverage note without opt-in; A3 rationale + 2.2 consequence narrowed (direct sites + delegation arm); section 4 bullet added ('a PATH tool is not PATH resolution'); ADR obligation added with rejected alternatives"
+    },
+    {
+     "defect_id": "r3-same-F4",
+     "action": "fixed",
+     "note": "sweep-scope sentence now states grep spot-check + independent round-3 corroboration, not proven fact"
+    },
+    {
+     "defect_id": "r3-hetero-site7-path-prefix-drift",
+     "action": "rejected",
+     "note": "rejected — evidence verified false: section 2.2 site-7 row (line 50) cites the full skills/parallel-development/ prefix, identical in form to sites 1-6 — the quoted dropped-prefix text does not exist in the doc. Constructive half adopted: a one-line path-convention note added under the table header (sections 1-4 repo-rooted; section 5 skill-rooted), removing the ambiguity that invited the misread"
+    },
+    {
+     "defect_id": "r3-hetero-readme-zh-cn-omitted-from-audit",
+     "action": "fixed",
+     "note": "fixed — section 2.4 enumeration rewritten to 'README (both languages), USER_GUIDE (both languages), references/install.md' = 5 docs, matching A7"
+    },
+    {
+     "defect_id": "r3-hetero-acceptance-probes-skip-sites-2-to-6",
+     "action": "fixed",
+     "note": "fixed — acceptance generalized to planted-binary probes for EACH of the seven sites + the gated npx arm, with the three named anchors as the minimal regression set and T4 named as the extender"
+    }
+   ]
+  },
+  {
+   "round": 4,
+   "same_source_findings": 5,
+   "hetero_findings": 4,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r4-same-F1",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "provenance/status lines (doc lines 3-12)",
+     "evidence": "CLAIM: \"Status: csr rounds 1-3 reconciled (same-family ×3, different-family ×2); round-3 different-family leg pending.\" — and the provenance block carries no entry for a round-3 different-family leg. :: EVIDENCE: False against the run records and against the doc's own content. (a) workspace/cross-source-review/runs/20260904-node-bin-adoption/r3-hetero.json exists: verdict pass, 3 findings, minimax-cn/MiniMax-M3; r3-dispositions-hetero.json: 2 fixed + 1 rejected. (b) progress.jsonl line 59: {\"ts\":\"2026-09-05T00:24:01\",\"type\":\"reconcile\",\"round\":3,\"fixed\":2,\"rejected\":1}; line 61: round-4 same-family spawn. (c) The current doc embodies exactly the r3-hetero dispositions: the path-convention note under the 2.2 table (line 44), the section-2.4 five-doc enumeration (line 71), and the acceptance generalization to seven site probes + gated npx arm (line 111) are the actions recorded in r3-dispositions-hetero.json items 1-3. So the leg not only ran — its fixes are already in the artifact — while the status line declares it pending and the leg count (×2) omits it. This is the same defect class r3-same F1 (blocker, stale status line) flagged; that fix went stale one leg later.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r4-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "8 (doc line 132, pi site-2 anchor)",
+     "evidence": "CLAIM: pi site 2 cited as `infra/scripts/arch_contract_web.py:71-73` as evidence that pi carries site 2 (described in 2.2 as \"local first, then PATH, then `npx --no-install`\", CC range 70-78). :: EVIDENCE: The pi file's depcruise_cmd spans lines 70-78, line-identical to CC (read: /Users/solosus/dev/ws-ai/solidforge-pi/skills/parallel-development/infra/scripts/arch_contract_web.py:70-78 — 71-73 local, 74-75 PATH, 76-77 npx --no-install). The cited 71-73 range covers only the local-first arm and omits the PATH and npx lines — and the npx arm is load-bearing in the round-3 fix chain. Same anchor-undercoverage class as r2 F3 (\"pi _resolve_tsc anchor 202-203 misses the resolution body\"), which was fixed for tsc (202-207) and eslint (167-171) but left depcruise at 71-73.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r4-same-F3",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "4 header (doc line 87) vs its own npx bullet (doc line 94)",
+     "evidence": "CLAIM: \"Trust model (carried from handoff §4, unchanged)\" — while bullet 6 (\"npx delegation (`npx --no-install`) is opt-in-gated like direct local resolution...\") is a round-3 addition absent from the handoff. :: EVIDENCE: Handoff §4 (/Users/solosus/dev/ws-ai/solidforge-pi/docs/outflow/sf-project-node-bin-handoff.md:56-67) contains no npx bullet — its bullets are: opt-in trust statement, PATH-only default, node-branch containment, venv asymmetry, TOCTOU residual, POSIX-only. The doc's section 4 carries all of those plus the new npx bullet; r3-same F3 disposition records \"section 4 bullet added\" as part of the round-3 fix. The carried content is unchanged but the section is not, so \"unchanged\" is now an over-claim inside the very fix chain it describes.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r4-same-F4",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "5 acceptance (doc line 111)",
+     "evidence": "CLAIM: \"planted-binary probes for EACH of the seven collapsed sites (and the gated npx arm)\" — but the concrete breakdown names probes for only 6 of the 7 sites. :: EVIDENCE: Minimal set names: `node_modules/.bin/eslint` (fast_gate — annotated to site 1), `.venv/bin/ruff` (canonical resolve_tool, not one of the seven), `.venv/bin/lint-imports` (site 7). \"T4 extends the remaining site probes (depcruise / tsc / vitest / spectral)\" maps to sites 2/4/5/6. Site 3 (arch_contract_web.py:167-171 eslint concurrency check) appears in neither list — the remaining sites are five, the extension list has four items. Mitigating fact: a planted node_modules/.bin/eslint would physically exercise site 3's identical resolution, but the doc's own \"(fast_gate)\" annotation binds the probe to site 1. This is the residue of r3-hetero H3 (\"acceptance-probes-skip-sites-2-to-6\"): the headline was generalized but the enumeration still under-counts by one site.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r4-same-F5",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "2.1 row 5 (doc line 33) vs path-convention note (doc line 44)",
+     "evidence": "CLAIM: Evidence path \"`infra/test/` inventory has no such file\" is skill-rooted shorthand inside sections 1-4, which the doc's own convention note declares repo-rooted. :: EVIDENCE: [note-class in the leg's own output] Line 44 (added this round): \"sections 1-4 cite repo-rooted paths\". Rows 1-2 of the same table use the full prefix (skills/parallel-development/infra/...), but row 5's `infra/test/` resolves under the declared convention to a nonexistent repo-root path; the real inventory is skills/parallel-development/infra/test/ (glob: only plan_queue_detect.py matches *detect* — the row's factual claim is TRUE, verified). Advisory consistency fix only.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r4-hetero-fast-gate-canonical-scope-underrepresented",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "section 2.1, row 4 (tool_present vs CANONICAL resolve_tool mismatch)",
+     "evidence": "Doc: \\\"TODAY the gates are SPLIT: fast_gate's python branch (which routes through the canonical resolver) refuses\\\". Source: `skills/parallel-development/infra/hooks/fast_gate.py` line 45 (check_python -> dt.resolve_tool(\\\"ruff\\\")), line 159 (check_rust -> dt.resolve_tool(\\\"rustfmt\\\")), line 172 (check_java -> dt.resolve_tool(\\\"google-java-format\\\")), line 191 (check_go -> dt.resolve_tool(\\\"gofmt\\\")). Four of the six fast_gate branches already route through the canonical resolver and refuse without opt-in; the doc singles out \\\"python branch\\\" as the canonical example, misrepresenting TODAY's split. check_web (lines 217-218) is the singular ad-hoc local-first branch, but the doc frames python as the canonical example. This affects the reader's mental model of the pre-A2/A3 state and the magnitude of the A2/A3 fix.",
+     "suggestion": "Re-frame row 4 as \\\"fast_gate's python/go/rust/java branches (which route through the canonical resolver) refuse; check_web's local-first + the seven section-2.2 ad-hoc sites still execute unconditionally.\\\" Or state explicitly that 4/6 fast_gate branches already use canonical resolve_tool."
+    },
+    {
+     "defect_id": "r4-hetero-complete-inventory-vs-sweep-scope",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "section 2.2 (paragraph beginning \\\"Complete inventory...\\\")",
+     "evidence": "Doc: \\\"Complete inventory (swept by the verification session AND independently by csr round 1...)\\\" and later in the same section: \\\"Sweep scope: `skills/parallel-development/infra/` (hooks, scripts, install, tests) only;... The other skills (blueprint-crafting, cross-source-review, primary-source-verification) were spot-checked by grep only (no matches), not fully swept — stated as evidence-backed, not proven.\\\" The word \\\"Complete\\\" sits in direct tension with the acknowledged scope limitation in the same section. Section 2.1 row 5 and the framing of the sweep as scoped but \\\"corroborated by grep\\\" together contradict the \\\"Complete\\\" framing.",
+     "suggestion": "Soften \\\"Complete inventory\\\" to \\\"Inventory under sweep scope\\\" or \\\"Inventory of parallel-development/infra/ ad-hoc resolution sites, with sweep scope disclosed\\\"; the disclosed limitation already exists, but the headline claim overstates the evidence."
+    },
+    {
+     "defect_id": "r4-hetero-acceptance-opt-in-ambiguity",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "section 5, T2 acceptance paragraph (\\\"ignored by the gates without the matching opt-in, honored under it\\\")",
+     "evidence": "Doc acceptance: \\\"planted-binary probes for EACH of the seven collapsed sites (and the gated npx arm) — ignored by the gates without the matching opt-in, honored under it.\\\" The \\\"matching opt-in\\\" is unspecified: site 7 (arch_contract_python) gates on SF_PROJECT_VENV_TOOLS; sites 1-6 + npx arm gate on SF_PROJECT_NODE_BIN (per A1/A3). The T5/A7 task bundles them as \\\"Document both env vars\\\" but T4's CC-specific probe design needs explicit per-site opt-in mapping to be implementable. Without it, a probe writer doesn't know whether to set SF_PROJECT_VENV_TOOLS=1 or SF_PROJECT_NODE_BIN=1 to exercise the success path of, e.g., site 3's eslint vs site 7's lint-imports.",
+     "suggestion": "Add an opt-in mapping table in section 5 acceptance: site -> env var -> probe binary. E.g., \\\"sites 1, 3 -> SF_PROJECT_NODE_BIN=1 with node_modules/.bin/eslint; site 2 -> SF_PROJECT_NODE_BIN=1 with node_modules/.bin/depcruise; site 4 -> SF_PROJECT_NODE_BIN=1 with node_modules/.bin/tsc; site 5 -> SF_PROJECT_NODE_BIN=1 with node_modules/.bin/vitest; site 6 -> SF_PROJECT_NODE_BIN=1 with node_modules/.bin/spectral; site 7 -> SF_PROJECT_VENV_TOOLS=1 with .venv/bin/lint-imports; npx arm -> SF_PROJECT_NODE_BIN=1.\\\""
+    },
+    {
+     "defect_id": "r4-hetero-containment-monorepo-nested-node-modules",
+     "severity": "coverage",
+     "kind": "coverage-gap",
+     "location": "section 4 (Containment bullet) and section 5 T1 (containment = realpath under <root>/node_modules/)",
+     "evidence": "Doc: \\\"Containment applies to the node branch only: a `.bin` entry whose realpath escapes `node_modules/` is refused even under the opt-in\\\"; T1: \\\"containment = realpath under `<root>/node_modules/`\\\". This containment check as specified would refuse any binary whose realpath is NOT under `<root>/node_modules/` — including legitimate monorepo nested entries like `frontend/node_modules/.bin/eslint` (realpath `<root>/frontend/node_modules/.bin/eslint` is not under `<root>/node_modules/`). The current pre-fix code (fast_gate.py:217) only checks `<root>/node_modules/.bin/eslint`, so the new code preserves the same scope; but the doc never addresses whether this is the intent for monorepos, where a planted-binary probe at a nested path would behave differently from a planted-binary probe at the root path. The doc doesn't specify containment scope.",
+     "suggestion": "Add a sentence clarifying whether containment is strictly `<root>/node_modules/` (refuses monorepo nested binaries) or recursive (allows any `**/node_modules/.bin/*`). If the former, note the monorepo consequence explicitly; if the latter, state the recursive prefix. Also: add a T4 planted-binary probe at `frontend/node_modules/.bin/eslint` if the intent is to test nested-node_modules behavior."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r4-same-F1",
+     "action": "fixed",
+     "note": "r3-hetero + r4-same provenance bullets added; status line updated (rounds 1-3 reconciled, sf x3, df x3)"
+    },
+    {
+     "defect_id": "r4-same-F2",
+     "action": "fixed",
+     "note": "pi site-2 anchor 71-73 -> 70-78 (ranges matching section-2.2 shapes incl. npx arm)"
+    },
+    {
+     "defect_id": "r4-same-F3",
+     "action": "fixed",
+     "note": "section 4 header: '(carried from handoff section 4; the npx bullet below is new — csr round 3)'"
+    },
+    {
+     "defect_id": "r4-same-F4",
+     "action": "fixed",
+     "note": "eslint anchor re-annotated 'exercises BOTH site 1 fast_gate and site 3 arch_contract_web concurrency (same resolved path)'; T4 extension list annotated to sites 2/4/5/6"
+    },
+    {
+     "defect_id": "r4-same-F5",
+     "action": "fixed",
+     "note": "row 5 path fully qualified to skills/parallel-development/infra/test/"
+    },
+    {
+     "defect_id": "r4-hetero-fast-gate-canonical-scope-underrepresented",
+     "action": "fixed",
+     "note": "fixed — row 4 TODAY-split widened: fast_gate python/rust/java/go branches (:45,:159,:172,:191) route canonical and refuse; web branch is site 1"
+    },
+    {
+     "defect_id": "r4-hetero-complete-inventory-vs-sweep-scope",
+     "action": "fixed",
+     "note": "fixed — 'Complete inventory' -> 'Inventory — complete within the sweep scope disclosed below'"
+    },
+    {
+     "defect_id": "r4-hetero-acceptance-opt-in-ambiguity",
+     "action": "fixed",
+     "note": "fixed — opt-in mapping added to acceptance: sites 1-6 + npx arm -> SF_PROJECT_NODE_BIN; site 7 + venv half -> SF_PROJECT_VENV_TOOLS"
+    },
+    {
+     "defect_id": "r4-hetero-containment-monorepo-nested-node-modules",
+     "action": "fixed",
+     "note": "carried in coverage notes + clarified in doc — section 4 containment bullet now states resolution only probes <root>/node_modules/.bin/<name> (nested workspace bins never resolved — out of scope by construction); containment refuses root .bin symlinks escaping root node_modules (verified against pi implementation)"
+    }
+   ]
+  },
+  {
+   "round": 5,
+   "same_source_findings": 2,
+   "hetero_findings": 3,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r5-same-F1",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "2.1 row 4 (TODAY-split, widened in csr round 4)",
+     "evidence": "CLAIM: \"fast_gate's python/rust/java/go branches route through the canonical resolver (`fast_gate.py:45,159,172,191`) and refuse\" :: EVIDENCE: Anchors verified true: /Users/solosus/dev/ws-ai/solidforge/skills/parallel-development/infra/hooks/fast_gate.py:45,159,172,191 all call dt.resolve_tool. But for java the refusal is not terminal: fast_gate.py:172-176 — after `tool = dt.resolve_tool(\"google-java-format\")` returns None, check_java falls back to `jar = os.environ.get(\"GOOGLE_JAVA_FORMAT_JAR\"); if jar and os.path.exists(jar): tool = [\"java\", \"-jar\", jar]` and executes. So the java branch does not categorically 'refuse' — python/rust/go do (they return True,None on None), java has an explicit env-configured execution channel after the resolver declines. Imprecision in a TODAY-state claim introduced by the round-4 widening (the wording was adopted verbatim from r4-hetero.json's suggestion, so the imprecision originates in the record too). Not plan-breaking: the JAR channel is explicit user configuration, not auto project-local resolution, and sits outside A3's seven-site scope.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r5-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "Provenance block, line 12 (r1 different-family bullet) vs line 15 status",
+     "evidence": "CLAIM: Round-1 different-family leg reported as \"3 findings — 1 blocker …, 1 warning …, 1 coverage …\" with no verdict stated, while the r2/r3/r4 different-family bullets each state \"verdict pass\" :: EVIDENCE: [note-class in the leg's own output] r1-hetero.json line 2 records \"verdict\": \"rewrite\" for that leg — the only non-pass verdict in the run. The doc does not contradict the record (the blocker and its fix are disclosed, and 'fully reconciled' in the status line is accurate — all findings dispositioned per progress.jsonl), but the omission is an asymmetric disclosure in the audit trail: a reader of the provenance block alone sees 'verdict pass' three times and no verdict once. Advisory provenance-completeness point, not a false claim.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r5-hetero-a2-report-only-vs-row4-all-refuse",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "Section 2.1 row 4 (last sentence) vs Section 3 A2 / Section 5 T3",
+     "evidence": "Section 2.1 row 4 concludes: \"ALL gates refuse only post-A2/A3\". Section 3 A2 defines A2 as: \"Route `arm.py tool_present` through `resolve_tool`\". Section 5 T3 confirms scope: \"`infra/install/arm.py` `tool_present` — import + call `resolve_tool(name, root=project_dir)` ... drop the private venv scan.\" Section 2.1 row 4 itself states the python/rust/go branches ALREADY refuse today (\"and refuse\") and the java branch ALSO refuses (canonical first, then explicit user-configured channel) — so the only un-refusing sites today are the WEB branch (site 1) + the 7 ad-hoc sites (sites 2-7), all of which collapse under A3. A2 only fixes the report (matches the callout in section 3: \"the report states what the gates can actually execute\"). The natural English reading of \"ALL gates refuse only post-A2/A3\" attributes gate-refusal impact to A2, but A2 has no gate-execution effect — only A3 does. Reading (b) (\"ALL gates behave consistently post-A2/A3, with A2 fixing the report and A3 fixing the execution paths\") is forced and the doc does not state it.",
+     "suggestion": "Replace \"ALL gates refuse only post-A2/A3\" with a phrasing that separates A2's report-alignment effect from A3's gate-execution effect, e.g. \"ALL gate-execution sites route through the canonical resolver only post-A3; the report matches that reality only post-A2 (callout in section 3).\""
+    },
+    {
+     "defect_id": "r5-hetero-section8-missing-test-file-source",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "Section 8 Sources (missing entry); affects Section 1 enumeration and Section 5 T4",
+     "evidence": "Section 8 lists the pi landed implementation as: \"solidforge-pi/skills/parallel-development/infra/hooks/lib/detect_toolchain.py, solidforge-pi/skills/parallel-development/infra/install/arm.py, solidforge-pi/prompts/arm-tools.md ...\". Section 1 references \"Port the test file `infra/test/detect_toolchain_test.py`\" (the CC-side destination path) and counts \"10 checks (csr round 1 recount): 7 in `main()` ... plus 3 in `arm_tool_present_truth()`\". Section 5 T4 states \"port pi's 10-check `detect_toolchain_test.py`\". The pi source of the file being ported is NOT in section 8's pi landed-implementation list — a reader tracing the test file back to its pi origin has no cited anchor (presumed `solidforge-pi/skills/parallel-development/infra/test/detect_toolchain_test.py`, but the doc does not state this). This is inconsistent with the other pi-side files cited at exact paths.",
+     "suggestion": "Add the pi test file to section 8's pi landed implementation list, e.g. \"solidforge-pi/skills/parallel-development/infra/test/detect_toolchain_test.py (10 checks: 7 in main + 3 in arm_tool_present_truth)\"."
+    },
+    {
+     "defect_id": "r5-hetero-cc-docs-quote-unverifiable",
+     "severity": "coverage",
+     "kind": "citation-error",
+     "location": "Section 2.3 (Claude Code substitutions doc quote)",
+     "evidence": "Section 2.3 states: \"Official docs (https://code.claude.com/docs/en/slash-commands, substitutions table; fetched 2026-09-04 by the verification session, quote verbatim): \"`$ARGUMENTS` — All arguments passed when invoking the skill. When no placeholder receives an argument, Claude Code appends them as `ARGUMENTS: <value>`.\"\" This is a primary-source citation that the doc builds a load-bearing claim on (downgrading A5 from bug fix to optional hardening, per section 3's A5 row and section 6's ADR). The fetched text is the oracle; the run-record evidence directory is gitignored, so an audit reviewer without web access cannot re-fetch and verify the verbatim quote. The doc states \"A reviewer without pi-repo or web access can audit those captures\" (section 13 / status-line block) — but that refers to the pi working-tree evidence, not the CC docs fetch. I could not verify the verbatim quote in this review; the same-family reviewer already flagged a separate prior-findings citation error, leaving this primary-source quote unverified by either leg.",
+     "suggestion": "Either (a) capture the CC-docs substitution table excerpt to the run-record evidence directory so a reviewer without web access can audit it (matches the existing evidence-capture pattern), or (b) restate the claim with a weaker hedge (\"per CC docs as of fetch; substitution semantics subject to upstream change\") so a verifier with web access can re-validate."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r5-same-F1",
+     "action": "fixed",
+     "note": "row 4 split corrected: python/rust/go refuse (:45,:159,:191); java routes canonical first (:172) then GOOGLE_JAVA_FORMAT_JAR explicit env channel (:173-176) — opt-in-like, not project-local auto-resolution"
+    },
+    {
+     "defect_id": "r5-same-F2",
+     "action": "fixed",
+     "note": "'verdict rewrite' added to the r1-hetero provenance bullet"
+    },
+    {
+     "defect_id": "r5-hetero-a2-report-only-vs-row4-all-refuse",
+     "action": "fixed",
+     "note": "fixed — row 4 last sentence rewritten: 'ALL gate-execution sites refuse only post-A3 (A3 routes them through the canonical resolver); A2 aligns the STATUS REPORT with the same contract'"
+    },
+    {
+     "defect_id": "r5-hetero-section8-missing-test-file-source",
+     "action": "fixed",
+     "note": "fixed — pi test file added to section 8's landed-implementation list with the 10-check/T4 annotation"
+    },
+    {
+     "defect_id": "r5-hetero-cc-docs-quote-unverifiable",
+     "action": "rejected",
+     "note": "rejected (already satisfied) — the excerpt has been captured at evidence/cc-docs-arguments-excerpt.txt since round 1 (the finding's suggestion (a) is the status quo); the doc's provenance block discloses the capture"
+    }
+   ]
+  },
+  {
+   "round": 6,
+   "same_source_findings": 3,
+   "hetero_findings": 3,
+   "hetero_degraded": false,
+   "blockers": 0,
+   "verdict": "pass",
+   "findings": [
+    {
+     "defect_id": "r6-same-F1",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "provenance (evidence-capture bullet, line 13)",
+     "evidence": "CLAIM: (gitignored run artifacts; the convergence-record carries the hash) :: EVIDENCE: No convergence-record exists for this run. The run dir workspace/cross-source-review/runs/20260904-node-bin-adoption/ contains progress.jsonl + r1-r5 records + evidence/ only (no convergence-record file). The only convergence-record.json in the tree is workspace/cross-source-review/convergence-record.json, whose \"artifact\" field is \"workspace/cross-source-review/langgraph-adoption-analysis.md\" (cap 4, 3 rounds) — a different run. Today the hash 9a3b4a5 is actually carried by evidence/pi-commit.txt (verified: file content is exactly \"9a3b4a5\"), which the same sentence already cites via \"(hash recorded in the run record)\". Under this doc's own five-round standard of exact run-record provenance (r3-same F1 and r4-same F1 blockers were both stale-status claims of this class), a present-tense reference to a record that does not exist for this artifact is the same defect shape in miniature, though materially benign since the hash is independently recorded.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r6-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "2.1 row 4 (line 38)",
+     "evidence": "CLAIM: fast_gate's WEB branch (site 1) and the seven section-2.2 ad-hoc sites — including arch_contract_python.py's private resolver — still execute unconditionally :: EVIDENCE: [note-class in the leg's own output] Site 1 IS one of the seven (section 2.2 inventory line 51: site 1 = fast_gate.py:217-218 web eslint, verified at fast_gate.py:217-218). The juxtaposition \"the WEB branch (site 1) and the seven ... sites\" reads additively as 8 unconditionally-executing sites when the inventory defines exactly 7; a reader reconciling against A3's \"collapse the SEVEN\" must backtrack. Reword to \"the WEB branch (site 1) and the other six ad-hoc sites\" or \"the seven section-2.2 ad-hoc sites (site 1 = the fast_gate WEB branch)\". Pre-existing phrasing (predates the r5 fix), no factual error.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r6-same-F3",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "1 (line 27) vs path-convention note (line 50)",
+     "evidence": "CLAIM: Port the test file `infra/test/detect_toolchain_test.py` (substrate-neutral) :: EVIDENCE: [note-class in the leg's own output] The convention note at line 50 declares \"sections 1-4 cite repo-rooted paths\", but section 1 cites the skill-rooted short form `infra/test/detect_toolchain_test.py` (repo-rooted form: skills/parallel-development/infra/test/...). Mitigations: the bullet recounts the handoff's own item (handoff line 41 uses the same short path) and the file does not yet exist on CC (T4 ports it); section 8 now carries the pi source path (the r5-hetero fix). Advisory inconsistency only.",
+     "suggestion": "reject-rationale-needed"
+    },
+    {
+     "defect_id": "r6-hetero-check-swift-omitted",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "section 2.1 row 4 (line 38); also implicit in section 4 trust model",
+     "evidence": "Doc claims (line 38, emphasis added): 'fast_gate's python/rust/go branches route through the canonical resolver (`fast_gate.py:45,159,191`) and refuse; its java branch routes canonical first (`:172`) ... fast_gate's WEB branch (site 1 of the seven section-2.2 ad-hoc sites) ... **ALL gate-execution sites refuse only post-A3** (A3 routes them through the canonical resolver)'. The doc enumerates python/rust/go/java/web for fast_gate (5 branches). The actual fast_gate.py also has `def check_swift(file_path):` at line 59-66 — verified: 'tool = dt.which_any(\\\"swift-format\\\")' (uses `which_any`, NOT `dt.resolve_tool`). detect_toolchain.py:65-70 confirms `which_any(*candidates)` is a strict-PATH wrapper with NO opt-in support. check_swift therefore never honors SF_PROJECT_VENV_TOOLS or any opt-in, and its behavior is unchanged by A3 (it still uses which_any, not the canonical resolver). The doc's 'ALL gate-execution sites refuse only post-A3' claim is misleading: check_swift already refuses off-PATH today and is not routed through the canonical resolver post-A3 either, so it is neither 'refusing only post-A3' nor 'being routed by A3'. The doc should explicitly note that swift is intentionally out of scope and why (which_any is already stricter than the canonical default).",
+     "suggestion": "Add an explicit mention of check_swift to section 2.1 row 4 (state: 'check_swift uses dt.which_any — strictly PATH, never honors SF_PROJECT_VENV_TOOLS, intentionally out of scope because it is strictly tighter than the canonical default') and revise 'ALL gate-execution sites refuse only post-A3' to scope the 'ALL' to sites that route through the canonical resolver (sites that the adoption actually touches)."
+    },
+    {
+     "defect_id": "r6-hetero-verbatim-line-number-mismatch",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "line 60 (section 2.2 additional fact) vs section 8 sources block (line 138)",
+     "evidence": "Line 60: 'pi itself carries ALL SEVEN sites VERBATIM in its own tree (site 1 at `solidforge-pi/.../hooks/fast_gate.py:215-216`; sites 2-7 as listed above, at the section-8 anchors)'. Section 8 (line 138) reiterates pi's site 1 at `solidforge-pi/.../hooks/fast_gate.py:215-216`. The doc's own CC-side table (line 51) places CC's site 1 at `skills/parallel-development/infra/hooks/fast_gate.py:217-218` — verified by direct read: lines 217-218 are 'local = os.path.join(root, \\\"node_modules\\\", \\\".bin\\\", \\\"eslint\\\"); tool = local if os.path.exists(local) else dt.which_any(\\\"eslint\\\")'. The 2-line offset (215-216 on pi vs 217-218 on CC) is self-acknowledged by the doc in the same sentence that uses the word VERBATIM. 'VERBATIM' is strong language meaning word-for-word / identical position; the explicit citation of different line numbers for the SAME logical site contradicts it. The same caveat does NOT apply to sites 2-7 (the doc asserts they match CC's line ranges via 'at the section-8 anchors' and section 8 cites the same ranges), so the contradiction is site-1-specific, not blanket.",
+     "suggestion": "Replace 'VERBATIM' with a less-load-bearing phrase (e.g., 'with the same local-first shapes; line numbers shift by ~2 lines between pi and CC fast_gate.py'), or omit the word VERBATIM entirely — the citation already conveys the equivalent-code claim."
+    },
+    {
+     "defect_id": "r6-hetero-cap-escalation-protocol-undefined",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "line 17 (Cap extension bullet)",
+     "evidence": "Line 17: 'Cap extension: the declared cap of 5 was reached with blocker history 3→1→1→1→1 (no two consecutive blocker-free rounds; **core-claims coverage-verified satisfied**). **Per the cap-hit escalation protocol** the human elected to extend to cap=7 to pursue **the formal 2-clean-round streak** — no further extension; the run accepts whatever state round 7 ends in.' Three load-bearing terms are used without definition or citation: (a) 'cap-hit escalation protocol' — the protocol itself is never defined or cited anywhere in the doc; (b) 'core-claims coverage-verified satisfied' — neither 'core-claims' nor how coverage was verified is defined; (c) 'formal 2-clean-round streak' — the streak metric is referenced as a goal but its definition (what counts as 'clean', how the count is taken across same-family vs different-family legs) is absent. The cap extension is a load-bearing process decision justified entirely by these undefined terms. Without their definition, a reviewer cannot audit the extension decision from the doc alone. The doc is supposed to be self-contained per the reviewer instruction.",
+     "suggestion": "Either (a) cite the csr skill doc/section that defines the cap-hit escalation protocol and the streak metric, or (b) include a brief inline definition of each term ('core-claims' = the four A1/A3/A4/A7 outcome-defining items; 'clean round' = same-family 0-blocker AND different-family 0-blocker; 'streak' = consecutive clean rounds; protocol preconditions = core-claims verified + no consecutive clean rounds + human-elected extension)."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r6-same-F1",
+     "action": "fixed",
+     "note": "reworded: hash lives at evidence/pi-commit.txt and is re-stated in the convergence-record emitted at run end"
+    },
+    {
+     "defect_id": "r6-same-F2",
+     "action": "fixed",
+     "note": "'site 1 of the seven ... and the OTHER SIX' — additive reading eliminated"
+    },
+    {
+     "defect_id": "r6-same-F3",
+     "action": "fixed",
+     "note": "inline gloss added (skill-rooted, handoff's own wording, pi source = section-8 entry)"
+    },
+    {
+     "defect_id": "r6-hetero-check-swift-omitted",
+     "action": "fixed",
+     "note": "fixed — row 4 now names the swift branch: strictly PATH-only (which_any, fast_gate.py:60-61) today AND post-adoption — out of scope by construction"
+    },
+    {
+     "defect_id": "r6-hetero-verbatim-line-number-mismatch",
+     "action": "fixed",
+     "note": "fixed — 'VERBATIM' replaced with 'same resolution shapes — code identical at each anchor (anchor granularity, no byte diff); line numbers shift slightly (site 1: pi 215-216 vs CC 217-218)'"
+    },
+    {
+     "defect_id": "r6-hetero-cap-escalation-protocol-undefined",
+     "action": "fixed",
+     "note": "fixed — inline glosses added per rule 10: core-claims definition, cap-hit escalation protocol source (csr SKILL.md convergence judgment), 2-clean-round streak definition"
+    }
+   ]
+  },
+  {
+   "round": 7,
+   "same_source_findings": 2,
+   "hetero_findings": 2,
+   "hetero_degraded": false,
+   "blockers": 0,
+   "verdict": "pass",
+   "findings": [
+    {
+     "defect_id": "r7-same-F1",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "2.1 row 4 (final sentence) vs swift clause in the same row",
+     "evidence": "CLAIM: \"ALL gate-execution sites refuse only post-A3 (A3 routes them through the canonical resolver)\" :: EVIDENCE: The same row's r6-added swift clause says the swift branch is \"strictly PATH-only (which_any, fast_gate.py:60-61) both today and post-adoption — never project-local, out of scope by construction\"; verified at /Users/solosus/dev/ws-ai/solidforge/skills/parallel-development/infra/hooks/fast_gate.py:59-66 (check_swift uses dt.which_any, refuses off-PATH TODAY). Under the maximally inclusive reading of \"ALL gate-execution sites\", swift is a gate-execution site that already refuses today and is never routed by A3, making \"refuse only post-A3\" false for it. The sentence is true only under its anaphoric reading (the seven unconditional-execution sites just enumerated: web + the OTHER SIX). The r6-hetero suggestion (r6-hetero.json, check-swift-omitted) asked for BOTH the swift naming and a rescoped ALL; only the first half was adopted (r6-dispositions-hetero.json names only the swift addition). Not a blocker: the natural reading is true and the swift clause + parenthetical exclude the false reading.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r7-same-F2",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "2.2 heading; 3 row A3",
+     "evidence": "CLAIM: \"SEVEN un-gated local-first resolution sites survive 489b217\" (heading); \"Collapse the SEVEN ad-hoc local-first resolutions (section 2.2 inventory)\" (A3) :: EVIDENCE: The doc's own body contradicts the label for site 7: section 2.2 opening says \"Six of the seven sites below prefer node_modules/.bin over PATH; site 7 tries PATH first, then unconditionally executes project-venv binaries\", and the site-7 table row's Shape column reads \"PATH then UNCONDITIONAL .venv/venv/env scan\" — verified at /Users/solosus/dev/ws-ai/solidforge/skills/parallel-development/infra/scripts/arch_contract_python.py:89-96 (which(name) first, venv scan second, no opt-in). This is the same over-generalization class as r2-F4 (r2-same-findings.json: \"'prefers node_modules/.bin over PATH' generalized to all seven sites; false for site 7\"), which was fixed in the opening paragraph but left standing in the heading and the A3 row. Not a blocker: the precise split is stated in three places and all seven sites collapse identically under T2.",
+     "suggestion": "fix"
+    },
+    {
+     "defect_id": "r7-hetero-section8-path-prefix-drop",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "Section 8 (Sources), second paragraph — \"pi's own un-collapsed gate sites — ALL SEVEN\"",
+     "evidence": "Doc quote (Section 8, second paragraph): \"pi's own un-collapsed gate sites — ALL SEVEN, evidence for section 2.2's both-repos claim: `solidforge-pi/.../hooks/fast_gate.py:215-216` (site 1), `infra/scripts/arch_contract_web.py:70-78,167-171,202-207` (sites 2-4, ranges matching the section-2.2 shapes incl. the npx arm), `arch_contract_tests.py:575-587` (site 5), `spectral_adapter.py:124-133` (site 6), `arch_contract_python.py:83-97` (site 7).\" The same paragraph's earlier \"pi landed implementation\" list uses the full prefix `solidforge-pi/skills/parallel-development/infra/...`, and site 1 itself uses the explicit `solidforge-pi/.../hooks/` prefix. Sites 2-7 drop the `solidforge-pi/skills/parallel-development/` prefix entirely and read as bare `infra/scripts/...` — which is the same shape as the CC paths in Section 2.2 (`skills/parallel-development/infra/scripts/...`). A reviewer reading Section 8 alone cannot tell whether the bare `infra/scripts/arch_contract_web.py:70-78` is a pi path or a CC path; the doc asserts these are pi evidence (preamble: \"pi's own un-collapsed gate sites\"), but the citation form is indistinguishable from a CC citation. The \"code identical at each anchor\" cross-repo claim (Section 2.2 \"additional fact\") depends on a reader correctly mapping these un-prefixed paths back to pi. The path-style drift between site 1 (`solidforge-pi/.../hooks/fast_gate.py:215-216`) and sites 2-7 (no prefix) is also internally inconsistent within the same paragraph.",
+     "suggestion": "Either prefix sites 2-7 with `solidforge-pi/skills/parallel-development/` to match the \"pi landed implementation\" entries, or add a \"(pi repo path)\" / \"(CC repo path)\" label so the repo of each path is unambiguous on a single read."
+    },
+    {
+     "defect_id": "r7-hetero-core-claims-unenumerated",
+     "severity": "coverage",
+     "kind": "coverage-gap",
+     "location": "Section 17 (Cap extension), parenthetical definition of \"core claims\"",
+     "evidence": "Doc quote (Section 17): \"core-claims coverage-verified satisfied — 'core claims' = the load-bearing assertions enumerated across sections 1-2, each verified by the review legs against source/evidence\". The doc references the csr convergence-judgment criterion (\"core-claims coverage-verified\") used to justify the cap extension from 5 → 7, but does not define the criterion, enumerate which claims count as \"core\", or cross-reference each round's verdict to the specific claim it verified. The csr SKILL.md convergence-judgment definition is external; the cap-extension decision's load-bearing premise is not self-contained in this artifact. A reviewer without csr SKILL.md context cannot audit whether \"core-claims coverage-verified\" is actually satisfied by what rounds 1-6 did — they have to reconstruct which claim each of the 30+ round findings maps to, against which sections 1-2 assertion.",
+     "suggestion": "Add a one-line definition of \"core-claims coverage-verified\" (either inline or as a csr SKILL.md cross-reference with the glossed phrase) and list which sections 1-2 claims count as core for this artifact, so the cap-extension premise is auditable from the doc alone."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r7-same-F1",
+     "action": "fixed",
+     "note": "'ALL gate-execution sites' -> 'the seven project-local-executing sites' (anaphoric reading made explicit)"
+    },
+    {
+     "defect_id": "r7-same-F2",
+     "action": "fixed",
+     "note": "heading -> 'SEVEN un-gated project-local execution sites'; A3 row -> 'SEVEN ad-hoc project-local resolutions ... six local-first node sites + site 7's PATH-then-unconditional-venv'"
+    },
+    {
+     "defect_id": "r7-hetero-section8-path-prefix-drop",
+     "action": "fixed",
+     "note": "fixed — section 8 pi gate-site enumeration now carries the solidforge-pi/skills/parallel-development/ prefix once, up front, for all seven"
+    },
+    {
+     "defect_id": "r7-hetero-core-claims-unenumerated",
+     "action": "fixed",
+     "note": "fixed — cap-extension gloss now enumerates core claims concretely (section 2.1 rows, 2.2 seven-site inventory, 2.3-2.4 corrections) + defines coverage-verified with the disclosed-unverifiables pointer"
+    }
+   ]
+  }
+ ],
+ "substantive_converged": true,
+ "rightness": "human_confirm_required",
+ "stalemate": false,
+ "coverage": [
+  "convergence: blocker history 3-1-1-1-1-0-0; rounds 6-7 are two consecutive blocker-free rounds (the formal streak); cap extended 5->7 by human election at the cap-hit escalation (no second extension)",
+  "core claims = section 2.1 verification-table rows, section 2.2 seven-site inventory, section 2.3-2.4 corrections; each verified by the legs against source code, the pi tree, or captured evidence",
+  "different-family leg: minimax-cn / MiniMax-M3, 7/7 legs ok (no degradation)",
+  "hetero-only findings were dispositioned fixed/rejected after independent orchestrator verification against source (protocol deviation from the different-family-only->escalate table, recorded per-round in rN-dispositions-hetero.json protocol_note); 2 hetero findings rejected on verified-false evidence (r3 site7-path-prefix-drift; r5 cc-docs-quote-unverifiable, already-satisfied)",
+  "residual unverifiables (stated, never silenced): the two 489b217 git-history claims (probe-was-manual; env-var-introduction attribution); pi tree verified as working tree, pinned hash 9a3b4a5 captured at evidence/pi-commit.txt (legs had no git)",
+  "evidence captures: evidence/{pi-commit.txt, pi-detect_toolchain.py, pi-detect_toolchain_test.py, cc-docs-arguments-excerpt.txt, live-repro-transcript.txt}; CC-docs URL not re-fetchable by review legs (quote verified against the capture)",
+  "same-family findings embedded from the legs' final outputs; same-family 'note'-severity findings are recorded as warning with a [note-class] marker (the record schema's severity enum has no note tier)",
+  "csr-infra hygiene bug found during the run (recorded, out of this run's scope): the hetero wrapper's own sidecar events carry round=1 on every leg (orchestrator events carry the true round); candidate fix for the csr skill itself",
+  "sweep scope: skills/parallel-development/infra only; other skills spot-checked by grep (no matches), not fully swept"
+ ],
+ "core_claims": [
+  "CC resolve_tool has no node_modules resolution path (detect_toolchain.py:73-95)",
+  "arm.py tool_present is its own unconditional venv scan (arm.py:69-76)",
+  "arm.py status reports node-installed tools absent (reproduced live; transcript captured)",
+  "tool_present vs canonical resolve_tool mismatch for venv tools (reproduced live; transcript captured)",
+  "CC has no detect_toolchain test",
+  "pi shipped the handoff's three items (resolve_tool node branch + containment; tool_present routing; ARGUMENTS wiring)",
+  "SEVEN un-gated project-local execution sites survive 489b217 (six local-first node sites + arch_contract_python's PATH-then-unconditional-venv resolver)",
+  "pi carries all seven sites itself (same shapes; anchor-verified, line numbers shift slightly)",
+  "the $ARGUMENTS silent-drop does not apply on current CC (docs quote captured)",
+  "commands/arm-tools.md --lang enum misses go; zero $ARGUMENTS occurrences",
+  "SF_PROJECT_VENV_TOOLS appears only in detect_toolchain.py (facade-doc gap)"
+ ]
+}

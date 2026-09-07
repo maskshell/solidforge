@@ -170,3 +170,12 @@ csr→pd port status here). Surface:
 - `--dry-run-malform` → exit 1, `verdict: rewrite`, `malformation: "dry-run-malform"`, coverage notes the malformation.
 - `--dry-run-budget` → exit 0 (ADR #41 — degrade is NOT a malformation), `degraded: true`, `degraded_providers: [{provider: deepseek, subtype: error_max_budget_usd, ...}]`.
 - `_materialize_profile("deepseek")` → resolves `profiles/deepseek.json` + reads `DEEPSEEK_ANTHROPIC_AUTH_TOKEN` from `.env.solidforge` (via `_load_dotenv`), writes a chmod-600 temp, injects the token, preserves BASE_URL routing (token NOT printed in the verification).
+
+## CC-side additive: --round-index derivation from --prior-findings (2026-09-07)
+
+CC wrapper: `--round-index` default changed 1 → None; when unset, the round is
+derived from the prior-findings JSON's `round` field (explicit flag wins; fallback 1).
+Driver: the sidecar-round incident (every wrapper-emitted leg event labeled round=1
+because the SKILL.md protocol command never passed the flag — deterministic default
+beat prompt compliance). pi note: pi's wrapper takes the same shape if its footers/
+sidecar surface ever labels rounds from argv; substrate-neutral, copyable verbatim.

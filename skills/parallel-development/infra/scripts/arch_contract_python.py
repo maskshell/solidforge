@@ -80,21 +80,23 @@ def run(argv, timeout=120):
         return 124, f"timeout after {timeout}s"
 
 
-def resolve_tool(name):
-    """Return an argv prefix [<path>] for a tool, searching PATH then the
-    project's local venv bins (.venv/venv/env); None if not found. Finds tools
-    installed as project dev deps even when the venv is not active on PATH."""
-    from shutil import which
+def resolve_tool(name, root=None):
+    """Canonical tool resolution, delegating to hooks/lib/detect_toolchain
+    (2026-09-06, node-bin adoption A3): PATH-wins; project-local bins only
+    under their explicit opt-ins (SF_PROJECT_VENV_TOOLS / SF_PROJECT_NODE_BIN)
+    with node containment. Replaces this gate's former PRIVATE resolver —
+    an unconditional .venv/venv/env scan (the pre-489b217 shape) that executed
+    repo-committed venv binaries with no opt-in. Lazy import mirrors the idiom this
+    change-set standardizes; `root` defaults to this script's usual project root."""
+    lib = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "hooks", "lib"
+    )
+    if lib not in sys.path:
+        sys.path.insert(0, lib)
+    import detect_toolchain as _dt
 
-    p = which(name)
-    if p:
-        return [p]
-    root = os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd()
-    for venv in (".venv", "venv", "env"):
-        cand = os.path.join(root, venv, "bin", name)
-        if os.path.exists(cand):
-            return [cand]
-    return None
+    root = root or (os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd())
+    return _dt.resolve_tool(name, root=root)
 
 
 def find_importlinter_config(root):
@@ -153,10 +155,10 @@ def check_import_linter(root, findings, coverage):
             "import-linter: not configured (.importlinter.ini / setup.cfg / pyproject.toml absent) — layer/forbidden contracts skipped"
         )
         return
-    lint_imports = resolve_tool("lint-imports")
+    lint_imports = resolve_tool("lint-imports", root=root)
     if not lint_imports:
         coverage.append(
-            "import-linter: lint-imports not installed — layer/forbidden contracts skipped (install: `uv add --dev import-linter`, or run `uvx --from import-linter lint-imports`)"
+            "import-linter: lint-imports not resolved — layer/forbidden contracts skipped (PATH, or `uv add --dev import-linter` + activate the venv / `SF_PROJECT_VENV_TOOLS=1`)"
         )
         return
     # ACF-I4: if 0 active contracts (neutral-by-default template), skip lint-imports
@@ -189,10 +191,10 @@ def check_import_linter(root, findings, coverage):
 
 
 def check_cyclic(root, findings, coverage, package):
-    pylint = resolve_tool("pylint")
+    pylint = resolve_tool("pylint", root=root)
     if not pylint:
         coverage.append(
-            "pylint: not installed — cyclic-import check skipped (install: `uv add --dev pylint`)"
+            "pylint: not resolved — cyclic-import check skipped (PATH, or `uv add --dev pylint` + activate the venv / `SF_PROJECT_VENV_TOOLS=1`)"
         )
         return
     rc, out = run(
@@ -304,10 +306,10 @@ def check_concurrency(root, findings, coverage, package):
 
 def check_types(root, findings, coverage, package):
     """Pyright type-check baseline. Types are the strongest deterministic constraint on Agent hallucination for dynamic Python. --outputjson emits a machine-readable report; stdout is captured alone so config chatter on stderr can't corrupt the JSON. pyright JSON lines are 0-based -> +1 for display."""
-    pyright = resolve_tool("pyright")
+    pyright = resolve_tool("pyright", root=root)
     if not pyright:
         coverage.append(
-            "pyright: not installed — type-check skipped (install: `uv add --dev pyright` or `pip install pyright`)"
+            "pyright: not resolved — type-check skipped (PATH, or `uv add --dev pyright` + activate the venv / `SF_PROJECT_VENV_TOOLS=1`)"
         )
         return
     try:

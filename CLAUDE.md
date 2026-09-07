@@ -15,6 +15,7 @@ A change is not done while any fail. For `parallel-development/`:
 
 ```bash
 python3 skills/parallel-development/infra/test/disconnect_check.py  # structure + loading-chain
+python3 skills/parallel-development/infra/test/detect_toolchain_test.py  # resolve_tool trust boundary (opt-ins, containment, seven-site collapse, npx gating)
 python3 skills/parallel-development/infra/test/smoke_gates.py       # gate behavior
 python3 skills/parallel-development/infra/test/lint_self.py         # skill lints its own infra
 python3 skills/parallel-development/infra/test/arm_copy_config.py   # arch-config gating + arm idempotency
@@ -151,3 +152,4 @@ When a Reviewer flags one of these, the convergence loop treats it as an outer- 
 The convergence-loop gates degrade gracefully and never report a silent green when a tool is absent. To arm them on a new machine or in CI, restore/install the gate tools for the ecosystems this project uses:
 
 - Python: `uv sync` — ruff / import-linter / pylint are in dev deps (uv.lock)
+- Project-local installs (node_modules/.bin, the local venv bins) count as present only under their opt-ins — SF_PROJECT_NODE_BIN=1 / SF_PROJECT_VENV_TOOLS=1 (PATH always wins; the arm report and gate coverage notes state what the gates can actually execute).

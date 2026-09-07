@@ -56,7 +56,7 @@ claude --plugin-dir /path/to/solidforge
 
 这会复制各语言架构配置（`.importlinter.ini`、`.dependency-cruiser.cjs`、`.swiftlint.yml`、`clippy.toml`、`checkstyle.xml`），把 L1 宪法 + 门工具链说明追加到项目 `CLAUDE.md`，复制意图蓝图模板，并为循环的运行时状态添加 `.gitignore` 条目。`--with-tools` 把门工具加入项目自己的 dev 依赖（uv/poetry/pip/npm/pnpm/yarn）；仅系统级工具会打印安装命令。可逆：`arm.py --revert`（dry-run；`--apply` 执行）。
 
-参见 `parallel-development/references/install.md`。
+**门工具默认只从 PATH 解析（信任边界）。**仓库可提交的 `node_modules/.bin` / `.venv/bin` 工具，未经显式逐项目 opt-in（`SF_PROJECT_NODE_BIN=1` / `SF_PROJECT_VENV_TOOLS=1`；PATH 恒赢；node 符号链接 containment）绝不被门执行。opt-in 前，arm-tools 状态报告把项目本地工具列为 `absent (gate degrades)`——报告的是门实际能执行什么。详见 [install.md](skills/parallel-development/references/install.md)。
 
 前端项目需要设计治理？在同一项目中同时武装 Impeccable：`npx impeccable install` 然后 `/impeccable init`（配套插件，不打包——见下）。
 

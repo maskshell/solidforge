@@ -64,13 +64,18 @@ Per detected ecosystem:
 - Go (system toolchain, printed not run): `brew install go` (or the official installer; ships `gofmt`/`go vet`/`go build`/`-race`), `brew install golangci-lint` or `go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest` (arch gate: depguard layer rules), `go install golang.org/x/vuln/cmd/govulncheck@latest` (supply-chain gate).
 - Cross-language (system, printed not run): `brew install gitleaks` (or `cargo install gitleaks`) — secrets gate; runs for any ecosystem.
 
-The gate scripts resolve project-pinned tools so the gate runs the project's declared version: **Python** tools resolve PATH first (an activated venv is on PATH), then the project's local venv bins (`.venv/bin`, `venv/bin`, `env/bin`) as a fallback when the venv isn't active; **Web** tools resolve the project's `node_modules/.bin` FIRST (`node_modules/.bin` is never on PATH, unlike an activated venv), then PATH. A tool still absent degrades its gate to a documented no-op (never silently green). (External-skill companion gates resolve PATH/global — those tools aren't version-coupled to the project; see "Arming external-skill gates" below.)
+The gate scripts resolve tools through ONE canonical resolver with a trust boundary (node-bin adoption, ADRs #63-#65): **PATH only, by default** — a repo-committed `node_modules/.bin/<tool>` or `.venv/bin/<tool>` is never executed without an explicit per-project opt-in, because project-local tooling is repo-committable code. Opt in when you rely on dev-dep tooling and trust the repo:
+
+- `SF_PROJECT_NODE_BIN=1` — resolves `node_modules/.bin` (with symlink containment: a `.bin` entry whose real path escapes `node_modules/` is refused even under the opt-in).
+- `SF_PROJECT_VENV_TOOLS=1` — resolves the local venv bins (`.venv/bin`, `venv/bin`, `env/bin`) when the venv isn't active on PATH.
+
+PATH always wins over both opt-ins. An activated venv (on PATH) needs no opt-in. Version-coupled tools (`vitest`, `tsc`): the project's pinned copy runs under `SF_PROJECT_NODE_BIN=1` when no PATH copy shadows it. A tool still unresolved degrades its gate to a documented no-op — the arch/test-gate coverage notes name the matching opt-in (the per-edit fast gate passes silently by design when its tool is absent; that state surfaces in the arm report); the `/solidforge:arm-tools` status report likewise lists project-local tools as `absent (gate degrades)` until you opt in — the report states what the gates can actually execute. `npx --no-install` delegation rides only under the node opt-in (a PATH tool is not PATH resolution). (External-skill companion gates resolve PATH/global — those tools aren't version-coupled to the project — EXCEPT spectral, which additionally resolves `node_modules/.bin` under `SF_PROJECT_NODE_BIN=1` with containment, mirroring the first-party web gates; see "Arming external-skill gates" below.)
 
 Re-run `--with-tools` any time; the package managers are idempotent on already-present deps.
 
 ## Arming external-skill gates (companion system tools)
 
-Unlike the first-party gates above (project-pinned via `--with-tools` so they match the project's declared versions), the external-skill gates wrap **companion system tools** — standalone linters/scanners reused across projects. Install these **globally** (not project-local); where a Homebrew formula exists, **prefer `brew install`**. The adapters detect the tool on PATH and degrade to a coverage-noted no-op when absent (never silently green).
+Unlike the first-party gates above (whose tools `--with-tools` installs into the project's dev deps — executed by the gates under the opt-in contract above), the external-skill gates wrap **companion system tools** — standalone linters/scanners reused across projects. Install these **globally** (not project-local); where a Homebrew formula exists, **prefer `brew install`**. The adapters detect the tool on PATH (spectral additionally honors the node opt-in above) and degrade to a coverage-noted no-op when absent (never silently green).
 
 | Tool | Gate | Preferred (Homebrew) | Global alternative |
 | --- | --- | --- | --- |
@@ -138,7 +143,12 @@ There is no per-project reconciler. The plugin model replaces the old vendored-s
 Before committing a skill change, the deterministic inner ring must pass green:
 
 - `python3 infra/test/disconnect_check.py` — structural + loading-chain integrity.
+- `python3 infra/test/detect_toolchain_test.py` — resolve_tool trust boundary: PATH-only default, the SF_PROJECT_NODE_BIN / SF_PROJECT_VENV_TOOLS opt-ins, node containment, the seven-site collapse + gated npx arm (node-bin adoption, ADRs #63-#65).
 - `python3 infra/test/smoke_gates.py` — arch-gate behavior (skips languages whose tools are absent).
+- `python3 infra/test/run_record.py` — run-record schema + normalized-event discipline.
+- `python3 infra/test/plan_queue_detect.py` — rich-path producer-marker detection (fail-safe).
+- `python3 infra/test/hetero_review_wiring.py` — different-family wrapper ↔ loop_state round-trip (ADR #40).
+- `python3 infra/test/blueprint_guard_carveout.py` — frozen-blueprint mapping carve-out (ADR #58).
 - `python3 infra/test/lint_self.py` — the skill lints its own infra (Python with `ruff`; markdown docs with `markdownlint`). Both are dev tools that SKIP with a coverage note when absent (never silently green): `brew install ruff markdownlint-cli`.
 - `python3 infra/test/arm_copy_config.py` — arch-config gating + arm idempotency.
 - `python3 infra/test/arm_report_gates.py` — gate-status report + LSP advisory.

@@ -57,7 +57,7 @@ Plugins do not mutate host-project build files, so enabling does NOT provision g
 This copies the per-language arch-configs (`.importlinter.ini`, `.dependency-cruiser.cjs`, `.swiftlint.yml`, `clippy.toml`, `checkstyle.xml`), appends the L1 Constitution + Gate
 Toolchain note to the project `CLAUDE.md`, copies the intent-blueprint template, and adds `.gitignore` entries for the loop's runtime state. `--with-tools` adds the gate tools to the project's own dev deps (uv/poetry/pip/npm/pnpm/yarn); system-only tools print install commands. Reversible: `arm.py --revert` (dry-run; `--apply` to execute).
 
-See `parallel-development/references/install.md`.
+**Gate tools resolve PATH-only by default (trust boundary).** A repo-committed `node_modules/.bin` or `.venv/bin` tool is never executed by the gates without an explicit per-project opt-in (`SF_PROJECT_NODE_BIN=1` / `SF_PROJECT_VENV_TOOLS=1`; PATH always wins; node symlink containment). The arm-tools status report lists project-local tools as `absent (gate degrades)` until you opt in — it reports what the gates can actually execute. Details: [install.md](skills/parallel-development/references/install.md).
 
 Frontend project wanting design governance? Also arm Impeccable in the same project: `npx impeccable install` then `/impeccable init` (companion, not bundled — see below).
 

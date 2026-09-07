@@ -27,8 +27,8 @@ def have(cmd):
     )
 
 
-def run_gate(lang, fixture, src_arg):
-    env = dict(os.environ, CLAUDE_PROJECT_DIR=fixture)
+def run_gate(lang, fixture, src_arg, extra_env=None):
+    env = dict(os.environ, CLAUDE_PROJECT_DIR=fixture, **(extra_env or {}))
     proc = subprocess.run(
         ["python3", os.path.join(SCRIPTS, f"arch_contract_{lang}.py"), src_arg],
         capture_output=True,
@@ -43,9 +43,9 @@ def run_gate(lang, fixture, src_arg):
         return {"_raw": proc.stdout, "_stderr": proc.stderr, "_rc": proc.returncode}
 
 
-def run_script(name, fixture, src_arg="."):
+def run_script(name, fixture, src_arg=".", extra_env=None):
     """Run a cross-ecosystem gate script (deps/tests) the same way run_gate runs a per-language one, returning its parsed JSON."""
-    env = dict(os.environ, CLAUDE_PROJECT_DIR=fixture)
+    env = dict(os.environ, CLAUDE_PROJECT_DIR=fixture, **(extra_env or {}))
     proc = subprocess.run(
         ["python3", os.path.join(SCRIPTS, name), src_arg],
         capture_output=True,
@@ -135,7 +135,9 @@ def smoke_swift():
 
 def smoke_web():
     # Web needs depcruise reachable in the fixture (node_modules/.bin/depcruise).
-    # Gate falls back to npx --no-install, which fails if depcruise isn't installed.
+    # The gate resolves project-local bins ONLY under SF_PROJECT_NODE_BIN=1
+    # (node-bin adoption A3, 2026-09-06) — the fixture's npm-installed depcruise
+    # is trusted-by-construction, so the smoke run carries the opt-in.
     d = tempfile.mkdtemp(prefix="pdsmoke_web_")
     write(
         f"{d}/package.json",
@@ -162,7 +164,7 @@ def smoke_web():
         )
         return
     # Cruise from an ENTRY file — depcruise's cycle detection is most reliable from entries.
-    data = run_gate("web", d, "src/a.ts")
+    data = run_gate("web", d, "src/a.ts", {"SF_PROJECT_NODE_BIN": "1"})
     assert_conforms(data, "web")
     rules = [f.get("rule", "") for f in data.get("findings", [])]
     assert any("circular" in r for r in rules), (
@@ -407,7 +409,9 @@ def _armed_detect_mjs(fixture):
 
 
 def _armed_spectral(fixture=None):
-    """True if the Stoplight Spectral CLI is armed (local node_modules/.bin or global on PATH)."""
+    """True if the Stoplight Spectral CLI is armed: global on PATH, or installed at
+    node_modules/.bin/spectral (project-local — the gate resolves it ONLY under
+    SF_PROJECT_NODE_BIN=1; the spectral smoke carries that opt-in)."""
     for base in (fixture, os.getcwd()):
         if base and os.path.isfile(
             os.path.join(base, "node_modules", ".bin", "spectral")
@@ -493,7 +497,7 @@ def smoke_spectral():
         )
         + "\n",
     )
-    data = run_script("spectral_adapter.py", d, ".")
+    data = run_script("spectral_adapter.py", d, ".", {"SF_PROJECT_NODE_BIN": "1"})
     assert_conforms(data, "spectral")
     assert data["gate"] == "spectral-openapi", data["gate"]
     assert data["passed"] is True, (
