@@ -6,7 +6,7 @@ Loading-chain check for the PLUGIN BOUNDARY (the analog of disconnect_check.py f
   - .claude-plugin/plugin.json parses and has name=solidforge, version, description
   - hooks/hooks.json parses, has PreToolUse + PostToolUse, and the hook commands reference ${CLAUDE_PLUGIN_ROOT} and the three hook scripts (blueprint_guard / counters / fast_gate)
   - commands/arm-tools.md exists (the /solidforge:arm-tools Layer 2 command)
-  - agents/ contains the 17 plugin-bundled agents (by frontmatter name)
+  - agents/ contains the 23 plugin-bundled agents (by frontmatter name)
   - every agent that references a references/agent-patterns/<role>.md companion has that companion bundled under skills/parallel-development/references/agent-patterns/ (catches the loading-chain break where an agent points at a companion that was not copied)
 
 The hook command PATHS use ${CLAUDE_PLUGIN_ROOT}/skills/parallel-development/... (resolved at runtime on plugin-enable). This check validates STRUCTURE (files present + well-formed), not runtime resolution.
@@ -46,9 +46,10 @@ HOOKS_JSON = os.path.join(PLUGIN_ROOT, "hooks", "hooks.json")
 ARM_TOOLS_MD = os.path.join(PLUGIN_ROOT, "commands", "arm-tools.md")
 AGENTS_DIR = os.path.join(PLUGIN_ROOT, "agents")
 
-# The 17 plugin-bundled agents (Solid Forge registers these as solidforge:<name>).
+# The 23 plugin-bundled agents (Solid Forge registers these as solidforge:<name>).
 EXPECTED_AGENTS = [
     "architect",
+    "web-claim-verifier",
     "backend-developer",
     "code-reviewer",
     "devops-engineer",
@@ -57,6 +58,11 @@ EXPECTED_AGENTS = [
     "graphiti-config-generator",
     "ios-developer",
     "ios-tester",
+    "claim-extractor",
+    "claim-verifier",
+    "collision-verifier",
+    "doc-reviewer",
+    "novelty-claim-extractor",
     "plan-reviewer",
     "playwright-test-generator",
     "playwright-test-healer",

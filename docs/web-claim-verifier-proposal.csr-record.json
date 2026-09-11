@@ -1,0 +1,1851 @@
+{
+ "artifact": "docs/web-claim-verifier-proposal.md",
+ "authority_ref": "the 22 agents' own contracts + csr/psv SKILL.mds + the schemas + run-record anchors (cited per-section)",
+ "size_tier": "long",
+ "cap": 17,
+ "rounds": [
+  {
+   "round": 1,
+   "same_source_findings": 6,
+   "hetero_findings": 5,
+   "hetero_degraded": false,
+   "blockers": 0,
+   "verdict": "pass",
+   "findings": [
+    {
+     "defect_id": "r1-same-F1",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "5",
+     "evidence": "CLAIM: 'five outcome-axis agents' mislabel: doc-reviewer is process-axis (csr's leg) per its own contract + plugin.json's layer attribution :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r1-same-F2",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "4/6",
+     "evidence": "CLAIM: output contract lacked the family's fenced-JSON exact-field norm + severity mapping (refuted→blocker/narrowed→warning/unverifiable→coverage); 'IS the evidence-capture format' ambiguous vs the bare-excerpt precedent :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r1-same-F3",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4/6",
+     "evidence": "CLAIM: volatile gate + bounded search had no enforcement semantics — rule 3 requires declaring deterministic/advisory/outer-ring; now: contract-declared downgrade + outer-ring checkable, honestly NOT a deterministic self-gate :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r1-same-F4",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4/6",
+     "evidence": "CLAIM: read-only enforced in frontmatter disallowedTools (family norm at agents/*.agent.md:5), not prose-only; acceptance list updated :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r1-same-F5",
+     "severity": "warning",
+     "kind": "authority-chain-break",
+     "location": "5",
+     "evidence": "CLAIM: .graphiti.json '13 cascaded subagents' — pre-existing two-generation staleness surfaced by the term grep; joins the ripple :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r1-same-F6",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "6 T3",
+     "evidence": "CLAIM: 'csr's plugin_layout' naming misleading — csr's copy is skill-internal, no EXPECTED_AGENTS; the growing list lives only in pd's plugin_layout.py :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r1-hetero-wcv-csr-decision-point",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "§5 line 45 (csr SKILL.md ripple bullet)",
+     "evidence": "Proposal: \"csr `SKILL.md`: name the leg at the decision point — external-claim verification during reconcile spawns `solidforge:web-claim-verifier` (replacing implicit general-purpose use).\" csr SKILL.md line 47 (verified): \"Reconcile: revise the artifact per accepted findings, or reject a finding with rationale. RECORD each finding's disposition at reconcile time...\" The csr protocol has no \"external-claim verification\" decision point in its round loop (lines 45-49); reconcile is about applying findings, not adjudicating external claims. The proposal is INTRODUCING a new decision point, not naming an existing one. The \"implicit general-purpose use\" is also not in csr's protocol — §1 itself characterizes it as an ad-hoc pattern in the node-bin incident (\"the adjudicator-with-a-fetch-leg did not exist; a general-purpose spawn or author-fetch were the only options\"), not a documented csr step."
+    },
+    {
+     "defect_id": "r1-hetero-wcv-adr52-scope-creep",
+     "severity": "warning",
+     "kind": "scope-creep",
+     "location": "§4 bounded-search bullet",
+     "evidence": "Proposal: \"on exhaustion return `unverifiable` with what was tried — never hunt unbounded (the bounded-observable doctrine, ADR #52 family).\" ADR #52 in pd/references/design-decisions.md (verified): \"The hetero substrate runs BOUNDED + OBSERVABLE — explicit `--max-turns` (print mode has NO default turn limit; the old 'CC's turn limit' citation was a phantom), DEFAULT stream-json read incrementally (stderr heartbeat + resolved-model capture + `--max-stream-bytes` runaway breaker + stderr tail), budget demoted to coarse breaker (default 12.0), `--no-stream` json fallback — CC v2.1.238 re-probe recorded\". ADR #52 is specifically scoped to the hetero SUBSTRATE (CC subprocess supervision: argv, stream-json, byte-cap, stderr heartbeat, subprocess version re-probe). Extending it to a SUBAGENT's per-claim search budget stretches the original ADR's scope; the \"family\" wording acknowledges the extension but does not justify the analogy between subprocess supervision and an in-context subagent's tool-call budget."
+    },
+    {
+     "defect_id": "r1-hetero-wcv-role-vs-boundary",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "§4 Role bullet vs §4 Boundaries bullet",
+     "evidence": "Proposal §4 Role: \"given ONE atomic factual claim or technical question (+ optional version/scope context), search, fetch the adjudicating source(s), and return a verdict grounded ONLY in fetched text.\" Proposal §4 Boundaries: \"adjudicates FACTS/citations only; never judges whether the doc's thesis/conclusion is right (outcome axis stays human — family philosophy).\" §1 example: \"verify ONE atomic claim or technical constraint against the live web (e.g. 「核验 NLB ENI conntrack 约束」)\". \"Technical question\" (Role) is broader than \"FACTS/citations only\" (Boundaries); a technical question can be a behavior, comparison, or constraint semantics, not all of which are pure facts/citations. The Boundaries would reject any non-fact-shaped input the Role says it accepts."
+    },
+    {
+     "defect_id": "r1-hetero-wcv-docreviewer-adjudicates",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "§2 contract table, doc-reviewer row",
+     "evidence": "Proposal §2: `solidforge:doc-reviewer` row → \"offline; reviews, never adjudicates facts\". doc-reviewer.agent.md line 14 (verified): \"contradiction — two claims in the doc conflict, or a claim conflicts with a cited source.\" doc-reviewer.agent.md line 15 (verified): \"authority-chain-break — a claim cites a source that does not actually say what the doc says it says.\" doc-reviewer DOES adjudicate claims against cited sources (the contradiction and authority-chain-break kinds); \"never adjudicates facts\" is false. The accurate framing is \"offline against cited sources only (no external web fetch)\", not \"never adjudicates facts\"."
+    },
+    {
+     "defect_id": "r1-hetero-wcv-source-tier-undefined",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 Source-tiers bullet + §4 Output-schema bullet",
+     "evidence": "Proposal §4: \"Source tiers (output metadata): official vendor docs > RFC/standard > first-party engineering blog > community; label the tier of each source used.\" The output schema lists `source_tier` but the tier vocabulary is prose-only with no enum. Researcher (the family's web-gathering agent) defines a machine-checkable enum: researcher.agent.md line 41 (verified) — `\"provenance\": \"official-spec | peer-reviewed | vendor-doc | blog | unknown\"`. psv's coverage-record inherits the same provenance concept. The web-claim-verifier's `source_tier` field is undefined prose (\"official vendor docs\" vs researcher's \"official-spec\" / \"vendor-doc\"; \"RFC/standard\" has no researchener/p sv analog; \"first-party engineering blog\" maps ambiguously to \"blog\"). The family's \"exact fields\" norm (proposal §4 itself) is contradicted."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r1-same-F1",
+     "action": "fixed",
+     "note": "label corrected: four outcome-axis + csr's process-axis doc-reviewer"
+    },
+    {
+     "defect_id": "r1-same-F2",
+     "action": "fixed",
+     "note": "fenced-JSON exact fields + claim-verifier's severity mapping verbatim; capture clarified to the quote/URL/date block"
+    },
+    {
+     "defect_id": "r1-same-F3",
+     "action": "fixed",
+     "note": "downgrade rule mirrored + enforcement-honesty paragraph (self-declared + outer-ring; NOT deterministic, future harness option named)"
+    },
+    {
+     "defect_id": "r1-same-F4",
+     "action": "fixed",
+     "note": "disallowedTools frontmatter clause + acceptance updated"
+    },
+    {
+     "defect_id": "r1-same-F5",
+     "action": "fixed",
+     "note": ".graphiti.json 13→23 added to the ripple"
+    },
+    {
+     "defect_id": "r1-same-F6",
+     "action": "fixed",
+     "note": "T3 names only pd's rule-1 battery + explains why csr's copy is irrelevant here"
+    },
+    {
+     "defect_id": "r1-hetero-wcv-csr-decision-point",
+     "action": "fixed",
+     "note": "fixed — bullet now says ADD a reconcile-time decision point (none exists today), new protocol text in step-2 reconcile"
+    },
+    {
+     "defect_id": "r1-hetero-wcv-adr52-scope-creep",
+     "action": "fixed",
+     "note": "fixed — weakened to plain bounded-budget doctrine; ADR #52 named as adjacent precedent, not same mechanism"
+    },
+    {
+     "defect_id": "r1-hetero-wcv-role-vs-boundary",
+     "action": "fixed",
+     "note": "fixed — boundaries widened to 'atomic factual claims or fact-shaped technical questions ONLY'"
+    },
+    {
+     "defect_id": "r1-hetero-wcv-docreviewer-adjudicates",
+     "action": "fixed",
+     "note": "fixed — row: 'offline against cited/local sources only (flags claim-vs-cited-source conflicts); never fetches the external web'"
+    },
+    {
+     "defect_id": "r1-hetero-wcv-source-tier-undefined",
+     "action": "fixed",
+     "note": "fixed — source_tier closed enum (official-spec|rfc-standard|vendor-doc|first-party-blog|community|unknown) + ordering + honest-unknown rule"
+    }
+   ]
+  },
+  {
+   "round": 2,
+   "same_source_findings": 10,
+   "hetero_findings": 3,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r2-same-F1",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: Role still unqualified 'technical question' vs Boundaries 'fact-shaped ONLY' — r1 fix widened only one side :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r2-same-F2",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "5/6",
+     "evidence": "CLAIM: .graphiti.json 13→23 ripple had no owning task (T2 omitted it; acceptance omitted it) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r2-same-F3",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "6",
+     "evidence": "CLAIM: acceptance list 6 items vs §4 ~10 clauses while claiming 'every' :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r2-same-F4",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "4",
+     "evidence": "CLAIM: question-mode output underspecified (verdict presence, per-element fields, severity applicability, searched/not_found requiredness) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r2-same-F5",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "5",
+     "evidence": "CLAIM: plugin_layout.py's own two '17 plugin-bundled' prose sites (docstring + comment) missed by the ripple :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r2-same-F6",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: claim-verifier's comparison-blind-spot caveat ('verified = you found no contradiction, NOT that none exists') not mirrored :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r2-same-F7",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: volatile downgrade two targets no criterion; exemplar has one :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r2-same-F8",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "header",
+     "evidence": "CLAIM: status line stale ('awaiting csr' during round 2) :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r2-same-F9",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "2",
+     "evidence": "CLAIM: general-purpose row is characterization, not verbatim — header says verbatim :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r2-same-F10",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "6 T3",
+     "evidence": "CLAIM: T3 named only pd's battery but T2 edits csr+psv SKILL.mds — rule 1 requires their own gates :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r2-hetero-disallowed-every-family-agent",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "§4 Contract — Tools paragraph, \"Read-only is enforced in FRONTMATTER like every family agent: `disallowedTools: Edit, Write, NotebookEdit`\"",
+     "evidence": "DOC: \"Read-only is enforced in FRONTMATTER like every family agent: `disallowedTools: Edit, Write, NotebookEdit`.\" Source (agents/ dir): 14 of 22 .agent.md files have NO `disallowedTools` line — `architect`, `backend-developer`, `code-reviewer`, `devops-engineer`, `documentation-writer`, `frontend-developer`, `graphiti-config-generator`, `ios-developer`, `ios-tester`, `playwright-test-generator`, `playwright-test-healer`, `playwright-test-planner`, `requirements-manager`, `tester` (all implementing / write-allowing agents). Only the 8 read-only family members (doc-reviewer, claim-verifier, claim-extractor, collision-verifier, novelty-claim-extractor, plan-reviewer, researcher, security-specialist) carry it. The doc's \"every family agent\" claim is unqualified and contradicts the repo state — the pattern is the read-only SUBSET's norm, not every family agent's."
+    },
+    {
+     "defect_id": "r2-hetero-narrowed-semantic-stretch",
+     "severity": "warning",
+     "kind": "authority-chain-break",
+     "location": "§4 Contract — Volatile-fact hard gate: \"`narrowed` when the fetched text supports the claim but the version anchor is absent (the weaker, date-scoped form — claim-verifier's `narrowed` semantics)\"",
+     "evidence": "DOC: \"claim-verifier's `narrowed` semantics\" applied to the volatile-gate downgrade. SOURCE — agents/claim-verifier.agent.md:14-17 verbatim: \"`narrowed` — the fetched source supports only a WEAKER form. (severity `warning`.)\" claim-verifier's narrowed is a SEMANTIC narrowing (the source supports the claim only in a weaker scope / weaker truth-value). The volatile-gate narrowed is an EVIDENTIARY narrowing (the source text supports the claim, but a date / version anchor is missing from the OUTPUT block — the source itself is unchanged). These are different semantic categories; the doc's \"mirrors claim-verifier's narrowed semantics\" stretches the source."
+    },
+    {
+     "defect_id": "r2-hetero-csr-step2-reconcile-bullet-ambiguity",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§5 Enumeration ripple — \"csr `SKILL.md`: ADD a reconcile-time decision point ... — new protocol text in the step-2 reconcile bullet\"",
+     "evidence": "DOC: singular \"the step-2 reconcile bullet\". SOURCE — skills/cross-source-review/SKILL.md step 2 (\"Round loop\"): contains TWO reconcile points: (a) \"Reconcile: revise the artifact per accepted findings, or reject a finding with rationale\" (between same-family-spawn and different-family-spawn), and (b) \"Reconcile again. Apply the per-round reconciliation table (both-report→adopt; ...)\" (after the different-family leg). The doc does not specify which of the two receives the new web-claim-verifier protocol text — a load-bearing step is ambiguous (the same-family reconcile has fresh findings to feed; the different-family reconcile has escalated/escalated-from-prior findings to feed)."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r2-same-F1",
+     "action": "fixed",
+     "note": "Role aligned: 'atomic factual claim or fact-shaped technical question'"
+    },
+    {
+     "defect_id": "r2-same-F2",
+     "action": "fixed",
+     "note": ".graphiti.json added to T2 enumeration"
+    },
+    {
+     "defect_id": "r2-same-F3",
+     "action": "fixed",
+     "note": "acceptance = bullet-by-bullet §4 check, named inclusions extended"
+    },
+    {
+     "defect_id": "r2-same-F4",
+     "action": "fixed",
+     "note": "question mode: no top-level verdict; per-element grounding block + confidence; searched/not_found required both modes; severity mapping claim-mode only"
+    },
+    {
+     "defect_id": "r2-same-F5",
+     "action": "fixed",
+     "note": "the two prose sites joined the EXPECTED_AGENTS bullet"
+    },
+    {
+     "defect_id": "r2-same-F6",
+     "action": "fixed",
+     "note": "blind-spot caveat clause added to oracle discipline"
+    },
+    {
+     "defect_id": "r2-same-F7",
+     "action": "fixed",
+     "note": "selection criterion: narrowed = text supports but anchor absent (weaker date-scoped form); unverifiable = no anchorable source found"
+    },
+    {
+     "defect_id": "r2-same-F8",
+     "action": "fixed",
+     "note": "status current (round 2 in flight)"
+    },
+    {
+     "defect_id": "r2-same-F9",
+     "action": "fixed",
+     "note": "row annotated as characterization with its basis"
+    },
+    {
+     "defect_id": "r2-same-F10",
+     "action": "fixed",
+     "note": "T3 = pd battery + csr suite + psv self-gates (every touched skill, rule 1)"
+    },
+    {
+     "defect_id": "r2-hetero-disallowed-every-family-agent",
+     "action": "fixed",
+     "note": "fixed — 'every family agent' -> 'every READ-ONLY family agent (8 of 22; write-capable agents lack the field BY DESIGN)'"
+    },
+    {
+     "defect_id": "r2-hetero-narrowed-semantic-stretch",
+     "action": "fixed",
+     "note": "fixed — volatile-gate narrowed stated in its own terms (time-scoped support); exemplar gloss downgraded to adjacent analogy"
+    },
+    {
+     "defect_id": "r2-hetero-csr-step2-reconcile-bullet-ambiguity",
+     "action": "fixed",
+     "note": "fixed — decision point specified at BOTH reconcile moments; evidence-drop + disposition-grounding semantics added"
+    }
+   ]
+  },
+  {
+   "round": 3,
+   "same_source_findings": 5,
+   "hetero_findings": 6,
+   "hetero_degraded": false,
+   "blockers": 2,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r3-same-F1",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "4",
+     "evidence": "CLAIM: question-mode seams: confidence enum undefined (repo-unique vocabulary); volatile gate verdict-only (question mode has no verdict — unwired); bounded budget 'per claim' only :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r3-same-F2",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "4",
+     "evidence": "CLAIM: 'severity mapping above' dangling backward reference (mapping is in the NEXT sentence) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r3-same-F3",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "4",
+     "evidence": "CLAIM: Role 'return a verdict' unconditional vs question mode NO verdict — Role↔Output unsynced (residual of r1 wcv-role-vs-boundary class) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r3-same-F4",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "4",
+     "evidence": "CLAIM: 'write-capable implementation agents' imprecise — some lacking agents have no tools: at all; true term = write-allowing :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r3-same-F5",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "4",
+     "evidence": "CLAIM: 'coverage field' names a field the schema never defines (actual: searched/not_found) :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r3-hetero-missing-claim-id-field",
+     "severity": "blocker",
+     "kind": "structural-gap",
+     "location": "§4 Contract — Output schema paragraph (claim mode)",
+     "evidence": "Doc enumerates the claim-mode output as: \"a ```json block with `verdict` ∈ {verified, refuted, narrowed, unverifiable} — psv's enum VERBATIM — plus `quote` (verbatim, from the fetched text), `url`, `fetched_at` (date), `source_tier`, `searched` / `not_found` (coverage disclosure).\" The doc explicitly says \"exact fields\" and repeatedly mirrors claim-verifier (\"mirrors `claim-verifier`'s phrasing\", \"psv's enum VERBATIM\"). Yet claim-verifier's actual output (agents/claim-verifier.agent.md:32) carries a top-level `claim_id` (\"claim_id\": \"C1\"). The web-claim-verifier contract drops `claim_id` — so the csr loop has no schema-stable way to bind a verdict back to the specific finding it is adjudicating without threading identity externally. A doc-reviewer-type reviewer/caller cannot trace which doc-finding produced which adjudication."
+    },
+    {
+     "defect_id": "r3-hetero-missing-finding-subobject",
+     "severity": "blocker",
+     "kind": "structural-gap",
+     "location": "§4 Contract — Output schema paragraph (claim mode), especially the severity-mapping sentence",
+     "evidence": "Doc: \"Severity mapping into doc-findings packets follows claim-verifier's rule verbatim: refuted→blocker, narrowed→warning, unverifiable→coverage (the ENUM needs zero mapping; findings packets get the severity via this fixed rule) — and this mapping applies to CLAIM mode only.\" Yet claim-verifier's output (agents/claim-verifier.agent.md:34-41) emits a `finding` sub-object on every non-verified verdict with the full doc-findings-shaped fields: `defect_id`, `severity`, `kind`, `location`, `evidence`, `suggestion`. The web-claim-verifier output schema (§4 claim mode) carries ONLY severity-via-verdict, and does not carry defect_id/kind/location/evidence/suggestion. So when a csr loop needs to embed the adjudication into a doc-findings packet, defect_id/kind/location/evidence/suggestion have no source — the conversion contract is undefined. The doc's \"the ENUM needs zero mapping\" obscures the missing non-severity fields."
+    },
+    {
+     "defect_id": "r3-hetero-single-quote-vs-multi-fetch",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 Contract — Output schema (claim mode) vs Bounded search paragraph",
+     "evidence": "Doc sets bounded budget as \"~5 searches / ~8 fetches per task — claim OR question\" (i.e. multiple fetches expected). But the claim-mode output schema (§4) carries exactly ONE `quote`, ONE `url`, ONE `fetched_at`, ONE `source_tier` — the contract says \"every verdict carries a verbatim quote\" (singular). When a claim requires MULTIPLE adjudicating sources (e.g. one source verifies sub-claim A, another refutes sub-claim B; or two sources conflict), the contract does not specify (a) pick-best-by-source_tier, (b) most-recent-fetch, (c) error-on-contradiction, or (d) drop-with-coverage-note. The oracle discipline paragraph says \"the fetched source TEXT is the oracle — never model recall\" — singular \"the source\" reinforces one-source-per-claim framing, but the bounded search admits many."
+    },
+    {
+     "defect_id": "r3-hetero-question-mode-exhaustion-undefined",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "§4 Contract — Bounded search paragraph vs Question-mode output paragraph",
+     "evidence": "Doc on exhaustion: \"on exhaustion return `unverifiable` with what was tried — never hunt unbounded\". `unverifiable` is, however, a CLAIM-mode verdict (§4: \"`verdict` ∈ {verified, refuted, narrowed, unverifiable}\"). The Question-mode paragraph says \"Question mode (no claim to adjudicate): NO top-level `verdict`\" — explicitly excluding `unverifiable`. So the exhaustion rule, as written, applies to claim mode only. The doc never bridges budget exhaustion into the question-mode output: an exhausted question-mode invocation could plausibly (i) emit empty `findings[]`, (ii) emit one finding with `confidence: unresolved`, (iii) emit a top-level error marker — the contract is silent, leaving every implementation free to invent a convention."
+    },
+    {
+     "defect_id": "r3-hetero-source-tier-enum-divergence",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 Contract — Source tiers paragraph",
+     "evidence": "Doc specifies `source_tier` as the closed enum `official-spec | rfc-standard | vendor-doc | first-party-blog | community | unknown` with preference ordering \"official-spec > rfc-standard > vendor-doc > first-party-blog > community\". The doc justifies the closed-enum discipline by analogy to researcher (\"family norm\" implicit), but the actual researcher contract (agents/researcher.agent.md:41) defines a different enum: `\"provenance\": \"official-spec | peer-reviewed | vendor-doc | blog | unknown\"`. The two enums differ on three axes: researcher has `peer-reviewed`, no `rfc-standard`; new agent has `rfc-standard`, no `peer-reviewed`; new agent splits `blog` into `first-party-blog` + `community`. The doc never records an ADR or rejected-alternatives note (rule 6) for this divergence; a reader mapping csr/psv/pd outputs through the same enum cannot."
+    },
+    {
+     "defect_id": "r3-hetero-searched-not-found-semantics-blur",
+     "severity": "coverage",
+     "kind": "structural-gap",
+     "location": "§4 Contract — Output schema (coverage disclosure fields) vs Oracle-discipline blind-spot caveat",
+     "evidence": "Doc defines `searched` and `not_found` as \"coverage disclosure\" fields and says \"top-level `searched` / `not_found` are REQUIRED in both modes (both fields, empty array allowed)\". Then in the oracle-discipline paragraph it says: \"Comparison-blind-spot caveat (mirrored verbatim in spirit from claim-verifier): `verified` means YOU found no contradiction in the fetched text — NOT that none exists; state this honestly in the output's `searched` / `not_found` disclosure fields.\" The semantic shape implied for `searched`/`not_found` is an array of search terms / not-found items (per their `empty array allowed` framing). State-the-caveat-in-an-array-of-search-terms conflates two field roles: an enumeration of search activity vs a self-evaluative epistemic caveat. claim-verifier keeps the blind-spot caveat in its body text and `note` field, not in a coverage-disclosure array."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r3-same-F1",
+     "action": "fixed",
+     "note": "confidence enum DEFINED (grounded/partial/unresolved with semantics + volatile wiring: unanchored volatile element never grounded); budget 'per task — claim OR question'"
+    },
+    {
+     "defect_id": "r3-same-F2",
+     "action": "fixed",
+     "note": "reordered: mapping sentence first, scope clause attached to it"
+    },
+    {
+     "defect_id": "r3-same-F3",
+     "action": "fixed",
+     "note": "Role: 'a verdict (claim mode) or grounded findings (question mode)'"
+    },
+    {
+     "defect_id": "r3-same-F4",
+     "action": "fixed",
+     "note": "'write-allowing agents — implementers and others'"
+    },
+    {
+     "defect_id": "r3-same-F5",
+     "action": "fixed",
+     "note": "named the searched/not_found fields"
+    },
+    {
+     "defect_id": "r3-hetero-missing-claim-id-field",
+     "action": "fixed",
+     "note": "fixed — claim_id REQUIRED in claim-mode output (mirrors claim-verifier)"
+    },
+    {
+     "defect_id": "r3-hetero-missing-finding-subobject",
+     "action": "fixed",
+     "note": "fixed — finding sub-object (defect_id/severity/kind/location/evidence/suggestion) REQUIRED iff verdict != verified, shape verbatim"
+    },
+    {
+     "defect_id": "r3-hetero-single-quote-vs-multi-fetch",
+     "action": "fixed",
+     "note": "fixed — multi-fetch collapse rule: grounding block = adjudicating (highest-preference) fetch; others listed in searched"
+    },
+    {
+     "defect_id": "r3-hetero-question-mode-exhaustion-undefined",
+     "action": "fixed",
+     "note": "fixed — question-mode exhaustion = findings[] all at confidence unresolved + disclosure"
+    },
+    {
+     "defect_id": "r3-hetero-source-tier-enum-divergence",
+     "action": "fixed",
+     "note": "fixed — source_tier = researcher's provenance enum VERBATIM (official-spec|peer-reviewed|vendor-doc|blog|unknown) + ordering + rfc/blog mapping gloss"
+    },
+    {
+     "defect_id": "r3-hetero-searched-not-found-semantics-blur",
+     "action": "fixed",
+     "note": "fixed — note field added as the blind-spot caveat's slot (mirrors claim-verifier's note)"
+    }
+   ]
+  },
+  {
+   "round": 4,
+   "same_source_findings": 6,
+   "hetero_findings": 2,
+   "hetero_degraded": false,
+   "blockers": 0,
+   "verdict": "pass",
+   "findings": [
+    {
+     "defect_id": "r4-same-F1",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "4",
+     "evidence": "CLAIM: claim_id unscoped — question mode has no claim id :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r4-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: question-mode exhaustion internally unsatisfiable (unresolved elements cannot carry quote/url; only the coverage arrays had an empty allowance) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r4-same-F3",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "4",
+     "evidence": "CLAIM: multi-fetch collapse key 'bears on' (relevance) can detach quote from verdict — must be 'determines the verdict', tier breaks ties only :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r4-same-F4",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "4",
+     "evidence": "CLAIM: blind-spot caveat double-assigned (searched/not_found AND note) — r3 half-landed :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r4-same-F5",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "5",
+     "evidence": "CLAIM: 'accepted-or-disputed' not csr's fixed/rejected/escalated vocabulary; escalated handling unstated :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r4-same-F6",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: 'mirrored verbatim in spirit' incoherent — the sentence IS character-identical :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r4-hetero-qmode-severity-mapping-gap",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 Contract — Output schema paragraph (severity-mapping sentence vs question-mode paragraph)",
+     "evidence": "Doc: \"Severity mapping into doc-findings packets follows claim-verifier's rule verbatim: refuted→blocker, narrowed→warning, unverifiable→coverage (the ENUM needs zero mapping; findings packets get the severity via this fixed rule) — and this mapping applies to CLAIM mode only (question mode has no verdict to map).\" The doc defines question-mode per-element confidence ∈ {grounded, partial, unresolved} with grounded/partial/unresolved semantics, and the doc-reviewer contract (agents/doc-reviewer.agent.md:39) requires severity ∈ {blocker | warning | coverage} for any finding entering a doc-findings packet. Yet the doc provides NO question-mode mapping: if a `partial` (volatile-class unanchored) or `grounded` question-mode finding must be embedded into a doc-findings packet, the caller must invent the confidence→severity conversion. The \"applies to CLAIM mode only\" clause closes one half of the contract without opening the other."
+    },
+    {
+     "defect_id": "r4-hetero-axis-convention-overreach",
+     "severity": "warning",
+     "kind": "scope-creep",
+     "location": "§3 Decision — \"named on the family's axis convention\"",
+     "evidence": "Doc: \"named on the family's axis convention (`claim-verifier` + the web axis; parallel: `novelty-claim-extractor`).\" Repo state (verified via `ls agents/*.agent.md | grep -E '^[a-z]+-claim-'`): exactly ONE agent — novelty-claim-extractor — currently uses the [domain]-claim-[role] naming pattern. The other 21 agent files have no domain-axis prefix (claim-verifier, claim-extractor, collision-verifier, doc-reviewer, plan-reviewer, researcher, etc.). The doc frames a one-example pattern as \"the family's axis convention\", overstating its prevalence; web-claim-verifier would be the SECOND example, not a continuation of an established family norm."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r4-same-F1",
+     "action": "fixed",
+     "note": "claim_id REQUIRED in claim mode / ABSENT in question mode"
+    },
+    {
+     "defect_id": "r4-same-F2",
+     "action": "fixed",
+     "note": "unresolved elements MAY carry null grounding; disclosure arrays carry what was tried"
+    },
+    {
+     "defect_id": "r4-same-F3",
+     "action": "fixed",
+     "note": "collapse key = the fetch that DETERMINES the verdict; tier breaks ties only among determining fetches"
+    },
+    {
+     "defect_id": "r4-same-F4",
+     "action": "fixed",
+     "note": "caveat single-assigned to note"
+    },
+    {
+     "defect_id": "r4-same-F5",
+     "action": "fixed",
+     "note": "fixed-bound/rejected-bound (csr vocabulary) + before-recording semantics + escalated-no-fetch rule"
+    },
+    {
+     "defect_id": "r4-same-F6",
+     "action": "fixed",
+     "note": "'mirrored verbatim'"
+    },
+    {
+     "defect_id": "r4-hetero-qmode-severity-mapping-gap",
+     "action": "fixed",
+     "note": "fixed — parallel confidence->severity rule added (grounded -> no finding; partial -> warning; unresolved -> coverage)"
+    },
+    {
+     "defect_id": "r4-hetero-axis-convention-overreach",
+     "action": "fixed",
+     "note": "fixed — 'axis convention' -> 'analogy to the ONLY precedent (n=1, not yet a convention)'"
+    }
+   ]
+  },
+  {
+   "round": 5,
+   "same_source_findings": 4,
+   "hetero_findings": 3,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r5-same-F1",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: 'every verdict carries a verbatim quote' unsatisfiable for unverifiable (exemplar scopes to refuted/narrowed) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r5-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "header",
+     "evidence": "CLAIM: 'first fully clean round' contradicted by r1 11/0B in the same sentence — r4 is the first round of the CURRENT streak :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r5-same-F3",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: 'full grounding block' vs null-allowance phrasing :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r5-same-F4",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "6 T2",
+     "evidence": "CLAIM: T2 'leg naming' stale shorthand vs §5 'decision-point addition' :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r5-hetero-quote-rule-contradicts-exemplar",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "§4 Contract — Oracle discipline paragraph",
+     "evidence": "Doc (§4): \"`verified` / `refuted` / `narrowed` MUST carry a verbatim quote from the fetched text (a `refuted` / `narrowed` without one is INVALID — downgrade to `unverifiable`, the exemplar's rule)\". Cited exemplar (agents/claim-verifier.agent.md line 21): \"Your `evidence` for `refuted` / `narrowed` MUST be a QUOTE from the fetched text you were given — NOT model recall. A `refuted` / `narrowed` verdict without a fetched quote is INVALID: downgrade to `unverifiable`.\" The exemplar's quote requirement explicitly names ONLY `refuted` / `narrowed`; `verified` is NOT in the exemplar's quote list. The doc extends the rule to `verified` while labeling it \"the exemplar's rule\" — a real contradiction between what the cited source says and what the doc attributes to it. The r5 disposition (r5-same-findings.json F1, \"scoped verbatim to the exemplar (verified/refuted/narrowed MUST; refuted/narrowed without -> downgrade; unverifiable exempt)\") actually LOCKED this contradiction in — the disposition's prose claims \"verbatim to the exemplar\" while its rule statement covers verdicts the exemplar does not."
+    },
+    {
+     "defect_id": "r5-hetero-blind-spot-not-verbatim",
+     "severity": "warning",
+     "kind": "authority-chain-break",
+     "location": "§4 Contract — Oracle discipline, Comparison-blind-spot caveat sentence",
+     "evidence": "Doc (§4): \"Comparison-blind-spot caveat (mirrored verbatim from claim-verifier): `verified` means YOU found no contradiction in the fetched text — NOT that none exists; state this honestly in the output's `note` slot.\" Cited source (agents/claim-verifier.agent.md line 22): \"**Comparison blind-spot caveat (workspace rule 3):** `verified` means YOU found no contradiction in the fetched text — NOT that none exists. The fetched source is strongly decoupled; your comparison is not. `refuted` / `narrowed` additionally involve a bounded interpretive step. State this honestly.\" The doc adds the tail \"; state this honestly in the output's `note` slot\", which is NOT in claim-verifier (which closes with \"State this honestly.\"). The \"mirrored verbatim\" attribution is false. (Also: claim-verifier's caveat names an additional clause — \"The fetched source is strongly decoupled; your comparison is not. `refuted` / `narrowed` additionally involve a bounded interpretive step.\" — that the doc also drops, making the verbatim claim more clearly wrong.) The r5 coverage note (\"all verbatim-mirror claims re-verified TRUE char-exact\") propagates this error: it claims char-exact re-verification that the actual diff disproves."
+    },
+    {
+     "defect_id": "r5-hetero-claim-unverifiable-grounding-undefined",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 Contract — Output schema, claim-mode unverifiable shape",
+     "evidence": "Doc (§4) defines the grounding block as \"`quote` verbatim from the fetched text, `url`, `fetched_at` date, `source_tier`\" and says \"`unverifiable` carries no quote requirement (nothing adjudicating may exist) — the disclosure arrays carry what was tried\". Question-mode is explicit: \"`unresolved` = no fetched text adjudicates — an `unresolved` element MAY carry `null` grounding fields\". Claim-mode `unverifiable` is silent on whether `url`, `fetched_at`, and `source_tier` are REQUIRED, OPTIONAL, or NULL when the verdict is unveriable but a fetch WAS tried (the disclosure arrays carry what was tried — implying the grounding block's source-attribution fields exist somewhere, but the doc does not say where). This is a load-bearing field requirement left undefined for a verdict class the volatile-fact hard gate (also §4) explicitly downgrades INTO."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r5-same-F1",
+     "action": "fixed",
+     "note": "quote rule scoped verbatim to the exemplar (verified/refuted/narrowed MUST; refuted/narrowed without -> downgrade; unverifiable exempt)"
+    },
+    {
+     "defect_id": "r5-same-F2",
+     "action": "fixed",
+     "note": "'first round of the CURRENT blocker-free streak (r1 was also 0B; r2 broke it)'"
+    },
+    {
+     "defect_id": "r5-same-F3",
+     "action": "fixed",
+     "note": "'present on every element, its fields MAY be null for unresolved'"
+    },
+    {
+     "defect_id": "r5-same-F4",
+     "action": "fixed",
+     "note": "T2 label = 'csr SKILL.md decision-point addition (per §5)'"
+    },
+    {
+     "defect_id": "r5-hetero-quote-rule-contradicts-exemplar",
+     "action": "fixed",
+     "note": "fixed — attribution split: (a) exemplar's rule VERBATIM = refuted/narrowed quote-MUST + downgrade; (b) verified-quote = THIS contract's own evidence-capture addition, divergence stated (exemplar's verified branch omits quote because psv captures quotes elsewhere)"
+    },
+    {
+     "defect_id": "r5-hetero-blind-spot-not-verbatim",
+     "action": "fixed",
+     "note": "fixed — full three-sentence caveat quoted; 'verbatim' now true"
+    },
+    {
+     "defect_id": "r5-hetero-claim-unverifiable-grounding-undefined",
+     "action": "fixed",
+     "note": "fixed — unverifiable grounding shape defined (quote null; url/fetched_at/source_tier required iff a fetch attempted; all-null on zero fetches)"
+    }
+   ]
+  },
+  {
+   "round": 6,
+   "same_source_findings": 5,
+   "hetero_findings": 4,
+   "hetero_degraded": false,
+   "blockers": 3,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r6-same-F1",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "4",
+     "evidence": "CLAIM: divergence rationale FALSE: psv captures NO quote for verified anywhere (packet quotes refuted/narrowed only; coverage-record stores verified as an integer) — 'captures quotes elsewhere' re-commits the r5 attribution class :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r6-same-F2",
+     "severity": "blocker",
+     "kind": "citation-error",
+     "location": "5",
+     "evidence": "CLAIM: 'fixed-bound/rejected-bound' compounds attributed to csr's vocabulary — zero matches in csr; the actual words are fixed/rejected/escalated :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r6-same-F3",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "5",
+     "evidence": "CLAIM: .graphiti.json 'their 13' stale on two axes (numeral + referent); blind swap yields a new false claim :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r6-same-F4",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "4",
+     "evidence": "CLAIM: official-spec undefined + RFC mapped to second tier — the paradigmatic official spec under-classified :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r6-same-F5",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: schema's universal grounding gloss conflicts with unverifiable-null (no specific-over-general pointer) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r6-hetero-table-claim-verifier-truncation",
+     "severity": "blocker",
+     "kind": "citation-error",
+     "location": "§2 table, claim-verifier row, \"Contract\" column (line 17)",
+     "evidence": "Doc presents the contract as verbatim from its definition: '\"Given ONE atomic claim AND the fetched source text that adjudicates it, returns a verdict\"; tools Read/Grep/Glob'. The column header at line 14 says \"Contract (verbatim from its definition)\". Actual `agents/claim-verifier.agent.md` frontmatter description (line 3) reads in full: \"Given ONE atomic claim AND the fetched source text that adjudicates it, returns a verdict (verified / refuted / narrowed / unverifiable) grounded in a fetched-source quote. Fresh, independent context; never edits or fixes. Spawn it per-claim as the verdict step (PSV-I3) of a psv run. The fetched source TEXT is the oracle — not model recall.\" The truncation removes load-bearing content the doc later relies on: the verdict enum the doc cites as \"psv's enum VERBATIM\" (§4 line 36), the \"grounded in a fetched-source quote\" grounding (the very invariant the proposal builds on), and the \"fetched source TEXT is the oracle — not model recall\" phrasing (paraphrased in §4 line 32). Same-family r6 caught §4 schema-grounding and psv-quote issues but did not flag this §2-table truncation."
+    },
+    {
+     "defect_id": "r6-hetero-multi-fetch-question-mode-undefined",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 Output schema, \"Multi-fetch collapse\" paragraph (line 36)",
+     "evidence": "Doc states: \"Multi-fetch collapse: the grounding block cites the fetch whose text DETERMINES the verdict (tier preference breaks ties only among determining fetches); every other fetch is listed in `searched`.\" But question mode (also defined in §4) has NO top-level `verdict` (\"NO top-level `verdict`; a `findings[]` array...\"). The \"determining fetch\" selection rule presupposes a verdict that question mode does not produce, and the doc provides no analogous selection criterion (per-finding strongest-fetch? per-finding tier-preference? aggregate best-fetch?) for question-mode grounding blocks. This is a load-bearing gap because every question-mode output with >1 fetch must pick a grounding block."
+    },
+    {
+     "defect_id": "r6-hetero-volatile-gate-coverage-scope",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "§4 \"Volatile-fact hard gate\" paragraph (line 34)",
+     "evidence": "Doc specifies the gate for ONE direction only: \"a `verified` on a volatile-class fact without both [fetch date + version anchor] is INVALID output — downgrade with a selection criterion (not either/or): `narrowed` when the fetched text grounds the claim only as of its own date/version ..., `unverifiable` when no anchorable source was found at all\". The gate is silent on (a) whether `refuted` verdicts on volatile-class facts also require an anchor (the doc elsewhere says refuted/narrowed already require a quote, but the volatile-class constraint is not reiterated), and (b) whether a `narrowed` verdict on a volatile fact must itself carry date/version scoping (vs. just a fetch quote). The volatile gate is incompletely scoped across the verdict enum; a reviewer building a downstream validator cannot tell which verdicts trigger the anchor requirement."
+    },
+    {
+     "defect_id": "r6-hetero-graphiti-wording-contradicts-alignment-rationale",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "§5 enumeration ripple, .graphiti.json fix line (line 47)",
+     "evidence": "Doc says: \"Fix: re-scope to the plugin ('the plugin's 23 cascaded subagents (registered as solidforge:<name>)'), aligning with plugin.json's plugin-wide count.\" The \"aligning with plugin.json\" rationale is contradicted by the actual fix wording: proposed `.graphiti.json` phrasing is \"(registered as solidforge:<name>)\" while the actual `.claude-plugin/plugin.json` description (line 4) reads \"(plugin-scoped as solidforge:<name>)\". The two phrases differ (\"registered\" vs \"plugin-scoped\"). The doc claims alignment but proposes non-aligned wording."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r6-same-F1",
+     "action": "fixed",
+     "note": "true rationale: exemplar COUNTS verified (integer), captures no per-verified artifact; this contract is STRICTER (output IS the evidence artifact)"
+    },
+    {
+     "defect_id": "r6-same-F2",
+     "action": "fixed",
+     "note": "plain composition: 'headed to fixed or rejected (csr's actual disposition words)'"
+    },
+    {
+     "defect_id": "r6-same-F3",
+     "action": "fixed",
+     "note": "re-scope to 'the plugin's 23 cascaded subagents', aligned with plugin.json"
+    },
+    {
+     "defect_id": "r6-same-F4",
+     "action": "fixed",
+     "note": "tier boundary defined (normative-issuing-authority vs refereed-literature); RFC = official-spec"
+    },
+    {
+     "defect_id": "r6-same-F5",
+     "action": "fixed",
+     "note": "pointer clause in the schema gloss (quote null for unverifiable per oracle rule)"
+    },
+    {
+     "defect_id": "r6-hetero-table-claim-verifier-truncation",
+     "action": "fixed",
+     "note": "fixed — column relabeled EXCERPT-with-ellipses; claim-verifier quote completed through the enum + quote tail"
+    },
+    {
+     "defect_id": "r6-hetero-multi-fetch-question-mode-undefined",
+     "action": "fixed",
+     "note": "fixed — question-mode multi-fetch rule added (per-finding determining fetch)"
+    },
+    {
+     "defect_id": "r6-hetero-volatile-gate-coverage-scope",
+     "action": "fixed",
+     "note": "fixed — gate scope stated: guards positive confirmations (verified + grounded); refuted/narrowed carry their limiting text; fetch date always rides"
+    },
+    {
+     "defect_id": "r6-hetero-graphiti-wording-contradicts-alignment-rationale",
+     "action": "fixed",
+     "note": "fixed — plugin.json's exact phrase 'plugin-scoped as solidforge:<name>'"
+    }
+   ]
+  },
+  {
+   "round": 7,
+   "same_source_findings": 3,
+   "hetero_findings": 4,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r7-same-F1",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: 'no per-verified-claim artifact anywhere' falsifiable — the volatile-authority registry IS a per-verified record (source refs); scope to QUOTE :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r7-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: verbatim caveat span carries an unmarked 6-word insertion (the note-slot routing) — regresses the r5 verbatim fix :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r7-same-F3",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: official-spec↔vendor-doc seam undefined after moving vendor product docs into official-spec — vendor-doc tier left with empty stated extension :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r7-hetero-qm-grounded-contradiction",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "§4 Contract / §4 Output schema — question-mode findings[] semantics",
+     "evidence": "Doc says two things that cannot both be true:\n\n(1) \"Question mode (no claim to adjudicate): NO top-level `verdict`; a `findings[]` array whose every element carries the grounding block (`quote`, `url`, `fetched_at`, `source_tier`) — present on every element, its fields MAY be null for `unresolved` plus a per-finding `confidence` ∈ {grounded | partial | unresolved}\" — \"every element\" implies grounded, partial, AND unresolved are all in findings[].\n\n(2) \"Question-mode confidence → doc-findings severity (the parallel rule): `grounded` → NO finding emitted (counted in the disclosure, like claim-verifier's verified); `partial` → `warning`; `unresolved` → `coverage`.\" — grounded findings are NOT emitted.\n\nThese conflict: if grounded findings are not emitted, then findings[] cannot contain \"every\" element of {grounded, partial, unresolved} as the first statement asserts. A reader building the agent contract cannot reconcile the output schema for question mode without picking one of the two.\n\nThis is the SAME doc, line 36, two adjacent claims."
+    },
+    {
+     "defect_id": "r7-hetero-pluginjson-exact-phrase-mismatch",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "§5 Enumeration ripple — `.graphiti.json` description field fix",
+     "evidence": "Doc claims: \"Fix: re-scope to the plugin using plugin.json's exact phrase — 'the plugin's 23 cascaded subagents (plugin-scoped as solidforge:<name>)' — aligning wording AND count with plugin.json.\"\n\nVerified against `.claude-plugin/plugin.json` line 4 (the file the doc itself names): the actual current phrase is \"22 cascaded subagents (plugin-scoped as solidforge:<name>)\" — with no \"the plugin's\" prefix. The post-landing phrase (after this proposal's T2 increments the count) will be \"23 cascaded subagents (plugin-scoped as solidforge:<name>)\" — STILL no \"the plugin's\" prefix. The proposed .graphiti.json text prepends \"the plugin's\" which is not in plugin.json's text in either state. The parenthetical \"plugin-scoped as solidforge:<name>)\" IS in plugin.json and IS used verbatim in the proposed text, but the full proposed string is a new compound, not plugin.json's \"exact phrase\"."
+    },
+    {
+     "defect_id": "r7-hetero-sourcetier-preprint-coverage-gap",
+     "severity": "coverage",
+     "kind": "coverage-gap",
+     "location": "§4 Contract / Source tiers — tier boundary definition",
+     "evidence": "Doc defines source_tier boundaries: `official-spec` = the NORMATIVE document issued by the authority governing the artifact; `peer-reviewed` = independently refereed LITERATURE about it; `vendor-doc` = vendor-published material that is NOT the normative artifact document; `blog` = first-party/community blogs; `unknown` = everything else.\n\nThe doc's incident precedent is \"the node-bin csr round-1 finding `r1-same-F5` — flagged the CC-docs `$ARGUMENTS` quote as 'load-bearing and unverifiable'\" and the 2026-09-08 session discussion topic is 「核验 NLB ENI conntrack 约束」 — but the doc is positioned as a general web claim verifier for any domain (not just AWS / Claude Code docs). arXiv preprints (the dominant fetchable source class for academic-research claims that psv and csr already touch — see psv SKILL.md §2 \"claim extraction (PSV-I2) ... arXiv abstract / Crossref / spec section / code symbol\") are not addressed: a preprint is NOT normative (so not `official-spec`), NOT refereed when first posted (so not `peer-reviewed` by the doc's \"independently refereed LITERATURE\" boundary), NOT issued by the artifact's vendor (so not `vendor-doc`), and NOT a blog. The only honest tag is `unknown`, which the doc itself flags as the lowest tier and \"labeled honestly, never silently mapped.\" Treating every arXiv preprint as `unknown` defeats the tier's stated preference ordering — a major category of fetchable sources collapses to the bottom tier.\n\nDisclosure: I did not exhaustively verify every fetched-source category from psv/csr's history; this is a structural coverage-gap in the doc's tier taxonomy, not a confirmation that psv or csr routes every preprint through this agent."
+    },
+    {
+     "defect_id": "r7-hetero-mode-interface-undefined",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 Contract — Role + §4 Output schema — mode distinction",
+     "evidence": "Doc says: \"given ONE atomic factual claim or fact-shaped technical question (+ optional version/scope context), search, fetch the adjudicating source(s), and return a verdict (claim mode) or grounded findings (question mode)\". The output schema differs sharply by mode (claim_id REQUIRED/ABSENT; top-level verdict present/absent; finding sub-object vs findings[] array), but the doc does not define how the agent selects mode. The caller-facing interface is unspecified: does the caller pass a flag? a discriminator field? a wrapping JSON envelope? does the agent infer from input shape (e.g. \"is this phrased as a question or a proposition?\")? The doc states the outputs of each mode and the volatiled-class / bounded-search behaviors per mode, but the input contract that selects mode is undefined — a load-bearing concept for any caller (csr reconcile, psv single-claim, ad-hoc general-purpose) implementing this contract.\n\nRelated but separate: §4 Output schema says \"claim_id (REQUIRED in CLAIM mode — echo the caller-supplied claim id, mirroring claim-verifier; ABSENT in question mode, which has no claim id)\" — implying the caller supplies a claim_id in claim mode, but no caller-side schema is given."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r7-same-F1",
+     "action": "fixed",
+     "note": "QUOTE-scoped + the registry acknowledged (source refs, quote-free)"
+    },
+    {
+     "defect_id": "r7-same-F2",
+     "action": "fixed",
+     "note": "verbatim span closed at 'State this honestly.'; routing in its own sentence"
+    },
+    {
+     "defect_id": "r7-same-F3",
+     "action": "fixed",
+     "note": "vendor-doc defined: vendor-published non-normative material (release notes / KBs / engineering posts)"
+    },
+    {
+     "defect_id": "r7-hetero-qm-grounded-contradiction",
+     "action": "fixed",
+     "note": "fixed — findings[] = the ANSWER set (every confidence; grounded IS the answer); severity rule restated as the PACKET-conversion rule (grounded -> no packet entry)"
+    },
+    {
+     "defect_id": "r7-hetero-pluginjson-exact-phrase-mismatch",
+     "action": "fixed",
+     "note": "fixed — parenthetical-verbatim claim (the exact substring); possessive prefix is ours"
+    },
+    {
+     "defect_id": "r7-hetero-sourcetier-preprint-coverage-gap",
+     "action": "fixed",
+     "note": "fixed — preprints map to blog (URL carries server); enum stays family-verbatim, extension is family-wide"
+    },
+    {
+     "defect_id": "r7-hetero-mode-interface-undefined",
+     "action": "fixed",
+     "note": "fixed — mode-selection bullet: caller states claim|question; assertion->claim / interrogative->question defaults"
+    }
+   ]
+  },
+  {
+   "round": 8,
+   "same_source_findings": 2,
+   "hetero_findings": 5,
+   "hetero_degraded": false,
+   "blockers": 2,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r8-same-F1",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "4 vs r7 record",
+     "evidence": "CLAIM: r7 disposition 'sourcetier-preprint-coverage-gap: fixed' but the artifact contains NO preprint text (grep=0) — the r7 sed anchor silently missed (blog sentence sits between the vendor-doc clause and the closing paren); record-artifact mismatch :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r8-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4 rule (a)",
+     "evidence": "CLAIM: 'rule VERBATIM' sat over a compressed restatement, not a character-exact span (no quote marks, so no false-citation claim — wording precision) :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r8-hetero-four-outcome-axis-mislabel",
+     "severity": "blocker",
+     "kind": "authority-chain-break",
+     "location": "§5 enumeration ripple, line ~45: \"the four outcome-axis ones (`claim-extractor`, `claim-verifier`, `collision-verifier`, `novelty-claim-extractor`)\"",
+     "evidence": "DOC QUOTE (§5): \"five sub-agents absent from the list — the four outcome-axis ones (`claim-extractor`, `claim-verifier`, `collision-verifier`, `novelty-claim-extractor`) plus csr's process-axis `doc-reviewer`; `agents/` holds 22 files today.\" The proposal also classifies doc-reviewer as \"process-axis\" in the same sentence, establishing that \"outcome-axis\" here is being used as a substantive taxonomy label, not a loose synonym.\\n\\nAGENT DEFINITIONS (cited by §5 itself — these are the proposal's authoritative source for what each agent IS):\\n- `agents/claim-extractor.agent.md:21` — \"**Barred from OUTCOME-AXIS**: do NOT judge whether a claim is TRUE — only whether it is atomic and source-admissible.\"\\n- `agents/claim-verifier.agent.md:23` — \"**Barred from OUTCOME-AXIS**: you adjudicate THIS claim against ITS source; you do NOT judge whether the overall doc is 'right'.\"\\n- `agents/collision-verifier.agent.md:23` — \"**Barred from OUTCOME-AXIS**: you adjudicate THIS novelty claim against ITS found prior art; you do NOT judge whether the artifact is genuinely NOVEL or significant.\"\\n- `agents/novelty-claim-extractor.agent.md:26` — \"**Barred from OUTCOME-AXIS**: do NOT judge whether a novelty claim is REAL or whether the artifact is genuinely novel.\"\\n\\nThe proposal's own §2 reinforces the cited-source meaning: doc-reviewer is described as barred from outcome-axis judgment (\"Barred from OUTCOME-AXIS\" is its definition's exact term, doc-reviewer.agent.md:24), and claim-verifier is described as returning a per-claim verdict (process-axis adjudication). The §5 classification therefore re-labels four explicitly-process-axis agents as outcome-axis. The count \"five sub-agents absent\" happens to be correct (4 + 1), so the enumeration ripple's downstream edits survive — but the LABELING is the contradiction, and any future maintainer grepping for \"outcome-axis agents\" will hit this label and infer the opposite taxonomy from the cited agent files."
+    },
+    {
+     "defect_id": "r8-hetero-ADR-claim-verbatim-mismatch-minor",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "§4, the verbatim-caveat quote",
+     "evidence": "DOC QUOTE (§4): \"Comparison-blind-spot caveat (mirrored VERBATIM — the full passage, claim-verifier): `verified` means YOU found no contradiction in the fetched text — NOT that none exists. The fetched source is strongly decoupled; your comparison is not. `refuted` / `narrowed` additionally involve a bounded interpretive step. State this honestly.\"\\n\\nSOURCE (`agents/claim-verifier.agent.md:22`): \"**Comparison blind-spot caveat (workspace rule 3):** `verified` means YOU found no contradiction in the fetched text — NOT that none exists. The fetched source is strongly decoupled; your comparison is not. `refuted` / `narrowed` additionally involve a bounded interpretive step. State this honestly.\"\\n\\nThe body of the passage is character-exact, but the \"mirrored VERBATIM — the full passage\" framing implies the full label \"**Comparison blind-spot caveat (workspace rule 3):**\" was carried over; the doc instead re-labels it \"Comparison-blind-spot caveat (mirrored VERBATIM — the full passage, claim-verifier):\". The substantive passage is verbatim; only the bold-text label is reformulated. Same applies to the fetched-quote invariant quote earlier in §4, which IS character-exact (verified). Minor."
+    },
+    {
+     "defect_id": "r8-hetero-question-mode-precedent-not-cited",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4, Question mode schema (the `findings[]` + per-element `confidence ∈ {grounded | partial | unresolved}` shape)",
+     "evidence": "The §4 question-mode schema is presented as the new agent's own contract, but `claim-verifier.agent.md` (the cited exemplar) has NO question mode — its schema is per-claim verdict only (claim-verifier.agent.md:30-44). Likewise collision-verifier (collision-verifier.agent.md:29-45) is verdict-only. The doc does not cite any existing precedent for the question-mode `findings[]` / `confidence: grounded|partial|unresolved` shape, nor does it derive it from researcher's `research.claims[]` (which has no per-element confidence enum). The doc flags a precedent (researcher's provenance enum) for `source_tier`, and psv's verdict enum for `verdict`, but the question-mode shape stands unanchored — a fresh design without a cited precedent. Whether this is intentional (a new shape for a new mode) or a gap is not stated."
+    },
+    {
+     "defect_id": "r8-hetero-disposition-words-mapping-not-justified",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§5, \"csr SKILL.md ADD a reconcile-time decision point\" decision-point text",
+     "evidence": "§5 says: \"during reconcile, when a finding whose disposition is headed to `fixed` or `rejected` (csr's actual disposition words — fixed / rejected / escalated) rests on an external, fetchable claim, spawn `solidforge:web-claim-verifier` for it BEFORE recording that disposition (replacing the implicit general-purpose pattern); its quote/URL/date output drops into the run-dir `evidence/` and grounds the disposition. `escalated` findings are already human-bound — no fetch spent.\"\\n\\nThe wording says a finding heading to \"fixed or rejected\" triggers a fetch. But §4's contract for the new agent is designed for VERIFYING claims, not for SUBSTANTIATING dispositions — the agent adjudicates whether an external assertion is supported, not whether a csr finding's disposition was correct. The §5 description thus conflates two semantics: (a) \"verify an external claim embedded in the finding's evidence\" (verifier role), and (b) \"fetch the source the disposition rests on\" (evidence-grounding role). csr's disposition is the AUTHOR's choice about whether to act on a finding; web-claim-verifier adjudicates whether an external CLAIM is supported. These overlap but are not identical — a `rejected` disposition may rest on author's reasoning, not on an external claim. The §5 trigger condition (\"finding whose disposition is headed to fixed or rejected rests on an external, fetchable claim\") is therefore under-specified: does \"rests on an external claim\" mean (i) the finding's evidence cites an external claim, or (ii) the author's reject/fix rationale cites an external claim? These produce different spawn conditions. The doc does not disambiguate."
+    },
+    {
+     "defect_id": "r8-hetero-psv-verified-shape-claim-unverified",
+     "severity": "coverage",
+     "kind": "citation-error",
+     "location": "§4, the claim about psv's verified-branch shape (\"psv COUNTS verified claims as a bare integer and captures no per-verified-claim QUOTE anywhere\")",
+     "evidence": "VERIFIED via cross-reference (this leg did NOT trace psv's exact schema, so cannot verify against the authoritative packet schema): I read `skills/primary-source-verification/SKILL.md` and confirmed the high-level count-not-list shape (line 57: \"`verified` claims are counted, not listed\"; line 57: \"the volatile-authority registry is the only per-verified record, quote-free\"). However the doc's stronger claim — that psv \"captures no per-verified-claim QUOTE anywhere\" — depends on the psv packet JSON schema (`infra/schemas/...`) and the volatile-authority registry's exact field set, which I did not open. Could not fully verify the \"anywhere\" claim. (Coverage disclosure per workspace rule 3.)"
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r8-same-F1",
+     "action": "fixed",
+     "note": "preprint mapping APPLIED with an asserted anchor this time (verified: grep=1); the silent-miss root cause noted for the record: unasserted string replaces — future reconciles assert anchors"
+    },
+    {
+     "defect_id": "r8-same-F2",
+     "action": "fixed",
+     "note": "rule (a) now quotes the exact span in quote marks"
+    },
+    {
+     "defect_id": "r8-hetero-four-outcome-axis-mislabel",
+     "action": "fixed",
+     "note": "fixed — relabeled 'the four psv/prior-art-search verdict-pipeline agents' + explicit note they SERVE the outcome-axis skills but each contract reads Barred from OUTCOME-AXIS"
+    },
+    {
+     "defect_id": "r8-hetero-ADR-claim-verbatim-mismatch-minor",
+     "action": "fixed",
+     "note": "fixed — verbatim span quote-marked (delimited precisely); label hyphenation aligned to source ('Comparison blind-spot')"
+    },
+    {
+     "defect_id": "r8-hetero-question-mode-precedent-not-cited",
+     "action": "fixed",
+     "note": "fixed — question mode labeled THIS contract's OWN extension (exemplar is per-claim verdict only, no family precedent)"
+    },
+    {
+     "defect_id": "r8-hetero-disposition-words-mapping-not-justified",
+     "action": "fixed",
+     "note": "fixed — escalated-no-fetch rationale stated (human-bound regardless of what the web says; a fetch cannot change its destination)"
+    },
+    {
+     "defect_id": "r8-hetero-psv-verified-shape-claim-unverified",
+     "action": "fixed",
+     "note": "carried in coverage notes — the claim is source-verified by the same-family legs against psv SKILL.md:57 (counted-not-listed; registry carries refs) — recorded here for the hetero leg's disclosure"
+    }
+   ]
+  },
+  {
+   "round": 9,
+   "same_source_findings": 1,
+   "hetero_findings": 6,
+   "hetero_degraded": false,
+   "blockers": 2,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r9-same-F1",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "status header",
+     "evidence": "CLAIM: the 7→9 extension transition had no explicit record sentence though the status line is the sole audit record (sidecar has no extension event) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r9-hetero-misattributed-verdict-enum",
+     "severity": "blocker",
+     "kind": "citation-error",
+     "location": "§4 Output schema paragraph, \"verdict ∈ {verified, refuted, narrowed, unverifiable} — psv's enum VERBATIM\"",
+     "evidence": "Doc claims the verdict set is \"psv's enum VERBATIM\". Source check: agents/claim-verifier.agent.md lines 12-17 define the four-value verdict set verbatim: \"`verified` ... `refuted` ... `narrowed` ... `unverifiable`\". psv itself does not declare this enum — psv SKILL.md line 57 references it only indirectly via the doc-findings packet shape (\"refuted / narrowed / unverifiable findings\"); the enum itself is the CLAIM-VERIFIER agent's contract, not psv's. The citation should read \"claim-verifier's enum VERBATIM\" (the same exemplar the doc invokes elsewhere)."
+    },
+    {
+     "defect_id": "r9-hetero-blind-spot-caveat-truncated",
+     "severity": "blocker",
+     "kind": "citation-error",
+     "location": "§4 Oracle discipline paragraph, the verbatim claim-verifier quote introducing the blind-spot caveat",
+     "evidence": "Doc presents the claim-verifier blind-spot caveat as a \"mirrored verbatim — the full passage, quote-marked\": \"verified means YOU found no contradiction in the fetched text — NOT that none exists. The fetched source is strongly decoupled; your comparison is not. refuted / narrowed additionally involve a bounded interpretive step. State this honestly.\" Source check (agents/claim-verifier.agent.md:22): the actual line begins with \"**Comparison blind-spot caveat (workspace rule 3):** \" — a load-bearing prefix that names the caveat's provenance (workspace rule 3) and labels it. The doc's \"full passage\" claim is contradicted by the omitted prefix. (The fetched-quote invariant quote earlier in the same paragraph IS character-exact against line 21.)"
+    },
+    {
+     "defect_id": "r9-hetero-preprint-tier-self-contradiction",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "§4 Source tiers paragraph: \"Preprints (not-yet-refereed server posts, e.g. arXiv) map to `blog`\" vs the same paragraph's clause \"extending it is a family-wide decision, not this contract's\"",
+     "evidence": "Doc states: \"`source_tier` is researcher's provenance enum VERBATIM (family-shared vocabulary)... extending it is a family-wide decision, not this contract's\" — then in the same paragraph adds \"Preprints (not-yet-refereed server posts, e.g. arXiv) map to `blog`\". But researcher's enum definition (agents/researcher.agent.md:41) is a bare 5-value list with no preprint-to-blog mapping rule — the mapping is this contract's OWN addition to researcher semantics. The doc's \"verbatim / no extension\" claim and its preprint-mapping rule are in direct tension within the same paragraph."
+    },
+    {
+     "defect_id": "r9-hetero-naming-precedent-overstates-n",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§3 Decision, \"named by analogy to `novelty-claim-extractor` — the family's ONLY existing `[domain]-claim-[role]` precedent (an analogy, not yet a convention at n=1; a second such name would make it one)\"",
+     "evidence": "Source check (agents/): there are TWO `[role]-extractor` agents — claim-extractor (psv) AND novelty-claim-extractor (prior-art-search) — both with disallowedTools in frontmatter, both described as \"Same-family [domain]-claim-extraction agent\". The doc's \"n=1\" framing for the [domain]-claim-[role] pattern undercounts: novelty-claim-extractor is the SECOND extractor (not first), and the [domain]-claim-extractor pattern already exists twice. Naming `web-claim-verifier` would make the `claim-[role]` (extractor/verifier) cross-skill pattern the family's SECOND agent in the [domain]-claim-[role] shape, not establish novelty-claim-extractor as a precedent at n=1."
+    },
+    {
+     "defect_id": "r9-hetero-enforcement-mechanism-misnamed",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "§4 Volatile-fact hard gate paragraph: \"deterministic enforcement would require a fetched_quote_gate-style harness, a future option\"",
+     "evidence": "Source check (skills/primary-source-verification/infra/test/fetched_quote_gate.py:2): the file's docstring is \"PSV-I5(a) -- the fetched-quote invariant gate (the load-bearing L1/rule-3 check\" — it enforces the QUOTE presence rule for refuted/narrowed, not date/version anchors. The doc's \"fetched_quote_gate-style harness\" framing invokes the wrong enforcement mechanism as the analogy: a date/version anchor gate would have a different shape (date-presence check, not quote-presence check) and the precedent's name doesn't transfer cleanly. This is a misattribution of an existing harness's scope."
+    },
+    {
+     "defect_id": "r9-hetero-csr-status-block-quote-mismatch",
+     "severity": "coverage",
+     "kind": "citation-error",
+     "location": "Status header (line 6) — \"Cap 5 reached with only one clean trailing round (r4)\"",
+     "evidence": "Source check: workspace/cross-source-review/runs/20260910-web-claim-verifier/r9-same-findings.json coverage_notes state \"ALL r8 fixes verified clean\" and the doc itself declares \"rounds 1-8 reconciled\". The status block's \"r4\" trailing-clean-round reference is consistent with the r1-r5 reconciliation described earlier in the same sentence, but the r9 coverage note in the same run dir is silent on whether r8 was a clean round. I could not verify from artifacts available in this session whether r4 is the SOLE clean trailing round before r5's cap-hit, because the per-round coverage_notes for r1-r8 are not in the run dir (only r9-same-findings.json is present alongside per-round dispositions and hetero files). Coverage disclosure: this reviewer cannot independently verify the \"only one clean trailing round (r4)\" claim from the cited artifacts."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r9-same-F1",
+     "action": "fixed",
+     "note": "complete extension ledger written (5→7 human election; 7→9 standing authorization at r7 cap-hit; 9→11 at r8 cap-hit)"
+    },
+    {
+     "defect_id": "r9-hetero-misattributed-verdict-enum",
+     "action": "fixed",
+     "note": "fixed — 'claim-verifier's enum VERBATIM (psv inherits via PSV-I3)'"
+    },
+    {
+     "defect_id": "r9-hetero-blind-spot-caveat-truncated",
+     "action": "fixed",
+     "note": "fixed — label prefix included in the quote-marked span (character-exact incl. bold markers)"
+    },
+    {
+     "defect_id": "r9-hetero-preprint-tier-self-contradiction",
+     "action": "fixed",
+     "note": "fixed — mapping-vs-extending distinction stated"
+    },
+    {
+     "defect_id": "r9-hetero-naming-precedent-overstates-n",
+     "action": "fixed",
+     "note": "fixed — three-token X-claim-Y pattern vs claim-extractor's two-token X-Y"
+    },
+    {
+     "defect_id": "r9-hetero-enforcement-mechanism-misnamed",
+     "action": "fixed",
+     "note": "fixed — psv's PSV-I5(a) gate exists; the ADAPTATION is the future option"
+    },
+    {
+     "defect_id": "r9-hetero-csr-status-block-quote-mismatch",
+     "action": "fixed",
+     "note": "fixed — status header compacted to current state + complete extension ledger"
+    }
+   ]
+  },
+  {
+   "round": 10,
+   "same_source_findings": 3,
+   "hetero_findings": 4,
+   "hetero_degraded": false,
+   "blockers": 2,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r10-same-F10-1",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "5/6 T2",
+     "evidence": "CLAIM: r8's trigger ambiguity (evidence-vs-rationale) dispositioned 'fixed' but the text was character-identical — record-artifact mismatch AND the ambiguity stood; the r8 fix addressed only the escalated-no-fetch half :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r10-same-F10-2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "2",
+     "evidence": "CLAIM: doc-reviewer row's leading cut mid-sentence unmarked (the table's own ellipses-mark-cuts convention) :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r10-same-F10-3",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4 rule (a)",
+     "evidence": "CLAIM: rule (a)'s trailing sentence-boundary cut unmarked (uniform-ellipsis convention) :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r10-hetero-hetero-row-cut-claim-verifier",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "§2 table, claim-verifier row",
+     "evidence": "Doc states its own convention: \"(EXCERPT from its definition — ellipses mark cuts; quotes inside are character-exact)\". The claim-verifier row quotes \"Given ONE atomic claim AND the fetched source text that adjudicates it, returns a verdict (verified / refuted / narrowed / unverifiable) grounded in a fetched-source quote…\" with NO leading ellipsis. Verified source `agents/claim-verifier.agent.md:3` has the preceding sentence \"Same-family per-claim verifier for the primary-source-verification (psv) skill.\" — the cut between \"skill.\" and \"Given\" is unmarked. Same defect kind as F10-2 (which the same-family leg caught on the doc-reviewer row and was fixed with a leading ellipsis); the parallel defect on the claim-verifier row was missed."
+    },
+    {
+     "defect_id": "r10-hetero-hetero-row-cut-researcher",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "§2 table, researcher row",
+     "evidence": "Doc states its own convention: \"(EXCERPT from its definition — ellipses mark cuts; quotes inside are character-exact)\". The researcher row quotes \"Never judges conclusion truth — outcome axis, human only\" with NO leading ellipsis. Verified source `agents/researcher.agent.md:3` has the preceding sentence \"Output feeds research_constraints (sources-cited/staging/cost/provenance).\" — the cut between \"provenance).\" and \"Never\" is unmarked. The phrase is the start of a complete sentence in the source, but the cut before it is still required by the doc's own ellipsis convention (parallel to F10-2)."
+    },
+    {
+     "defect_id": "r10-hetero-hetero-kind-enum-mismatch",
+     "severity": "blocker",
+     "kind": "structural-gap",
+     "location": "§4 Output schema (claim-mode finding sub-object)",
+     "evidence": "Doc says \"for verdict ≠ verified a `finding` sub-object is REQUIRED, mirroring claim-verifier's shape verbatim (`defect_id`, `severity`, `kind`, `location`, `evidence`, `suggestion`)\" — claim-verifier's kind is \"claim-refuted | claim-narrowed | claim-unverifiable\" (`agents/claim-verifier.agent.md:37`). The SAME paragraph also says \"Severity mapping into doc-findings packets follows claim-verifier's rule verbatim: refuted→blocker, narrowed→warning, unverifiable→coverage (the ENUM needs zero mapping; findings packets get the severity via this fixed rule)\" — the receiving schema `skills/cross-source-review/infra/schemas/doc-findings.schema.json:38` requires `kind ∈ [contradiction, authority-chain-break, scope-creep, structural-gap, citation-error, coverage-gap]`. claim-refuted/claim-narrowed/claim-unverifiable is DISJOINT from that set; \"the ENUM needs zero mapping\" is asserted but no kind-mapping rule is given — yet the finding is described as becoming a doc-findings packet entry. T1 cannot implement both halves of the contract as written: either the kind enum violates \"shape verbatim\" or the output fails doc-findings schema validation."
+    },
+    {
+     "defect_id": "r10-hetero-hetero-question-mode-kind-mapping",
+     "severity": "blocker",
+     "kind": "structural-gap",
+     "location": "§4 question-mode confidence → doc-findings conversion rule",
+     "evidence": "Doc states: \"Question-mode confidence → doc-findings severity (the CONVERSION rule — it governs only which elements become doc-findings PACKET entries, never the output itself): … `partial` → `warning` packet entry; `unresolved` → `coverage` packet entry.\" The doc-findings schema requires BOTH `severity` AND `kind` (`skills/cross-source-review/infra/schemas/doc-findings.schema.json:23`, enum at line 38). The conversion rule specifies severity but is silent on `kind`, so a question-mode `partial` or `unresolved` element cannot land in a doc-findings packet without an explicit kind — yet the proposal repeatedly refers to these as \"doc-findings PACKET entries.\" The `confidence` field itself is not a doc-findings field at all, so the proposal has not specified the OUTPUT shape of a doc-findings packet entry derived from a question-mode element."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r10-same-F10-1",
+     "action": "fixed",
+     "note": "trigger rewritten: 'whose EVIDENCE — or whose rejected rationale — cites an external, fetchable claim (the disposition being headed to fixed or rejected)'; the r8 record's fixed-without-text-change root cause: the r8 reconcile fixed only the escalated half — noted"
+    },
+    {
+     "defect_id": "r10-same-F10-2",
+     "action": "fixed",
+     "note": "leading ellipsis added"
+    },
+    {
+     "defect_id": "r10-same-F10-3",
+     "action": "fixed",
+     "note": "trailing ellipsis added (uniform convention)"
+    },
+    {
+     "defect_id": "r10-hetero-hetero-row-cut-claim-verifier",
+     "action": "fixed",
+     "note": "fixed — leading ellipsis added"
+    },
+    {
+     "defect_id": "r10-hetero-hetero-row-cut-researcher",
+     "action": "fixed",
+     "note": "fixed — leading ellipsis added"
+    },
+    {
+     "defect_id": "r10-hetero-hetero-kind-enum-mismatch",
+     "action": "fixed",
+     "note": "fixed — kind mapping stated for claim mode (refuted/narrowed -> citation-error; unverifiable -> coverage-gap) + the two receiving schemas distinguished"
+    },
+    {
+     "defect_id": "r10-hetero-hetero-question-mode-kind-mapping",
+     "action": "fixed",
+     "note": "fixed — question-mode packet kinds stated (partial -> citation-error; unresolved -> coverage-gap)"
+    }
+   ]
+  },
+  {
+   "round": 11,
+   "same_source_findings": 5,
+   "hetero_findings": 5,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r11-same-F1",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "2",
+     "evidence": "CLAIM: trailing ellipses missing on doc-reviewer + researcher rows (uniform convention) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r11-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "6 T2",
+     "evidence": "CLAIM: T2 .graphiti.json entry numeral-only, no per-§5 pointer — implementer could land the stale referent :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r11-same-F3",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "status",
+     "evidence": "CLAIM: 'at the r10 cap-hit' misuses the ledger's own convention (r10 was pre-cap under cap 11) :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r11-same-F4",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "4",
+     "evidence": "CLAIM: kind-gloss fit unowned: refuted's gloss IS the schema's contradiction definition; partial's gloss fit neither :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r11-same-F5",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: the disallowedTools triple shown is the 6-of-8 form (2 of 8 extend with WebSearch/WebFetch) :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r11-hetero-csr-decision-point-already-exists",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "§5 Enumeration ripple / csr SKILL.md row",
+     "evidence": "Doc claims: 'csr `SKILL.md`: ADD a reconcile-time decision point (none exists today) at BOTH reconcile moments of the step-2 round loop'. But csr SKILL.md line 47 already states 'Reconcile: revise the artifact per accepted findings, or reject a finding with rationale. RECORD each finding's disposition at reconcile time ... Append `reconcile` (fixed / rejected / escalated counts) to the sidecar at each reconcile.' And line 49: 'Reconcile again. Apply the per-round reconciliation table (both-report→adopt; same-family-only→adopt; different-family-only→escalate; neither→pass; DEGRADED→adopt same-family).' Two reconcile moments already exist in the source the doc itself cites. The T2 addition is an EXTENSION to existing reconcile logic, not an addition where 'none exists today'. The doc's own claim contradicts the cited source — the schema's contradiction gloss ('two claims conflict, or a claim conflicts with a cited source') fits exactly."
+    },
+    {
+     "defect_id": "r11-hetero-narrowed-kind-mapping-misapplied",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "§4 Contract / Output schema / kind-mapping paragraph (line 37)",
+     "evidence": "Doc says: 'narrowed→`citation-error` (the citation overclaims its source — wrong in scope)' and 'partial → warning packet entry (kind `citation-error` — the cited source does not deliver what the question demands: a citation wrong for its purpose)'. But the doc-findings schema's citation-error gloss (doc-reviewer agent line 18 + csr `doc-findings.schema.json` field-of-art `kind` enum glosses) is 'a file / section / field citation is wrong or unverifiable'. The narrowed verdict's actual semantic (per the doc's own line 33 gloss: 'the fetched text grounds the claim only as of its own date/version — a weaker, time-scoped support than a version-anchored verified') is a SCOPE-LIMITATION (claim says X; source supports only Y where Y⊂X), not a wrong/unverifiable file-or-section citation. The narrowed case fits scope-creep gloss ('over-reaches stated non-goals or scope') better, and `partial` (question-mode) fits the same shape. The doc's claim 'among the overlapping categories these are the gloss-exact fits' is asserted without testing scope-creep as an alternative."
+    },
+    {
+     "defect_id": "r11-hetero-r10-convergence-state-unstated",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "§0 / Status line — 'Rounds 1-10 reconciled (trajectory 0-1-2-0-1-3-1-2-2-2; r10 = the packet-kind interop mappings — load-bearing schema gaps). Extension ledger: ... 11→13 at r10 (same standing authorization, pre-cap like r8's; streak restarts at round 11). Round 11 in flight.'",
+     "evidence": "progress.jsonl round-end events confirm trajectory 0-1-2-0-1-3-1-2-2-2 (verified). But csr SKILL.md line 51 defines substantive_converged as 'core claims are coverage-verified AND no new Blocker for ≥2 rounds' (a clean-streak condition). With r9=2 and r10=2 new_blockers (both ≥1), the streak was zero at r10 — substantive_converged was NOT met. The doc states 'Rounds 1-10 reconciled' (every round had its findings disposed) but never declares the convergence state. The '11→13 at r10 (pre-cap like r8's)' framing suggests the cap was raised proactively, not after convergence — but the reader cannot tell whether r11 is the convergence-streak continuation or a continued-convergence-search. The same-family leg did not flag this."
+    },
+    {
+     "defect_id": "r11-hetero-agent-name-frontmatter-unstated",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 Contract + §5 Enumeration ripple (no explicit frontmatter `name:` clause)",
+     "evidence": "Doc references '`agents/web-claim-verifier.agent.md`' (line 43, 53) and '`solidforge:web-claim-verifier`' (line 46), and says 'named by analogy to `novelty-claim-extractor`' (§3). But §4 (the contract) never specifies the frontmatter `name:` field value, nor does the acceptance criterion in §6 ('every clause present — incl. the closed source_tier enum, the verbatim-quote oracle rule + blind-spot caveat, the question-mode shape, the boundaries clause, and the no-model/max_turns rule'). The `name: web-claim-verifier` field is load-bearing (plugin.json description counter, EXPECTED_AGENTS entry, csr SKILL.md spawn reference, the cap-hit flow) but is not in the checklist. T1 review per §6 cannot verify the name without an explicit contract clause. The same-family leg did not flag this gap."
+    },
+    {
+     "defect_id": "r11-hetero-adr-number-claim-unverifiable-from-doc",
+     "severity": "coverage",
+     "kind": "coverage-gap",
+     "location": "§5 Enumeration ripple / ADR row — 'next free number — next is #67'",
+     "evidence": "Doc asserts 'next is #67' as the next free ADR number, but the highest existing ADR number is not stated anywhere in the doc, nor is the ADR ledger path cited as a verifiable anchor (the doc cites 'skills/parallel-development/references/design-decisions.md' as the ledger at §8 implicitly, but does not name it inline). The same-family leg did not flag this. The next-free-number claim is a load-bearing premise for T3 (the ADR record task) and for any future maintainer following the audit trail — without it, the doc leaves the reader to either trust the claim or re-derive it by reading the ledger."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r11-same-F1",
+     "action": "fixed",
+     "note": "trailing ellipses added to both rows"
+    },
+    {
+     "defect_id": "r11-same-F2",
+     "action": "fixed",
+     "note": "T2 entry now 'two-axis fix (per §5)' with the full replacement sentence"
+    },
+    {
+     "defect_id": "r11-same-F3",
+     "action": "fixed",
+     "note": "'at r10 (pre-cap like r8's)'"
+    },
+    {
+     "defect_id": "r11-same-F4",
+     "action": "fixed",
+     "note": "refuted -> contradiction (gloss-exact per the schema's own definition); narrowed/partial glosses rewritten to own the citation-error fit; choices declared OWNED"
+    },
+    {
+     "defect_id": "r11-same-F5",
+     "action": "fixed",
+     "note": "6-of-8 form noted + the fetch-barred extension this agent must not copy"
+    },
+    {
+     "defect_id": "r11-hetero-csr-decision-point-already-exists",
+     "action": "fixed",
+     "note": "fixed — reframed: EXTEND the existing reconcile steps with a spawn condition (no such spawn condition exists today)"
+    },
+    {
+     "defect_id": "r11-hetero-narrowed-kind-mapping-misapplied",
+     "action": "fixed",
+     "note": "fixed — glosses rewritten around the schema's own word (wrong in scope / wrong for its purpose)"
+    },
+    {
+     "defect_id": "r11-hetero-r10-convergence-state-unstated",
+     "action": "fixed",
+     "note": "fixed — convergence math explicit (r11-12 or r12-13 both clean; r11 same already 0B)"
+    },
+    {
+     "defect_id": "r11-hetero-agent-name-frontmatter-unstated",
+     "action": "fixed",
+     "note": "fixed — frontmatter name: web-claim-verifier explicit in §5"
+    },
+    {
+     "defect_id": "r11-hetero-adr-number-claim-unverifiable-from-doc",
+     "action": "fixed",
+     "note": "fixed — anchor added (highest landed ## 66.)"
+    }
+   ]
+  },
+  {
+   "round": 12,
+   "same_source_findings": 2,
+   "hetero_findings": 3,
+   "hetero_degraded": false,
+   "blockers": 2,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r12-same-F1",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "status header",
+     "evidence": "CLAIM: status line stale: trajectory stopped at r10, 'Round 11 hetero in flight' contradicted by progress.jsonl (r11 complete, 1 blocker, r12 spawned), dead 11-12 branch presented live — the orchestrator's third stale-line failure across two runs :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r12-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "status header",
+     "evidence": "CLAIM: duplicated Extension ledger (r9-era remnant lacking 11→13 + the consolidated one) on the sole-audit-record line :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r12-hetero-r11-stale-line-blocker-misattributed",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "Status header, line 6 — parenthetical '(r11's second blocker was this line's own staleness — fixed...'",
+     "evidence": "DOC CLAIM (line 6): 'rounds 1-11 fully reconciled; trajectory 0-1-2-0-1-3-1-2-2-2-1-1 (r11's second blocker was this line's own staleness — fixed; the r12 same-family blocker is the same class, driving the spawn-time-update rule below).' The doc also says 'stale-line blockers have now occurred three times across two runs'. SOURCE-VERIFIED CONTRADICTION: (a) r11 had only ONE blocker total (r11-dispositions-hetero.json:1 blocker 'csr-decision-point-already-exists' about csr SKILL.md reconcile existence at lines 47/49 — NOT status line staleness); r11-same-findings.json has 5 findings all note/warning level, ZERO blockers. So 'r11's second blocker' is false on count alone. (b) r11 had no status-line staleness blocker in either leg — the closest is r11-same F3 (a NOTE about 'at the r10 cap-hit' misuses the ledger convention), and r11-hetero F3 (r10-convergence-state-unstated WARNING about not declaring the convergence state) — neither a blocker, neither about the status line being stale per se. (c) The chronology of stale-line blockers across both runs (r3-same-findings.json F1 'status line said r2 hetero pending while run records show it ran' BLOCKER + r4-same-findings.json F1 'status line stale again... (same class as r3-F1)' BLOCKER + r12-same-findings.json F1 'status line stale: trajectory stopped at r10... contradicted by progress.jsonl' BLOCKER) yields r3-prior, r4-prior, r12-current — the SECOND stale-line occurrence was r4 in the prior run, NOT r11. The 'three times across two runs' figure is consistent with these three; the r11 attribution is fabricated. (d) The follow-on claim 'the r12 same-family blocker is the same class' depends on r11 having had such a blocker, which it did not — the class-equivalence rests on a non-existent prior occurrence."
+    },
+    {
+     "defect_id": "r12-hetero-r12-trajectory-partial-misrepresented-as-complete",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "Status header, line 6 — 'rounds 1-11 fully reconciled; trajectory 0-1-2-0-1-3-1-2-2-2-1-1'",
+     "evidence": "DOC CLAIM: 'rounds 1-11 fully reconciled' but the trajectory lists 12 values (0-1-2-0-1-3-1-2-2-2-1-1 — counted: 12 numbers). progress.jsonl confirms r12 same-family-spawn at 23:51:43, same-family-complete at 00:03:56, reconcile at 00:03:56, hetero-leg-start at 00:04:14 — r12 same IS reconciled (F1 status-line blocker fixed, F2 ledger deduplication fixed per r12-same-findings.json dispositions); r12 hetero IS in flight (heartbeats still appending). The trajectory's r12 value (=1) is r12 same's blocker count only (1: the status-line stale blocker); the round is NOT fully reconciled (hetero leg has not landed). The doc's phrasing conflates 'rounds 1-11 fully reconciled' with a 12-value trajectory, making the r12 value look like a finalized round when it is partial."
+    },
+    {
+     "defect_id": "r12-hetero-standing-authorization-undefined",
+     "severity": "coverage",
+     "kind": "coverage-gap",
+     "location": "Status header, line 6 — '(all pre-cap, standing authorization)'",
+     "evidence": "DOC CLAIM: 'cap 5→7 at the r5 cap-hit (human election); 7→9 at r7, 9→11 at r8, 11→13 at r10 (all pre-cap, standing authorization); 13→15 at the r12 cap-hit (same authorization).' The doc invokes 'standing authorization' as the doctrinal basis for pre-cap extensions at r7/r8/r10, and 'same authorization' for the r12 cap-hit extension. csr SKILL.md line 14 defines only cap-HIT escalation ('cap-hit escalates to the human, never silent-pick (pd ADR #40 (e))'); it does not define or grant a 'standing authorization' for pre-cap extensions. progress.jsonl has no cap events recorded (no `cap-extended` event type in csr_progress.py's vocabulary per SKILL.md line 65-71), confirming the doc's own assertion 'this line is the sole audit record'. The doctrine is invoked but never defined or anchored; a future maintainer cannot re-derive the rule. (Not verified: the exact ADR that grants standing-authorization power, if any.)"
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r12-same-F1",
+     "action": "fixed",
+     "note": "status rewritten current (trajectory through r11; live convergence math); PROTOCOL RULE adopted: the status line is rewritten at EVERY round spawn — retiring the recurring class"
+    },
+    {
+     "defect_id": "r12-same-F2",
+     "action": "fixed",
+     "note": "single consolidated ledger"
+    },
+    {
+     "defect_id": "r12-hetero-r11-stale-line-blocker-misattributed",
+     "action": "fixed",
+     "note": "fixed — the misattributed parenthetical is DELETED with the entire claim-bearing status line (structural fix, not another careful rewrite)"
+    },
+    {
+     "defect_id": "r12-hetero-r12-trajectory-partial-misrepresented-as-complete",
+     "action": "fixed",
+     "note": "fixed — trajectory restated nowhere in the doc — sidecar only"
+    },
+    {
+     "defect_id": "r12-hetero-standing-authorization-undefined",
+     "action": "fixed",
+     "note": "fixed — authorization source named (human mid-run instruction 2026-09-10) in the minimal line's one non-claim sentence"
+    }
+   ]
+  },
+  {
+   "round": 13,
+   "same_source_findings": 0,
+   "hetero_findings": 3,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r13-hetero-verdict-pipeline-miscategorization",
+     "severity": "blocker",
+     "kind": "authority-chain-break",
+     "location": "§5 Enumeration ripple, line 45 — 'the four psv/prior-art-search verdict-pipeline agents (`claim-extractor`, `claim-verifier`, `collision-verifier`, `novelty-claim-extractor`)'",
+     "evidence": "Doc claims `claim-extractor` and `novelty-claim-extractor` are 'verdict-pipeline agents'. Their own contracts (verified): `agents/claim-extractor.agent.md:3` says 'Same-family claim-extraction agent for the primary-source-verification (psv) skill ... Spawn it as the extraction step (PSV-I2) of a psv run'; `agents/novelty-claim-extractor.agent.md:3` says 'Same-family novelty-claim-extraction agent for the prior-art-search skill ... Spawn it as the extraction step (NC-I2) of a prior-art-search run'. Only `claim-verifier` (PSV-I3) and `collision-verifier` (NC-I3) are the verdict steps — the doc's own framing on line 17 explicitly labels claim-verifier the 'oracle' agent, while claim-extractor is the 'input set the fetch+verdict pipeline adjudicates' (claim-extractor.agent.md:3). Two of the four 'verdict-pipeline agents' are extraction agents — the categorization groups input-producers with verdict-producers and is contradicted by every cited source."
+    },
+    {
+     "defect_id": "r13-hetero-adr-anchor-points-wrong-ledger",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "§5 Enumeration ripple, line 49 — 'ADR (rule 6, next free number — next is #67; anchor: design-decisions.md's highest landed heading is `## 66.`)'",
+     "evidence": "The anchor format '## 66.' matches only `skills/parallel-development/references/design-decisions.md` (66 ADRs in '## N.' format, verified grep). The proposal's primary effect — adding a web-claim-verifier spawn condition to the csr reconcile step — lands in csr, where `skills/cross-source-review/docs/design-decisions.md` uses a different format ('## ADR #N', highest landed ADR #5, verified). The doc's enumeration ripple (lines 44-48) names csr SKILL.md and psv SKILL.md as touch points but never specifies which design-decisions.md the ADR goes into. The 'next is #67' numeric claim is only valid for pd's ledger; if the ADR belongs in csr's (its natural home for the gap-decision), next is #6. The anchor is one-sided and the number is ungrounded without a location choice."
+    },
+    {
+     "defect_id": "r13-hetero-verbatim-enum-vs-divergent-narrowed-semantics",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "§4 Contract, lines 33 + 35 — 'claim-verifier's enum VERBATIM ... `narrowed` when the fetched text grounds the claim only as of its own date/version ... claim-verifier's `narrowed`-as-weaker-form is the adjacent analogy, not identical semantics'",
+     "evidence": "Line 33 claims the verdict enum is 'VERBATIM' from claim-verifier; line 35 redefines the semantics of one of the four values (`narrowed`). claim-verifier's contract (`agents/claim-verifier.agent.md:13`) defines `narrowed` as 'the fetched source supports only a WEAKER form' (generic partial support); web-claim-verifier's `narrowed` is restricted to 'weaker, time-scoped support than a version-anchored `verified`' (line 35) — a narrower semantic tied specifically to the volatile-fact hard gate's downgrade rule. The doc acknowledges the divergence explicitly, but the label 'VERBATIM' applied to the enum contradicts the explicit semantic divergence for `narrowed` — they are partial-only-shared, not verbatim. A caller reading the contract as 'same enum = same meaning' will mis-handle `narrowed` outputs (e.g., generic partial-support cases have no defined handling in web-claim-verifier)."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r13-hetero-verdict-pipeline-miscategorization",
+     "action": "fixed",
+     "note": "fixed — two EXTRACTION agents (PSV-I2/NC-I2) + two VERDICT agents (PSV-I3/NC-I3) distinguished"
+    },
+    {
+     "defect_id": "r13-hetero-adr-anchor-points-wrong-ledger",
+     "action": "fixed",
+     "note": "fixed — ADR lands in pd's ledger — the workspace's SINGLE ADR log (csr-originated #52/#61/#62 precedent); csr's local #N ledger noted as non-canonical; #67 anchored"
+    },
+    {
+     "defect_id": "r13-hetero-verbatim-enum-vs-divergent-narrowed-semantics",
+     "action": "fixed",
+     "note": "fixed — LABELS re-used verbatim + narrowed's time-scope restriction declared as the stated semantic divergence"
+    }
+   ]
+  },
+  {
+   "round": 14,
+   "same_source_findings": 3,
+   "hetero_findings": 5,
+   "hetero_degraded": false,
+   "blockers": 0,
+   "verdict": "pass",
+   "findings": [
+    {
+     "defect_id": "r14-same-F1",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "4",
+     "evidence": "CLAIM: 'gloss-exact fits' unproven for narrowed->citation-error (a narrowed citation is by construction found+verified); authority-chain-break's gloss is the exact fit :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r14-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: 'fetch-BARRED adjudicators' mislabels novelty-claim-extractor (an extractor per the doc's own r13 split + its no-verdict-pre-emption contract) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r14-same-F3",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "4",
+     "evidence": "CLAIM: 'ONE stated semantic divergence' invites a count misread (semantic vs output-shape divergence) :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r14-hetero-wcv-cov-roundbound",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "§4 \"Bounded search\" / §5 csr SKILL.md spawn condition",
+     "evidence": "Doc: \"Bounded search: ~5 searches / ~8 fetches per task — claim OR question (advisory budget stated in the agent contract — same enforcement class as the volatile gate: self-declared + outer-ring checkable via the `searched` disclosure, not a deterministic gate)\". Doc also: \"during reconcile, when a finding whose EVIDENCE — or whose `rejected` rationale — cites an external, fetchable claim ... spawn `solidforge:web-claim-verifier` for it BEFORE recording that disposition\". The bound is stated per-task only. The proposal adds an UNBOUNDED spawn fan-out (one web-claim-verifier instance per finding citing external — same-family-leg findings typically number in the low single digits per round, the different-family leg similar). Across the csr long tier (cap 5–7 rounds, per csr SKILL.md line 14), worst-case aggregate search volume scales as (findings-per-round × spawn-conditions × 5) without any per-round or per-run ceiling. The proposal cites ADR #52 as adjacent precedent for substrate-level bounded+observable but does not provide the analogous aggregation for csr-round or csr-run scope."
+    },
+    {
+     "defect_id": "r14-hetero-wcv-cov-ti dup-url",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "§4 \"Source tiers\"",
+     "evidence": "Doc: \"Preprints (not-yet-refereed server posts, e.g. arXiv) map to `blog` — the URL carries the server identity\". Doc also: \"First-party vs community blogs both = `blog`, distinguished by the URL itself\". The mapping rule keys off the URL host, but a single paper commonly has BOTH an arXiv URL (maps to `blog`) and a peer-reviewed-venue URL (maps to `peer-reviewed`). The same content + same date + same claim adjudicates differently depending on which URL the agent happens to fetch first; nothing in §4 specifies a tie-breaker or selection criterion when a claim has multiple adjudicating URLs on different tiers. Researcher's own contract (researcher.agent.md line 58: \"prefer the most specific tier you can justify from the URL/publisher\") does not pin this either."
+    },
+    {
+     "defect_id": "r14-hetero-wcv-str-note-caveat",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 \"Output schema\" / `note` slot description",
+     "evidence": "Doc: \"Route the caveat to the output's `note` slot — mirroring claim-verifier's `note`\". Doc also: \"`note` (optional — the blind-spot caveat's slot, mirroring claim-verifier's `note`)\". The caveat being routed is described earlier as load-bearing (\"Comparison blind-spot caveat (workspace rule 3): `verified` means YOU found no contradiction in the fetched text — NOT that none exists\"). For a `verified` verdict, the caveat is what makes the output non-misleading — without it the consumer reads a bare \"verified\" as an unconditional confirmation. §4 leaves the note optional and does not explicitly require the caveat for `verified` verdicts, so an agent omitting `note` on a `verified` produces an output the proposal elsewhere describes as misleading. The exemplar (claim-verifier.agent.md line 22) carries the caveat in the PROMPT (behavioral instruction), not in the optional output slot — §4's structural choice moves the load-bearing caveat into a non-required output field without replacing the prompt-level guarantee."
+    },
+    {
+     "defect_id": "r14-hetero-wcv-auth-label-vs-semantic",
+     "severity": "warning",
+     "kind": "authority-chain-break",
+     "location": "§4 output schema / LABEL-SEMANTIC divergence paragraph",
+     "evidence": "Doc: \"`verdict` ∈ {verified, refuted, narrowed, unverifiable} — claim-verifier's verdict LABELS re-used verbatim (defined in the exemplar's own contract; psv inherits them via PSV-I3's per-claim verdict step)\". The same paragraph then says: \"with one stated LABEL-SEMANTIC divergence ...: this contract's `narrowed` is time-scope-restricted (volatile-gate downgrades only), narrower than the exemplar's generic supports-only-a-weaker-form\". The opening claim (\"LABELS re-used verbatim\") is in tension with the acknowledged divergence — a consumer reading only the opening sentence expects identical strings + identical semantics, since the qualifier \"LABELS re-used verbatim\" sits next to the explicit `claim-verifier ... psv inherits them` authority chain. Claim-verifier's contract line 16 defines `narrowed` as \"the fetched source supports only a WEAKER form\" with no time-scope restriction; the proposal's narrower semantics is a deliberate divergence that is named in the second sentence but not surfaced in the first."
+    },
+    {
+     "defect_id": "r14-hetero-wcv-contra-evidence-vs-caveat",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "§4 oracle-discipline OUTPUT-SHAPE divergence + blind-spot caveat (both in the same long paragraph)",
+     "evidence": "Doc: \"`verified` ALSO carries its grounding quote, because the output IS the evidence capture (an intentional, stated STRICTER-THAN-EXEMPLAR divergence)\". The same paragraph then quotes verbatim: \"Comparison blind-spot caveat (workspace rule 3): `verified` means YOU found no contradiction in the fetched text — NOT that none exists. The fetched source is strongly decoupled; your comparison is not\". The first claim (\"the output IS the evidence capture\") treats the grounding block as a self-standing evidence artifact; the second (the mirrored caveat) treats the same output as a bounded, model-judged check whose negative space (\"no contradiction found\") is not proof. The two claims coexist without a reconciling clause that says what the quote+caveat combination COMMITS to — e.g. \"the quote grounds WHAT was checked; the caveat bounds HOW WELL it was checked\". A reader can read the same paragraph and conclude either that verified is unconditional (because the output IS the evidence) or that it is conditional (because the caveat says so); the proposal does not disambiguate."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r14-same-F1",
+     "action": "fixed",
+     "note": "REMAPPED: narrowed/partial -> authority-chain-break (gloss-exact per the schema's own 'does not say what the doc says'); refuted->contradiction and unverifiable/unresolved->coverage-gap unchanged"
+    },
+    {
+     "defect_id": "r14-same-F2",
+     "action": "fixed",
+     "note": "'the fetch-BARRED offline pair (one verdict adjudicator, one extractor)'"
+    },
+    {
+     "defect_id": "r14-same-F3",
+     "action": "fixed",
+     "note": "LABEL-SEMANTIC vs OUTPUT-SHAPE divergence distinguished inline"
+    },
+    {
+     "defect_id": "r14-hetero-wcv-cov-roundbound",
+     "action": "fixed",
+     "note": "fixed — per-round spawn cap: at most 2 per reconcile moment, highest-severity first; un-spawned claims surface in coverage notes"
+    },
+    {
+     "defect_id": "r14-hetero-wcv-cov-ti dup-url",
+     "action": "fixed",
+     "note": "fixed — dual-venue tie-breaker: cite the highest-preference-tier URL actually FETCHED; unfetched published URL goes to searched"
+    },
+    {
+     "defect_id": "r14-hetero-wcv-str-note-caveat",
+     "action": "fixed",
+     "note": "fixed — note REQUIRED for verified verdicts (carries the caveat); optional otherwise"
+    },
+    {
+     "defect_id": "r14-hetero-wcv-auth-label-vs-semantic",
+     "action": "fixed",
+     "note": "fixed — clause restructured: labels verbatim; semantics mirror EXCEPT narrowed (the one LABEL-SEMANTIC divergence)"
+    },
+    {
+     "defect_id": "r14-hetero-wcv-contra-evidence-vs-caveat",
+     "action": "fixed",
+     "note": "fixed — framing sentence: the caveat is the checked-instance discipline keeping the STRICTER output honest"
+    }
+   ]
+  },
+  {
+   "round": 15,
+   "same_source_findings": 2,
+   "hetero_findings": 5,
+   "hetero_degraded": false,
+   "blockers": 2,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r15-same-F1",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: question-mode partial mapping labeled gloss-exact but its rationale is a question-for-doc instantiation, not the gloss's operative clause :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r15-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "5",
+     "evidence": "CLAIM: csr's local ledger path given skill-relative while the canonical log gets a full path — asymmetric precision :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r15-hetero-vol-registry-mischaracterization",
+     "severity": "blocker",
+     "kind": "authority-chain-break",
+     "location": "§4 \"Oracle discipline\" paragraph",
+     "evidence": "Doc (§4): \"its volatile-authority registry carries source REFS for verified claims (the only per-verified record, quote-free)\". Actual schema (skills/primary-source-verification/infra/schemas/coverage-record.schema.json, `volatile_authority_registry.items.properties.volatile_source.description`): \"Where the source lived at run time (e.g. ~/.claude/projects/... memory files, /tmp clones, shell environment state). Volatile = repo-external / unversioned / deletable.\" Parent description: \"one entry per claim adjudicated against a non-durably-re-fetchable source. Covers verified claims too — their sources are counted-not-listed in the packet, so this registry is their only re-fetchability signal.\" Three defects compound: (1) \"source REFS\" — registry actually carries a WHERE-the-source-lived path, not a URL/REF to source content; (2) \"for verified claims\" — schema says verified are covered \"too\" (i.e., not exclusively), the registry records ANY claim with a volatile source; (3) \"the only per-verified record\" — the registry's per-verified role is incidental, not exclusive."
+    },
+    {
+     "defect_id": "r15-hetero-stricter-rationale-rests-on-mischaracterization",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "§4 \"Oracle discipline\" paragraph (STRICTER-THAN-EXEMPLAR justification)",
+     "evidence": "Doc (§4): \"the exemplar's verified branch carries no quote because psv COUNTS verified claims as a bare integer and captures no per-verified-claim QUOTE anywhere — its packet quotes only refuted/narrowed claims, and its volatile-authority registry carries source REFS for verified claims\". This justification for web-claim-verifier's STRICTER verified-quote capture is built on the mischaracterization in vol-registry-mischaracterization. If the registry does carry per-claim records (claim_ref + volatile_source) for verified claims, then psv does NOT \"capture no per-verified-claim [...] anywhere\" — it captures per-claim references, just not quotes. The \"STRICTER divergence\" rationale collapses once the registry description is corrected."
+    },
+    {
+     "defect_id": "r15-hetero-note-mirror-vs-required-divergence",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "§4 \"Output schema\" — `note` field rule",
+     "evidence": "Doc (§4): \"`note` (REQUIRED for `verified` verdicts — carrying the blind-spot caveat; optional otherwise, mirroring claim-verifier's `note`)\". Two sentences conflict: \"REQUIRED for `verified`\" is NOT a mirror of claim-verifier's `note` (which is plain `\"note\": \"<optional>\"` per agents/claim-verifier.agent.md schema block, with no per-verdict carve-out). Claim-verifier has no special-case for verified requiring note. Calling the rule a \"mirror\" while introducing a per-verdict requirement is a self-contradicting characterization."
+    },
+    {
+     "defect_id": "r15-hetero-fetchability-trigger-undefined",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "§5 \"csr `SKILL.md` extension\"",
+     "evidence": "Doc (§5): \"during reconcile, when a finding whose EVIDENCE — or whose `rejected` rationale — cites an external, fetchable claim (the finding's disposition being headed to `fixed` or `rejected`, csr's actual disposition words), spawn `solidforge:web-claim-verifier` for it BEFORE recording that disposition\". The trigger predicate \"external, fetchable claim\" is undefined in the doc and in any cited source. It does not specify how the orchestrator distinguishes (a) external URLs from local refs (the doc is silent on local-path/non-URL evidence), (b) paywalled/credentialed URLs from freely-fetchable ones (web-claim-verifier's bounded budget would be wasted on a fetch that 401s), or (c) the disposition-prediction step (\"disposition being headed to `fixed` or `rejected`\") — the disposition is set AT reconcile time, not before, so the orchestrator must predict disposition from the finding text. None of these mechanics are specified; the protocol step is under-defined for the orchestrator that would execute it."
+    },
+    {
+     "defect_id": "r15-hetero-schema-name-as-source-name",
+     "severity": "coverage",
+     "kind": "citation-error",
+     "location": "§4 volatile-fact hard gate paragraph",
+     "evidence": "Doc (§4): \"deterministic enforcement would require adapting psv's EXISTING fetched_quote_gate (PSV-I5(a), skills/primary-source-verification/infra/test/fetched_quote_gate.py) to this agent's output shape — the harness exists today; the adaptation is the future option\". The cited file exists and is named PSV-I5(a) in its module docstring (line 2: \"PSV-I5(a) -- the fetched-quote invariant gate\"). Verified citation is correct. COVERAGE DISCLOSURE: I did not verify that the gate's SHAPE contract (which expects psv's `evidence` string on refuted/narrowed findings) maps onto web-claim-verifier's `grounding.quote` field — the doc asserts the \"harness exists today; the adaptation is the future option\" without a concrete adaptation sketch, so the actual feasibility of mapping is unverifiable from the doc alone. The doc's claim that the adaptation is \"the future option\" rather than the current contract is honest, but leaves the future-adapter without a starting point."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r15-same-F1",
+     "action": "fixed",
+     "note": "adjective corrected to gloss-ADJACENT with the instantiation named"
+    },
+    {
+     "defect_id": "r15-same-F2",
+     "action": "fixed",
+     "note": "full skill-prefixed path"
+    },
+    {
+     "defect_id": "r15-hetero-vol-registry-mischaracterization",
+     "action": "fixed",
+     "note": "fixed — registry accurately characterized: WHERE-a-volatile-source-lived location record, any-claim-with-volatile-source coverage"
+    },
+    {
+     "defect_id": "r15-hetero-stricter-rationale-rests-on-mischaracterization",
+     "action": "fixed",
+     "note": "fixed — rationale re-derived: the registry proves re-fetchability, never quote content — verified-quote capture remains strictly additive"
+    },
+    {
+     "defect_id": "r15-hetero-note-mirror-vs-required-divergence",
+     "action": "fixed",
+     "note": "fixed — 'a stated divergence from claim-verifier's always-optional note'"
+    },
+    {
+     "defect_id": "r15-hetero-fetchability-trigger-undefined",
+     "action": "fixed",
+     "note": "fixed — operational test: fetchable = names/cites an identifiable source a fetch can retrieve; interpretive findings take no spawn"
+    },
+    {
+     "defect_id": "r15-hetero-schema-name-as-source-name",
+     "action": "fixed",
+     "note": "carried in coverage notes — PSV-I5(a) label's source is the gate file's own docstring — accurate, disclosed"
+    }
+   ]
+  },
+  {
+   "round": 16,
+   "same_source_findings": 3,
+   "hetero_findings": 6,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r16-same-F1",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "4",
+     "evidence": "CLAIM: claim-mode narrowed time-scope-restricted leaves NON-time-scoped weaker-form fetches with no assignable verdict (question-mode partial covers them; claim-mode did not) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r16-same-F2",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: 'the registry proves re-fetchability' — one-word overstatement; it is a signal (the registry's subjects are by definition non-durably-re-fetchable) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r16-same-F3",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "status",
+     "evidence": "CLAIM: the line's cap claim violates its own round+pointer-only rule :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r16-hetero-naming-analogy-contradiction",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "§3 Decision (line 25) and §4 Contract — proposed name `web-claim-verifier`",
+     "evidence": "Doc §3: \"Build `agents/web-claim-verifier.agent.md` ... named by analogy to `novelty-claim-extractor` — the family's only existing THREE-token `X-claim-Y` name (`claim-extractor` is a two-token `X-Y` name, a different pattern; an analogy at n=1, not yet a convention).\" But the doc also says §4: the new agent's role is \"search, fetch the adjudicating source(s), and return a verdict ... grounded ONLY in fetched text\" — i.e. it ADJUDICATES (= verifier), it does NOT extract novelty claims. The two existing agents named `-verifier` are `claim-verifier` (two-token `X-Y`, verifier/adjudicator) and `collision-verifier` (two-token `X-Y`, verifier/adjudicator). The doc's own taxonomy (§2 contract citations table) classifies `claim-verifier` as the per-claim adjudicator and groups `novelty-claim-extractor` with `claim-extractor` as EXTRACTORS. So `web-claim-verifier` matches the `X-Y` adjudicator pattern (`claim-verifier`, `collision-verifier`) — NOT novelty-claim-extractor's `X-claim-Y` extractor pattern. The \"analogy to novelty-claim-extractor\" claim contradicts the doc's own role taxonomy and the proposed name's structural parallelism to the existing verifier pair."
+    },
+    {
+     "defect_id": "r16-hetero-offline-pair-grouping-unstated",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 Contract — \"disallowedTools: Edit, Write, NotebookEdit (the 6-of-8 common form; collision-verifier and novelty-claim-extractor extend it with WebSearch, WebFetch — the fetch-BARRED offline pair...\"",
+     "evidence": "Doc claims \"8 of 22 today\" carry `disallowedTools`. Verified: exactly 8 agents carry the field (claim-extractor, claim-verifier, collision-verifier, doc-reviewer, novelty-claim-extractor, plan-reviewer, researcher, security-specialist). Of those 8, four are offline verdict/extractor agents: claim-extractor, claim-verifier, novelty-claim-extractor, collision-verifier. Doc groups only `collision-verifier` and `novelty-claim-extractor` as \"the fetch-BARRED offline pair\" that \"extend it with WebSearch, WebFetch\". But `claim-extractor` is ALSO a fetch-BARRED offline extractor — its `disallowedTools` is `Edit, Write, NotebookEdit` (no WebSearch/WebFetch extension). So either the \"offline pair\" is actually an offline QUARTET (which would re-shape the contract prose) or there is an unstated reason claim-extractor is excluded from the pairing (e.g. it doesn't have the WebSearch/WebFetch extension because it predates the convention). The doc never names this asymmetry."
+    },
+    {
+     "defect_id": "r16-hetero-csr-reconcile-spawn-procedure",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§5 Enumeration ripple — csr SKILL.md decision-point addition (line 46)",
+     "evidence": "Doc §5 says csr's SKILL.md \"reconcile steps (both reconcile moments ... already exist) ... spawn `solidforge:web-claim-verifier` for it BEFORE recording that disposition ... at most 2 spawns per reconcile moment, highest-severity findings first ... its quote/URL/date output drops into the run-dir `evidence/` and grounds the disposition.\" The doc never specifies (a) the spawn prompt template — claim text + finding defect_id + adjudicating-source URL all need to be passed to web-claim-verifier, but the prompt shape is unstated; (b) how the disposition re-write is triggered (does the csr wrapper poll the run-dir `evidence/` file? does it block on the spawn? does the human apply it?); (c) what counts as a \"FETCHABLE\" claim (the doc says \"a URL, a standard/doc, a versioned product behavior\" — but a finding with NO URL cited still names a versioned product behavior; the cite-or-naming boundary is fuzzy). §6's acceptance criterion says \"T1's review checks the .agent.md against §4 BULLET BY BULLET\" — so the spawn-side plumbing for §5 is unowned (no T-number in §6 covers \"implement csr spawn integration\", only T2 lists \"csr SKILL.md decision-point addition (per §5)\")."
+    },
+    {
+     "defect_id": "r16-hetero-partial-confidence-lumps-two-states",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 Contract — question-mode `confidence` enum definition (line 37)",
+     "evidence": "Doc §4: \"`partial` = the quote answers a weaker/scoped form, or the source lacks a version/date anchor (the volatile gate's question-mode wiring: an unanchored volatile-class element can never be `grounded`)\". This glues two heterogeneous epistemic states into one `partial` bucket: (a) \"weaker/scoped form\" — the fetched text IS the source of truth, just for a narrower claim (analogous to claim-verifier's `narrowed`); (b) \"source lacks a version/date anchor\" — the fetched text is the source of truth but its provenance is too volatile to bind to a specific point in time (a freshness risk, NOT a scope risk). The two states imply different downstream treatments: (a) tighten the question; (b) re-fetch with an anchor. The doc's downstream conversion rule (§4: \"`partial` → `warning` packet entry (kind `authority-chain-break`)\") treats them identically, losing the signal."
+    },
+    {
+     "defect_id": "r16-hetero-verified-required-note-citation",
+     "severity": "warning",
+     "kind": "structural-gap",
+     "location": "§4 Contract — \"note (REQUIRED for `verified` verdicts — carrying the blind-spot caveat; optional otherwise — a stated divergence from claim-verifier's always-optional `note`)\" (line 37)",
+     "evidence": "Doc marks `note` REQUIRED for `verified` and \"optional otherwise — a stated divergence from claim-verifier's always-optional `note`\". But the doc's own §4 output schema lists `note` AFTER `searched`/`not_found`, with no per-verdict conditional visibility rule. The exemplar (claim-verifier.agent.md) lists `note: \"<optional>\"` unconditionally. The doc's new REQUIRE-on-verified rule is a contract-level claim not mirrored in the schema sketch itself — a maintainer reading §4's schema block alone would build a schema where `note` is unconditionally optional."
+    },
+    {
+     "defect_id": "r16-hetero-orphan-t2-csr-reconcile-spawn",
+     "severity": "coverage",
+     "kind": "coverage-gap",
+     "location": "§6 Task breakdown — T2 enumeration list (line 54)",
+     "evidence": "Doc §5 adds three enumeration ripples — csr SKILL.md decision-point addition, psv SKILL.md building-block mention, .graphiti.json two-axis fix. §6's T2 lists them as prose but does not decompose the csr SKILL.md edit into its own T-number; T2 reads \"enumerations — plugin.json 22→23; EXPECTED_AGENTS 17→23 ... csr SKILL.md decision-point addition (per §5); psv SKILL.md building-block mention; .graphiti.json two-axis fix (per §5 ...)\". The psv SKILL.md edit AND the csr SKILL.md edit are listed but only the .graphiti.json one has a T2 sub-bullet. A reviewer using §6 as the task ledger cannot tell whether the csr SKILL.md edit owns its prompt-template shape, its reconcile-moment text insertion, and its rule-1 self-gate coverage — all three are unstated. The same-family reviewer's r16 warning cited a citation-error on the prior-findings path; this coverage-gap is on the §6 task breakdown that owns §5's csr SKILL.md work."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r16-same-F1",
+     "action": "fixed",
+     "note": "narrowed restored to the generic weaker-form semantics; the volatile-gate downgrade is one PRODUCTION of narrowed (its time-scoped form), not a replacement — the LABEL-SEMANTIC divergence claim removed (labels AND semantics now mirror the exemplar; the verified-quote capture remains the sole OUTPUT-SHAPE divergence)"
+    },
+    {
+     "defect_id": "r16-same-F2",
+     "action": "fixed",
+     "note": "'SIGNALS where a volatile source lived — a re-fetchability signal, never quote content'"
+    },
+    {
+     "defect_id": "r16-same-F3",
+     "action": "fixed",
+     "note": "cap claim dropped from the minimal line"
+    },
+    {
+     "defect_id": "r16-hetero-naming-analogy-contradiction",
+     "action": "fixed",
+     "note": "fixed — analogy re-framed to claim-verifier + collision-verifier (the X-verifier adjudicator names); extractor-pattern claim removed"
+    },
+    {
+     "defect_id": "r16-hetero-offline-pair-grouping-unstated",
+     "action": "fixed",
+     "note": "fixed — fetch-BARRED extensions = FOUR agents (2 extractors + 1 adjudicator + researcher's inverse case)"
+    },
+    {
+     "defect_id": "r16-hetero-csr-reconcile-spawn-procedure",
+     "action": "fixed",
+     "note": "fixed — T2 split: T2a the spawn integration (prompt template + evidence drop + both reconcile-moment insertions), T2b the enumerations"
+    },
+    {
+     "defect_id": "r16-hetero-partial-confidence-lumps-two-states",
+     "action": "fixed",
+     "note": "fixed — partial_reason sub-field (scope | unanchored)"
+    },
+    {
+     "defect_id": "r16-hetero-verified-required-note-citation",
+     "action": "fixed",
+     "note": "fixed — note's per-verdict visibility stated in the schema sketch"
+    },
+    {
+     "defect_id": "r16-hetero-orphan-t2-csr-reconcile-spawn",
+     "action": "fixed",
+     "note": "fixed — the T2a/T2b split closes it"
+    }
+   ]
+  },
+  {
+   "round": 17,
+   "same_source_findings": 3,
+   "hetero_findings": 3,
+   "hetero_degraded": false,
+   "blockers": 2,
+   "verdict": "rewrite",
+   "findings": [
+    {
+     "defect_id": "r17-same-F1",
+     "severity": "blocker",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: r16's fix introduced a false count: the WebSearch/WebFetch extension is carried by exactly TWO agents (collision-verifier, novelty-claim-extractor); claim-extractor has no web legs to bar (no extension) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r17-same-F2",
+     "severity": "warning",
+     "kind": "contradiction",
+     "location": "4",
+     "evidence": "CLAIM: 'FOUR offline agents' category contradicted by its own fourth member (researcher is web-legged — the inverse case, correct in itself, miscategorized) :: EVIDENCE: "
+    },
+    {
+     "defect_id": "r17-same-F3",
+     "severity": "warning",
+     "kind": "citation-error",
+     "location": "4",
+     "evidence": "CLAIM: 'visible in the schema sketch' — dangling referent; no sketch exists in this doc :: EVIDENCE: [note-class in the leg's own output] "
+    },
+    {
+     "defect_id": "r17-hetero-five-vs-four-missing",
+     "severity": "blocker",
+     "kind": "contradiction",
+     "location": "§5 Enumeration ripple, the EXPECTED_AGENTS 17→23 parenthetical",
+     "evidence": "Quote from the doc: 'EXPECTED_AGENTS: 17 → 23 — the new agent PLUS closing the pre-existing gap; the file's OWN two \"17 plugin-bundled agents\" prose sites (module docstring + the list's comment) update in the same edit (five sub-agents absent from the list — the two psv/prior-art-search EXTRACTION agents (`claim-extractor` PSV-I2, `novelty-claim-extractor` NC-I2) plus the two VERDICT agents (`claim-verifier` PSV-I3, `collision-verifier` NC-I3); all four SERVE the two outcome-axis skills but are process-axis — each one's own contract reads \"Barred from OUTCOME-AXIS\" plus csr's process-axis `doc-reviewer`; `agents/` holds 22 files today).' The doc opens with 'five sub-agents absent from the list', then enumerates exactly 4 (claim-extractor, novelty-claim-extractor, claim-verifier, collision-verifier), then immediately says 'all four SERVE' — directly contradicting the 'five' claim. Cross-checked against `skills/parallel-development/infra/test/plugin_layout.py:50-68`: the EXPECTED_AGENTS list (17 items: architect, backend-developer, code-reviewer, devops-engineer, documentation-writer, frontend-developer, graphiti-config-generator, ios-developer, ios-tester, plan-reviewer, playwright-test-generator, playwright-test-healer, playwright-test-planner, requirements-manager, researcher, security-specialist, tester) is missing FIVE agents present in `agents/`: claim-extractor, claim-verifier, collision-verifier, novelty-claim-extractor, AND doc-reviewer — so 'five' is the correct count; the enumeration listed only 4, and doc-reviewer is the silent omission."
+    },
+    {
+     "defect_id": "r17-hetero-blog-tier-first-party-distinction-ungrounded",
+     "severity": "warning",
+     "kind": "coverage-gap",
+     "location": "§4 Contract — Source tiers (the 'First-party vs community blogs both = `blog`' sentence and its surroundings)",
+     "evidence": "Quote: 'First-party vs community blogs both = `blog`, distinguished by the URL itself.' The doc admits the distinction but the same §4 section defines `source_tier` as a CLOSED 5-value enum (official-spec | peer-reviewed | vendor-doc | blog | unknown) and the output schema (claim-mode grounding block + question-mode per-finding grounding block) carries no sub-field to capture first-party vs community provenance within the `blog` tier. The output's grounding block fields are limited to `quote / url / fetched_at / source_tier` — `url` is the only signal available, but the doc does not state whether (or how) the receiving downstream doc-findings packet uses that signal, or whether the verifier is required to log it in `note`. For verdict adjudication, an AWS engineering blog (first-party vendor) and a Hacker News comment thread (community) are both `blog` but carry materially different epistemic weights — the contract does not address whether the distinction matters for tier preference ordering or disposition."
+    },
+    {
+     "defect_id": "r17-hetero-prior-findings-restate-none-vs-r17-file-existence",
+     "severity": "coverage",
+     "kind": "structural-gap",
+     "location": "§0 header — 'this line deliberately restates NONE of it'",
+     "evidence": "Quote: 'this line deliberately restates NONE of it [from the run record at workspace/cross-source-review/runs/20260910-web-claim-verifier/]' paired with the existence of `r17-same-findings.json` (the primary reviewer's cited file) at the same path. I could not directly read `workspace/cross-source-review/runs/20260910-web-claim-verifier/r17-same-findings.json` from this turn to confirm whether the run record's findings include content that contradicts the doc's load-bearing claims (e.g., whether the same-family primary reviewer at round 17 produced findings that disagree with §4's source-tier boundary, the §5 enumeration, or §6's T2a SKILL.md line references). The doc's posture — 'restates NONE' — and the primary reviewer's separate `citation-error` flag at the same `prior-findings` location both point at the same anchor but the doc body does not show which doc claims (if any) the prior-findings file refutes. This is an honest-disclosure coverage gap (rule 3): I cannot verify whether the 'restates NONE' framing is accurate or whether the r17-same-findings content contradicts a doc claim the body never surfaces."
+    }
+   ],
+   "dispositions": [
+    {
+     "defect_id": "r17-same-F1",
+     "action": "fixed",
+     "note": "precise inventory: TWO carriers (the fetch-barred pair); claim-extractor no-extension note; researcher inverse-case note"
+    },
+    {
+     "defect_id": "r17-same-F2",
+     "action": "fixed",
+     "note": "category dissolved — each agent's case stated on its own"
+    },
+    {
+     "defect_id": "r17-same-F3",
+     "action": "fixed",
+     "note": "referent corrected to T1's agent contract sketch"
+    },
+    {
+     "defect_id": "r17-hetero-five-vs-four-missing",
+     "action": "fixed",
+     "note": "fixed — doc-reviewer restored to the five-count parenthetical (extraction x2 + verdict x2 + doc-reviewer)"
+    },
+    {
+     "defect_id": "r17-hetero-blog-tier-first-party-distinction-ungrounded",
+     "action": "fixed",
+     "note": "fixed — the first-party/community distinction declared NOT a schema field — the URL is the reader-visible distinction"
+    },
+    {
+     "defect_id": "r17-hetero-prior-findings-restate-none-vs-r17-file-existence",
+     "action": "rejected",
+     "note": "rejected — the status line's restates-none rule is the deliberate r12 protocol decision (retire the hot claim surface); the record files — not the doc — are the audit surface; inlining findings into the line would re-open the retired blocker class"
+    }
+   ]
+  }
+ ],
+ "substantive_converged": false,
+ "rightness": "human_confirm_required",
+ "stalemate": true,
+ "coverage": [
+  "TERMINAL STATE: cap-hit at the human-decreed hard ceiling of 17 rounds (extensions 5->7 human election at r5; 7->9, 9->11, 13->15 standing mid-run authorization; 15->17 the FINAL extension with hard-ceiling acceptance, human decision 2026-09-11). The formal 2-consecutive-clean-rounds streak NEVER formed (per-round new-blocker counts 0-1-2-0-1-3-1-2-2-2-1-2-1-0-2-1-1-1).",
+  "CORE CLAIMS: coverage-verified — every enumeration anchor, quoted span, schema mapping, and file:line citation was verified against source by one or both legs in rounds 13-17 (the same-family leg returned ZERO findings in r13 and zero blockers r13-r16); the remaining blockers were excerpt/attribution precision defects, each fixed in-round.",
+  "PATTERN DISCLOSURE: the blocker source shifted monotonically inward — r2-r6 taxonomy/attribution (content), r7-r10 schema-interop and qualifier placement (r10's kind mappings load-bearing), r11-r12 status-line bookkeeping (retired structurally in r12 by making the line claim-free), r13-r17 excerpt/attribution precision on ever-smaller spans (r16's blocker was an error in the r15 fix itself; r17's a count-drift survivor from r8). Same-family legs clean from r13 on; different-family legs never clean.",
+  "PROTOCOL DEVIATIONS (per-round protocol_note): different-family-only findings dispositioned fixed/rejected after independent orchestrator verification instead of escalated; 2 hetero findings rejected on verified-false evidence (r3 site7-path-prefix-drift; r5 cc-docs-quote-unverifiable already-satisfied). One leg stall (r8 same-family, stream watchdog) — resumed, complete output. One synchronous-call timeout killed an r15 hetero leg — relaunched, completed.",
+  "UNVERIFIABLE BY CONSTRUCTION: the 2026-09-08 conversational origin (no file; disclosed in-doc); the extension authorizations (conversational; the sidecar has no cap event type — round-spawn history is the evidence).",
+  "RUN-RECORD HYGIENE: the sidecar's r8 same-family-complete/reconcile pair is duplicated (stalled-then-resumed leg); the wrapper's own sidecar events carry round=1 for early legs (pre-c46a8f5 wrapper already loaded when the run started) — orchestrator events carry the true rounds.",
+  "The artifact proceeds to pd under the human's standing instruction with THIS record as its process-axis verdict: content stable and source-verified; the formal criterion unmet at ceiling."
+ ],
+ "core_claims": [
+  "The gap is structural: no repo agent combines search+fetch+adjudicate",
+  "The r1-same-F5 incident is the first evidence",
+  "The §4 contract: mode selection, both output shapes, labels+severity mapping, packet-kind mappings, oracle discipline, volatile gate, bounded search, source_tier enum + boundary",
+  "The §5 ripple: 6 surfaces + ADR #67 in pd's one ADR log",
+  "The csr spawn condition: EXTEND both reconcile moments, fetchable-claim trigger, per-round cap, evidence-drop semantics"
+ ]
+}

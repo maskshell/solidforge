@@ -14,7 +14,7 @@
   - `cross-source-review` — 驱动同源（same-family）+ 异源（different-family）交叉评审，将文档驱动至实质收敛（substantive convergence）；是 blueprint-crafting 上游的收敛层（bc 之前的需求输入、设计文档、wiki 页均可），也可独立复用。其收敛记录内嵌每轮 findings 与逐条处置（可审计——读者可复核每条 finding 及其处理方式）。
   - `primary-source-verification` — 只读、以源为锚的逐条核验器：抽取原子级、可源裁决的 claim，抓取每个被引用的原始源，输出逐条裁决（verified / refuted / narrowed / unverifiable）加诚实覆盖率披露（`oracle_verified_under_known_coverage`）。在结果轴上与 csr 互补——可叠加、**不是顺序管线的一个阶段**；永不输出 `correctness_converged`。**门模式（GATE MODE，2026-08）**：对 rule-13 文档（承重引用 + 可 fetch 源），承重 claim 子集先于 csr 运行，作为廉价 GO/NO-GO 前提检查——门记录明确标记为非权威；csr 之后的全量 M 运行才是唯一权威覆盖率记录。
   - `prior-art-search` — 只读、以搜索为锚的逐新颖性 claim 碰撞检测器：抽取文档的新颖性 claim，对先例语料逐一搜索，输出逐条碰撞裁决（collision / uncited-relevant / clear-under-search / inconclusive）加诚实覆盖率披露（`collisions_under_known_coverage`）。第二条结果轴腿——向后-未引用（psv 是向后-已引用）；可叠加，永不输出 `novel_confirmed`。
-- **代理（Agents，22 个，以 `solidforge:<name>` 插件作用域注册）** — architect、backend-developer、frontend-developer、ios-developer、ios-tester、tester、code-reviewer、requirements-manager、devops-engineer、documentation-writer、security-specialist、graphiti-config-generator、playwright-test-planner / -generator / -healer、plan-reviewer、doc-reviewer、claim-extractor、claim-verifier、novelty-claim-extractor、collision-verifier、researcher。按角色的代码模式位于 `parallel-development/references/agent-patterns/`。
+- **代理（Agents，23 个，以 `solidforge:<name>` 插件作用域注册）** — architect、backend-developer、frontend-developer、ios-developer、ios-tester、tester、code-reviewer、requirements-manager、devops-engineer、documentation-writer、security-specialist、graphiti-config-generator、playwright-test-planner / -generator / -healer、plan-reviewer、doc-reviewer、claim-extractor、claim-verifier、novelty-claim-extractor、collision-verifier、researcher、web-claim-verifier。按角色的代码模式位于 `parallel-development/references/agent-patterns/`。
 - **钩子（Hooks）** — `fast_gate.py`（PostToolUse）、`blueprint_guard.py` + `counters.py`（PreToolUse）。脚本随技能的 `infra/` 目录发布（纯 Python 标准库），从插件根目录运行——它们基于 `$CLAUDE_PROJECT_DIR` 工作，无需逐项目复制脚本。
 - **命令（Command）** — `/solidforge:arm-tools`。
 
@@ -115,7 +115,7 @@ solidforge/                      （仓库根 = 插件根）
     cross-source-review/         跨源文档收敛技能（同源 + 异源 → 实质收敛）
     primary-source-verification/ 逐条源核验技能（结果轴；基于 fetch、向后-已引用、可与 csr 叠加）
     prior-art-search/            逐新颖性 claim 先例碰撞技能（结果轴；基于搜索、向后-未引用、可与 csr+psv 叠加）
-  agents/                        22 个代理定义（注册为 solidforge:<name>）；按角色代码模式在 skills/parallel-development/references/agent-patterns/
+  agents/                        23 个代理定义（注册为 solidforge:<name>）；按角色代码模式在 skills/parallel-development/references/agent-patterns/
   hooks/hooks.json               PreToolUse + PostToolUse → ${CLAUDE_PLUGIN_ROOT}/skills/.../hooks/*.py
   commands/arm-tools.md          /solidforge:arm-tools（第 2 层）
 ```
