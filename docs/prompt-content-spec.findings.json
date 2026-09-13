@@ -1,0 +1,60 @@
+{
+  "findings": [
+    {
+      "defect_id": "pcs-1",
+      "severity": "blocker",
+      "kind": "contradiction",
+      "location": "docs/prompt-content-spec.md §4 (Dispatch-mode exemption paragraph) vs skills/parallel-development/references/role-agent-mapping.md:389-397",
+      "evidence": "Spec claims the 9 review-seat agents 'are routed by description'. But the spec's own cited registry routes code-reviewer: role-agent-mapping.md:389-397 has a live routing row (actively maintained per ADR #30's 'Route the Code Reviewer row' instruction; ADR #14 fixes 'Reviewer = code-reviewer' as the pd Reviewer role). By the spec's own Terms definition, code-reviewer is registry-dispatched, not description-routed. The binary 14/9 split that D3's L2 exemption boundary is built on is factually wrong for this agent.",
+      "suggestion": "Reclassify code-reviewer as mapping-routed (pd Reviewer role) with description as a secondary ad-hoc surface, or introduce a dual-mode category; re-derive D3's exemption set and the §6 generational claim from the corrected classification."
+    },
+    {
+      "defect_id": "pcs-2",
+      "severity": "blocker",
+      "kind": "gap",
+      "location": "docs/prompt-content-spec.md §5 L2 MUST + §8 AC-3 (cross-checked against §7 D3/D4 and §6 audit finding 1)",
+      "evidence": "L2 MUST binds description-routed agents to carry a NOT-for clause, but §6 audit records zero occurrences in agents/*.agent.md — on freeze day every description-routed agent violates the MUST. D4's grandfathering is scoped to L3 only; D3 exempts only registry-dispatched agents. AC-3 checks only the skill-description half, silently dropping the agent half — the AC cannot fail for exactly the population the MUST binds.",
+      "suggestion": "Scope the L2 MUST to skills only (agent descriptions become SHOULD), or add a D4-style grandfather clause for existing agent descriptions; extend AC-3 to cover whichever set the MUST actually binds so the AC is falsifiable for the full layer."
+    },
+    {
+      "defect_id": "pcs-3",
+      "severity": "blocker",
+      "kind": "blind-spot",
+      "location": "docs/prompt-content-spec.md §6 table row 'L3 behavioral' + §6 audit findings 2-3 (baseline for M3/M5, D4, ODP-3)",
+      "evidence": "Spec claims '9 of 23 agents carry the clauses'. Verified: 'never edits or fixes' = 6 files; 'is the oracle' = 3 files; sets overlap on claim-verifier and collision-verifier, strict union = 7 files, not 9. code-reviewer — listed in the spec's own 9 — carries NONE of the five clauses. security-specialist — counted among the 14 'without' — carries a no-edit variant ('Read-only — reports findings, does not fix'). researcher is a producer, not a review seat, carrying only partial clauses. The generational story is false on both ends. Additionally, plan-model PCS-8.risk claims 'grep commands recorded for re-derivation', but §6 records only prose counts.",
+      "suggestion": "Re-run the audit, record the actual grep commands in §6, report the true union (7 strict; a 'partial' row for researcher/security-specialist variant carriers), move code-reviewer out of the clause-carrying set per pcs-1, and re-anchor D4/ODP-3/M3's '9' to the corrected inventory."
+    },
+    {
+      "defect_id": "pcs-4",
+      "severity": "blocker",
+      "kind": "contradiction",
+      "location": "docs/prompt-content-spec.md §5 L6 coverage-note bullet + §6 L6 row vs hetero_review.py and hetero_doc_review.py",
+      "evidence": "Spec's assembly claims are wrong on both halves: (1) BOTH wrappers assemble the prompt the same way — an in-code f-string builder adversarial_prompt() (hetero_review.py:432-463; hetero_doc_review.py:429-464, the csr docstring itself says it 'Replaces pd's CODE-shaped adversarial prompt'); hetero_review.py contains zero .replace( calls; its prompt builder has 5 substitution holes ({prior_findings}, {diff_ref}, {blueprint_ref}, {prior_block}, {round_no}) — no '39 substitution sites' exist. (2) 'provider-template + token injection' is the SETTINGS-materialization pattern (profiles/<provider>.json + ANTHROPIC_AUTH_TOKEN injection), implemented by BOTH wrappers (hetero_review.py:81-82, :294-414), not a csr prompt-assembly mechanism. Only the shared conclusion (neither wrapper asserts the assembled prompt text) is correct.",
+      "suggestion": "Rewrite the coverage note on the verified shared mechanism: both wrappers assemble the prompt in-code via adversarial_prompt() (f-string) and rely on downstream output shape-gates only; delete the 39-site and pd/csr-asymmetry claims; AC-7/ODP-2 then key off the honest shared statement."
+    },
+    {
+      "defect_id": "pcs-5",
+      "severity": "warning",
+      "kind": "contradiction",
+      "location": "docs/prompt-content-spec.md §3 ('Prompt-adjacent but out of scope' paragraph) vs §5 L6",
+      "evidence": "§3 declares gate/hook output prose in scope via 'The PROSE those tools assemble is in scope (L6)', but L6's MUSTs are wrapper-prompt rules (assert-or-coverage-note, minimal one-line state lines, quote delimiters). Gate-emit guidance (e.g. fast_gate's deliberately multi-line format-stratification remediation text) has no assembled prompt to assert and cannot satisfy the one-line state rule.",
+      "suggestion": "Narrow the sentence to 'the prompt text a wrapper script composes at invocation is in scope (L6); hook/gate emit text stays out of scope', or add an explicit L6 carve-out for gate-emit guidance."
+    },
+    {
+      "defect_id": "pcs-6",
+      "severity": "warning",
+      "kind": "gap",
+      "location": "docs/prompt-content-spec.md §3 Tier-1 enumeration",
+      "evidence": "Tier-1 omits command prompt templates. The plugin carries commands/arm-tools.md, a model-facing prompt template with its own parse/routing contract ($ARGUMENTS wiring + argument-hint). ADR #66 documents the failure mode: on a ported substrate the unwired $ARGUMENTS channel silently dropped invocation flags; a deterministic wiring assertion was added to plugin_layout.py.",
+      "suggestion": "Add commands/*.md to the tier-1 enumeration (L1 parse + L2 routing apply; note the existing plugin_layout $ARGUMENTS-wiring gate as the deterministic locus)."
+    },
+    {
+      "defect_id": "pcs-7",
+      "severity": "warning",
+      "kind": "blind-spot",
+      "location": "docs/prompt-content-spec.md §5 L5 'Inherited enforcement' line",
+      "evidence": "Spec states the deterministic placement gate exists because 'bc and pd both carry one'. Glob shows disconnect_check.py exists in ALL FIVE skills (blueprint-crafting, parallel-development, cross-source-review, primary-source-verification, prior-art-search). The understatement invites readers to treat AC-6 as bc/pd-only.",
+      "suggestion": "Change the parenthetical to 'all five skills carry one' (or drop it and let AC-6's generic per-skill phrasing stand)."
+    }
+  ]
+}

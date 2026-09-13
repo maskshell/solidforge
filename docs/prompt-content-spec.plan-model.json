@@ -1,0 +1,181 @@
+{
+  "plan_model_version": "v1",
+  "artifact_type": "product-spec",
+  "authority_chain": [
+    "docs/prompt-content-spec.md",
+    "CLAUDE.md",
+    "~/.claude/CLAUDE.md",
+    "skills/parallel-development/references/design-decisions.md"
+  ],
+  "conflict_rule": "for restated layers (L1, L5) the CLAUDE.md rule wins; for first-written-carrier layers (L2, L3, L4, L6) the spec is master until the D5 promotion lands",
+  "items": [
+    {
+      "item_id": "PCS-1",
+      "seq": 1,
+      "depends_on": [],
+      "dod_ref": "docs/prompt-content-spec.md §3 Scope Boundary + §4 Consumer Sub-Typing",
+      "title": "Tier boundary + consumer sub-typing + dispatch modes",
+      "scope": "Define tier-1 in-scope artifact set (incl. commands/*.md), exclude tiers 2/3, split tier-1 into three consumer kinds, and classify agent dispatch modes (mapping 11 / workflow 7 / dual 1 / platform-flow 4)",
+      "source_location": "docs/prompt-content-spec.md §3–§4",
+      "complexity": "S",
+      "risk": "Tier mis-classification would route facade/record docs under prompt rules; mitigated by explicit out-lists per tier",
+      "odp_status": [],
+      "constraints_profile": "product-spec",
+      "parallel_group": null,
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "PCS-2",
+      "seq": 2,
+      "depends_on": ["PCS-1"],
+      "dod_ref": "docs/prompt-content-spec.md §5 L1 Parse-Reliability Layer",
+      "title": "L1 parse-reliability principles",
+      "scope": "Restate rule-10 parse principles as MUST/SHOULD for all tier-1 artifacts including assembled prompts",
+      "source_location": "docs/prompt-content-spec.md §5 L1",
+      "complexity": "S",
+      "risk": "Restatement drifts from CLAUDE.md rule 10; mitigated by conflict_rule deferring to CLAUDE.md",
+      "odp_status": [],
+      "constraints_profile": "product-spec",
+      "parallel_group": null,
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "PCS-3",
+      "seq": 3,
+      "depends_on": ["PCS-1"],
+      "dod_ref": "docs/prompt-content-spec.md §5 L2 Routing-Surface Layer",
+      "title": "L2 routing-surface contract",
+      "scope": "Three-part description contract (trigger / NOT-for + route-to / produces) for description-routed skills and agents",
+      "source_location": "docs/prompt-content-spec.md §5 L2",
+      "complexity": "S",
+      "risk": "Over-application to trigger-rich implementation skills; mitigated by the evidence note on parallel-development",
+      "odp_status": [],
+      "constraints_profile": "product-spec",
+      "parallel_group": null,
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "PCS-4",
+      "seq": 4,
+      "depends_on": ["PCS-1"],
+      "dod_ref": "docs/prompt-content-spec.md §5 L3 Behavioral-Contract Layer",
+      "title": "L3 canonical behavioral clause set",
+      "scope": "Five canonical clauses (oracle / negative-scope / schema-only-no-edit / no-stake / honest-disclosure) with grandfathering",
+      "source_location": "docs/prompt-content-spec.md §5 L3",
+      "complexity": "M",
+      "risk": "Canonical wording vs the corrected inventory (7 strict + 2 variant carriers + code-reviewer zero-clause gap); mitigated by whole-inventory D4 grandfathering + ODP-3 incremental unification",
+      "odp_status": [
+        {
+          "id": "ODP-3",
+          "kind": "deferred",
+          "resolution": "Unification lands incrementally per D4 touch-trigger; a dedicated sweep over the corrected inventory (7 strict carriers + 2 variant carriers + code-reviewer's zero-clause gap, snapshot spec §6) is a separate work item with its own convergence run"
+        }
+      ],
+      "constraints_profile": "product-spec",
+      "parallel_group": null,
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "PCS-5",
+      "seq": 5,
+      "depends_on": ["PCS-1"],
+      "dod_ref": "docs/prompt-content-spec.md §5 L4 Enforcement-Division Layer",
+      "title": "L4 enforcement-division principle",
+      "scope": "No prose re-statement of deterministically-gated constraints; declare enforcement locus instead",
+      "source_location": "docs/prompt-content-spec.md §5 L4",
+      "complexity": "S",
+      "risk": "Judging duplication is semantic, not grep-able; honestly labeled advisory (AC-5)",
+      "odp_status": [],
+      "constraints_profile": "product-spec",
+      "parallel_group": null,
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "PCS-6",
+      "seq": 6,
+      "depends_on": ["PCS-1"],
+      "dod_ref": "docs/prompt-content-spec.md §5 L5 Placement Layer",
+      "title": "L5 placement/loading-chain inheritance",
+      "scope": "Restate rule-8 decision-point reachability; inherit deterministic disconnect_check enforcement",
+      "source_location": "docs/prompt-content-spec.md §5 L5",
+      "complexity": "S",
+      "risk": "Restatement drift; mitigated by conflict_rule deferring to CLAUDE.md rule 8",
+      "odp_status": [],
+      "constraints_profile": "product-spec",
+      "parallel_group": null,
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "PCS-7",
+      "seq": 7,
+      "depends_on": ["PCS-1"],
+      "dod_ref": "docs/prompt-content-spec.md §5 L6 Assembly-Discipline Layer",
+      "title": "L6 assembly-discipline rules",
+      "scope": "Deterministic assembly, assert-or-coverage-note, minimal state lines, quote delimiting, different-family-by-default, bounds stay in harness",
+      "source_location": "docs/prompt-content-spec.md §5 L6",
+      "complexity": "M",
+      "risk": "Neither existing wrapper asserts assembled prompt text — the coverage gap is stated in-rule (rule 3) on the verified shared mechanism (adversarial_prompt() f-string builders in both wrappers) rather than silently green",
+      "odp_status": [
+        {
+          "id": "ODP-2",
+          "kind": "deferred",
+          "resolution": "Candidate future gate (assert-on-prompt-text or coverage-note grep) recorded; blocked on ODP-1 sequencing and a wrapper change touching assembly"
+        }
+      ],
+      "constraints_profile": "product-spec",
+      "parallel_group": null,
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "PCS-8",
+      "seq": 8,
+      "depends_on": ["PCS-2", "PCS-3", "PCS-4", "PCS-5", "PCS-6", "PCS-7"],
+      "dod_ref": "docs/prompt-content-spec.md §6 Codification-Status Audit",
+      "title": "Codification-status audit baseline",
+      "scope": "Per-layer carrier/status/enforcement table with grep-verified evidence and the generational agent-split finding",
+      "source_location": "docs/prompt-content-spec.md §6",
+      "complexity": "M",
+      "risk": "Audit facts age; dated baseline (2026-09-13) and the exact re-derivation grep commands are recorded in spec §6",
+      "odp_status": [],
+      "constraints_profile": "product-spec",
+      "parallel_group": null,
+      "blueprint_subset": []
+    },
+    {
+      "item_id": "PCS-9",
+      "seq": 9,
+      "depends_on": ["PCS-8"],
+      "dod_ref": "docs/prompt-content-spec.md §7 Decisions + §8 Acceptance Criteria",
+      "title": "Decisions D1–D6 + AC set with declared enforcement loci",
+      "scope": "Six decisions with rationale/rejections; seven ACs each declaring deterministic/advisory/human enforcement",
+      "source_location": "docs/prompt-content-spec.md §7–§8",
+      "complexity": "M",
+      "risk": "AC enforcement declarations could over-claim determinism; each AC names its locus honestly per rule 3",
+      "odp_status": [
+        {
+          "id": "ODP-1",
+          "kind": "deferred",
+          "resolution": "D5 promotion of L4+L6 to CLAUDE.md rules deferred until >=1 completed dogfood cycle against this spec; this spec is the carrier meanwhile"
+        }
+      ],
+      "constraints_profile": "product-spec",
+      "parallel_group": null,
+      "blueprint_subset": []
+    }
+  ],
+  "anchors": {
+    "jtbd": {"present": true, "ref": "§1 Jobs to be Done"},
+    "desired-outcome-metrics": {"present": true, "ref": "§2 Desired Outcome Metrics (M1–M5)"},
+    "scope-boundary": {"present": true, "ref": "§3 Scope Boundary (three-tier reader model)"},
+    "constraints-assumptions": {"present": true, "ref": "§5 Constraints: The Six Principle Layers (L1–L6)"},
+    "decisions": {"present": true, "ref": "§7 Decisions (D1–D6)"},
+    "acceptance-criteria": {"present": true, "ref": "§8 Acceptance Criteria (AC-1–AC-7)"},
+    "non-goals": {"present": true, "ref": "§9 Non-Goals"}
+  },
+  "anchors_meta": {"source": "author-supplied"},
+  "subset_tags": {
+    "executable": ["item_id", "seq", "depends_on", "dod_ref"],
+    "upstream_only": ["title", "scope", "source_location", "complexity", "risk", "odp_status", "constraints_profile", "parallel_group"],
+    "downstream_only": ["blueprint_subset"]
+  }
+}

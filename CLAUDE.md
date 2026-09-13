@@ -131,6 +131,22 @@ For call/inheritance/dependency questions that a graph query can answer, prefer 
 
 **When used** (the reach conditions above hold — recommended-default, 2026-08-09), run psv TWICE: first as a cheap load-bearing-claims GATE before csr, then after csr as the authoritative full-M record: `psv(gate: load-bearing subset, GO/NO-GO) → csr → psv(full M) → (address refuted/narrowed; csr re-converge if restructured) → bc → pd`. The gate is a batch signal on the load-bearing claims only (NO-GO iff any is refuted or unverifiable, or ≥2 narrowed; bounded re-gate ≤2, not a debate loop); the gate record is explicitly NOT a coverage record — the full-M run after csr is the ONLY authoritative `oracle_verified_under_known_coverage`. The gate catches citation problems csr's recall-based legs share the model's blind spot on, before csr investment; csr catches structural gaps psv doesn't. Gate discriminator (ODP-5 resolved 2026-08-10): the gate's value concentrates on docs whose load-bearing citations are predominantly EXTERNAL (arXiv/blogs/standards — the recall blind-spot zone); for docs citing mostly local files (two known q≈0 samples), csr alone suffices. The gate defaults to LONG-tier docs (expected csr investment ≥ 3 rounds) — on short docs the gate cost (~1.5 rounds) exceeds the maximum saved investment (≤2 rounds), so it never pays there. When the reach conditions do NOT hold: csr alone suffices (`csr → psv → bc` unchanged). psv NEVER judges whether the doc is right (outcome-axis — human); its signal is `oracle_verified_under_known_coverage`, never `correctness_converged`. It dogfoods on its own and peer skills' design docs. See [USER_GUIDE § Two-axis doc convergence](USER_GUIDE.md).
 
+## 14. Tier-1 prompt content — no unlabelled gate duplication (spec L4)
+
+Model-facing prompt artifacts (SKILL.md, `references/`, agent definitions, `commands/*.md`, rule files, design/plan docs, runtime-assembled prompt text — the tier-1 set in `docs/prompt-content-spec.md` §3) MUST NOT re-state in prose a constraint a deterministic gate already enforces WITHOUT an enforcement-locus declaration. A one-line "X is enforced by gate Y" makes a re-statement the sanctioned form; unlabelled duplication is the violation — two truth sources drift, and drifted duplication is worse than silence. Spend the artifact's attention on the semantic residue gates cannot check. This extends rules 3/4 and the L1 Constitution split (codable → gate; uncodable → listed) from "where rules live" to "what prompts say". Full contract: `docs/prompt-content-spec.md` §5 L4.
+
+## 15. Runtime-assembled prompts — assembly discipline (spec L6)
+
+Prompt text a wrapper composes at invocation time (prompt templates, per-round state injection — NOT token injection, which is settings materialization):
+
+- Deterministic in-code construction only (builder functions / committed templates); never hand-edited intermediate files.
+- The assembled prompt is checked by an assert on its text, OR the covering spec/wrapper declares a coverage note that only downstream shape-gates check the output — assembly drift must not pass silently (rule 3 applied to prompt assembly).
+- State lines fed to the model are minimal one-line claim-free summaries, rewritten every round.
+- A `refuted`/`narrowed` verdict grounded in model recall instead of fetched/read text is INVALID — downgrade to `unverifiable` (the fetched-QUOTE invariant).
+- Assume a different-family consumer by default: no reliance on same-family implicit habits; delimiters, schemas, and instructions written out in full.
+
+Full contract incl. the current wrappers' grandfathered conformance: `docs/prompt-content-spec.md` §5 L6.
+
 ## Self-review
 
 After adding or modifying any file under this workspace, re-read the change against every rule above (plus the global CLAUDE.md) and verify compliance — especially rules 1, 5, 8, and 10, which are the ones most often missed.

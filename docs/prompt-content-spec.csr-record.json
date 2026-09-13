@@ -1,0 +1,1381 @@
+{
+  "artifact": "docs/prompt-content-spec.md",
+  "rounds": [
+    {
+      "round": 1,
+      "same_source_findings": 10,
+      "hetero_findings": 8,
+      "hetero_degraded": false,
+      "blockers": 4,
+      "verdict": "rewrite",
+      "findings": [
+        {
+          "defect_id": "F1",
+          "severity": "blocker",
+          "kind": "citation-error",
+          "location": "spec §6 audit finding 1",
+          "evidence": "'only negative-boundary instance is security-specialist' false — ios-developer/ios-tester/researcher also carry description-level boundaries",
+          "suggestion": "re-derive with broader idiom sweep"
+        },
+        {
+          "defect_id": "F2",
+          "severity": "blocker",
+          "kind": "authority-chain-break",
+          "location": "spec AC-3 + §6 L2 row",
+          "evidence": "trigger_check.py never asserts NOT-for presence (ADR #8 seam)",
+          "suggestion": "restate enforcement honestly"
+        },
+        {
+          "defect_id": "F3",
+          "severity": "warning",
+          "kind": "authority-chain-break",
+          "location": "spec §4 + §11",
+          "evidence": "ADR #30 subject is security-specialist; 'actively maintained' overstated",
+          "suggestion": "reword both sites"
+        },
+        {
+          "defect_id": "F4",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec AC-7",
+          "evidence": "no transition clause for current wrappers",
+          "suggestion": "add grandfathering"
+        },
+        {
+          "defect_id": "F5",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §3 tier-1",
+          "evidence": "agents/json/ does not exist",
+          "suggestion": "drop or gloss"
+        },
+        {
+          "defect_id": "F6",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "spec §4 workflow-routed",
+          "evidence": "3 of 7 seats route from references/install.md not SKILL.md",
+          "suggestion": "state per-seat carrier"
+        },
+        {
+          "defect_id": "F7",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "spec L2/§4/D3/AC-3 vs L1",
+          "evidence": "NOT-for clause vs negative boundary alternation unglossed; parenthetical-in-quotation",
+          "suggestion": "Terms gloss + quotation exemption"
+        },
+        {
+          "defect_id": "F8",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §6 command",
+          "evidence": "BSD grep lacks -P on macOS",
+          "suggestion": "POSIX-safe pattern"
+        },
+        {
+          "defect_id": "F9",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "spec §6 L3 snapshot",
+          "evidence": "researcher's negative-authority variant omitted",
+          "suggestion": "record full variant inventory"
+        },
+        {
+          "defect_id": "F10",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "reviewer disclosure",
+          "evidence": "literal pipeline not run; only cited gate checked; siblings not enumerated",
+          "suggestion": "coverage notes"
+        },
+        {
+          "defect_id": "H1",
+          "severity": "blocker",
+          "kind": "contradiction",
+          "location": "spec §6 L2 row + AC-3",
+          "evidence": "F2 fix overshot: trigger_check has FOUR assertions incl. strict Scope-Guard routing-away; 'positive surface only' false",
+          "suggestion": "four-assertion restatement"
+        },
+        {
+          "defect_id": "H2",
+          "severity": "blocker",
+          "kind": "structural-gap",
+          "location": "spec §3 tier model",
+          "evidence": "rule files + design/plan docs classes missing; spec does not place itself",
+          "suggestion": "extend tier model + self-placement"
+        },
+        {
+          "defect_id": "H3",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §6 + AC-3 + §11",
+          "evidence": "ADR #8 cited bare; seam ADR lives in bc's log (numbering collides per-skill)",
+          "suggestion": "qualify bc ADR #8 + authority chain"
+        },
+        {
+          "defect_id": "H4",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §6 command",
+          "evidence": "bare grep yields 12 rows (11 + harness Plan)",
+          "suggestion": "scope command + note Plan row"
+        },
+        {
+          "defect_id": "H5",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §4 platform-flow",
+          "evidence": "tester row + workflow line in the mapping DO dispatch these four",
+          "suggestion": "'no Agent: row of their own'"
+        },
+        {
+          "defect_id": "H6",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §5 L6",
+          "evidence": "no repo-root infra/; profiles are per-skill copies",
+          "suggestion": "cite per-skill paths"
+        },
+        {
+          "defect_id": "H7",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §4 dual-mode",
+          "evidence": "'only agent where description matching routes' conflicts with L2 premise + 4 imperative-carrying descriptions",
+          "suggestion": "qualify"
+        },
+        {
+          "defect_id": "H8",
+          "severity": "coverage",
+          "kind": "citation-error",
+          "location": "spec §5 L6 state-line",
+          "evidence": "17-round lesson carrier unverified against run-record artifacts",
+          "suggestion": "cite concrete carrier or downgrade wording"
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "F1",
+          "action": "fixed",
+          "note": "idiom sweep re-derived case-insensitively; audit rewritten"
+        },
+        {
+          "defect_id": "F2",
+          "action": "fixed",
+          "note": "AC-3 + §6 restated"
+        },
+        {
+          "defect_id": "F3",
+          "action": "fixed",
+          "note": "both sites reworded"
+        },
+        {
+          "defect_id": "F4",
+          "action": "fixed",
+          "note": "transition clause added (later became AC-7 arm c)"
+        },
+        {
+          "defect_id": "F5",
+          "action": "fixed",
+          "note": "glossed as global-rule convention, zero instances"
+        },
+        {
+          "defect_id": "F6",
+          "action": "fixed",
+          "note": "per-seat carrier stated"
+        },
+        {
+          "defect_id": "F7",
+          "action": "fixed",
+          "note": "Terms gloss + quotation exemption"
+        },
+        {
+          "defect_id": "F8",
+          "action": "fixed",
+          "note": "POSIX-safe command"
+        },
+        {
+          "defect_id": "F9",
+          "action": "fixed",
+          "note": "variant recorded in snapshot"
+        },
+        {
+          "defect_id": "F10",
+          "action": "rejected",
+          "note": "coverage-carry; both named gaps resolved by orchestrator sweep same session (zero NOT-for gates; four sibling schemas enumerated)"
+        },
+        {
+          "defect_id": "H1",
+          "action": "fixed",
+          "note": "four-assertion restatement (author's own fix-overshoot corrected)"
+        },
+        {
+          "defect_id": "H2",
+          "action": "fixed",
+          "note": "tier model extended + self-placement line"
+        },
+        {
+          "defect_id": "H3",
+          "action": "fixed",
+          "note": "bc ADR #8 qualified + bc log added to authority chain"
+        },
+        {
+          "defect_id": "H4",
+          "action": "fixed",
+          "note": "command scoped + Plan row noted"
+        },
+        {
+          "defect_id": "H5",
+          "action": "fixed",
+          "note": "platform-flow bullet restated"
+        },
+        {
+          "defect_id": "H6",
+          "action": "fixed",
+          "note": "per-skill profile paths cited"
+        },
+        {
+          "defect_id": "H7",
+          "action": "fixed",
+          "note": "dual-mode qualified"
+        },
+        {
+          "defect_id": "H8",
+          "action": "fixed",
+          "note": "wording downgraded to 'diagnosed during' + memory carrier (later rounds found the actual record)"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "same_source_findings": 6,
+      "hetero_findings": 7,
+      "hetero_degraded": false,
+      "blockers": 1,
+      "verdict": "rewrite",
+      "findings": [
+        {
+          "defect_id": "R2-1",
+          "severity": "blocker",
+          "kind": "authority-chain-break",
+          "location": "spec §3 tier-1 closure",
+          "evidence": ".graphiti.json enumerated by global rule AND instantiated at repo root, absent from tier-1",
+          "suggestion": "add to tier-1"
+        },
+        {
+          "defect_id": "R2-2",
+          "severity": "warning",
+          "kind": "authority-chain-break",
+          "location": "spec §6 + AC-3",
+          "evidence": "PARALLEL-DEV REACHABLE has designed skip; 'always-on' overstates",
+          "suggestion": "four strict assertions with skip note"
+        },
+        {
+          "defect_id": "R2-3",
+          "severity": "warning",
+          "kind": "authority-chain-break",
+          "location": "spec §3 tier-1",
+          "evidence": "references/* narrowed to 'decision-point docs' vs rule 10's own class",
+          "suggestion": "use rule's class"
+        },
+        {
+          "defect_id": "R2-4",
+          "severity": "warning",
+          "kind": "authority-chain-break",
+          "location": "spec §4 carrier note",
+          "evidence": "pas collision-verifier carrier is a step label, no spawn verb/handle; convention in dogfood record",
+          "suggestion": "annotate label-carried"
+        },
+        {
+          "defect_id": "R2-5",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §1/§5/§6",
+          "evidence": "un-glossed CJK tokens (职权/结论性) violate own L1 for cross-family consumers",
+          "suggestion": "English replacements"
+        },
+        {
+          "defect_id": "R2-6",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §6 commands",
+          "evidence": "BSD grep not literally executed by leg; BRE \\| is GNU extension",
+          "suggestion": "ERE form + execution note"
+        },
+        {
+          "defect_id": "pcs-r3-1",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §3 rule-files parenthetical",
+          "evidence": "AGENTS.md/.mdc have no repo instances; 'instantiated at repo root' false for them",
+          "suggestion": "no-instances disclosure"
+        },
+        {
+          "defect_id": "pcs-r3-2",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §6 audit finding 1",
+          "evidence": "ios-tester's boundary IS description-level (line 3), not body",
+          "suggestion": "relabel"
+        },
+        {
+          "defect_id": "pcs-r3-3",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec Terms workflow-routed",
+          "evidence": "researcher dispatch is conditional (bc ADR #13, multi-source only); 'every time that step runs' false",
+          "suggestion": "conditional-dispatch note"
+        },
+        {
+          "defect_id": "pcs-r3-4",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "spec §5 L3 enforcement split",
+          "evidence": "tool-layer no-edit locus (disallowedTools, bc ADR #14, 9 carriers) omitted",
+          "suggestion": "add deterministic locus"
+        },
+        {
+          "defect_id": "pcs-r3-5",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "spec §6 snapshot",
+          "evidence": "two-marker union is not a per-clause baseline; 3 of 5 clauses unmeasured; web-claim-verifier union membership via oracle only",
+          "suggestion": "relabel as two-marker union"
+        },
+        {
+          "defect_id": "pcs-r3-6",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §5 L3",
+          "evidence": "negative-authority 'canonical form' is a normalized paraphrase; grep-over-carriers returns zero",
+          "suggestion": "mark as normative wording"
+        },
+        {
+          "defect_id": "pcs-r3-7",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §6 + §5 L6",
+          "evidence": "BSD execution claim historical; D4 'originally-listed 9' references absent draft",
+          "suggestion": "session-carried notes + self-contained rewording"
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "R2-1",
+          "action": "fixed",
+          "note": ".graphiti.json added to tier-1"
+        },
+        {
+          "defect_id": "R2-2",
+          "action": "fixed",
+          "note": "'four strict assertions (skip note)' in both sites"
+        },
+        {
+          "defect_id": "R2-3",
+          "action": "fixed",
+          "note": "references/* class restored"
+        },
+        {
+          "defect_id": "R2-4",
+          "action": "fixed",
+          "note": "label-carried annotation"
+        },
+        {
+          "defect_id": "R2-5",
+          "action": "fixed",
+          "note": "CJK tokens anglicized"
+        },
+        {
+          "defect_id": "R2-6",
+          "action": "fixed",
+          "note": "ERE command + orchestrator literal-execution note"
+        },
+        {
+          "defect_id": "pcs-r3-1",
+          "action": "fixed",
+          "note": "instantiated vs enumerated-but-absent split"
+        },
+        {
+          "defect_id": "pcs-r3-2",
+          "action": "fixed",
+          "note": "ios-tester relabeled description-level"
+        },
+        {
+          "defect_id": "pcs-r3-3",
+          "action": "fixed",
+          "note": "conditional-dispatch note added"
+        },
+        {
+          "defect_id": "pcs-r3-4",
+          "action": "fixed",
+          "note": "tool-layer locus added"
+        },
+        {
+          "defect_id": "pcs-r3-5",
+          "action": "fixed",
+          "note": "two-marker-union relabel + caveats"
+        },
+        {
+          "defect_id": "pcs-r3-6",
+          "action": "fixed",
+          "note": "normative-wording mark + idiom families named"
+        },
+        {
+          "defect_id": "pcs-r3-7",
+          "action": "fixed",
+          "note": "session-carried notes + self-contained D4 rewording"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "same_source_findings": 5,
+      "hetero_findings": 6,
+      "hetero_degraded": false,
+      "blockers": 0,
+      "verdict": "pass",
+      "findings": [
+        {
+          "defect_id": "r3-wf",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "spec §4 carrier enumeration",
+          "evidence": "novelty-claim-extractor (7th seat) omitted; carrier is pas install.md:63 spawn directive",
+          "suggestion": "extend enumeration"
+        },
+        {
+          "defect_id": "r3-ac7",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §8 AC-7",
+          "evidence": "transition was a third form outside the two-arm disjunction",
+          "suggestion": "explicit grandfathered third arm"
+        },
+        {
+          "defect_id": "r3-terms",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec Terms vs §5 L6",
+          "evidence": "token injection listed as prompt composition; L6 says settings materialization",
+          "suggestion": "drop/gloss in Terms"
+        },
+        {
+          "defect_id": "r3-should-order",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "spec §5 L2 vs §6",
+          "evidence": "SHOULD-order 0-of-4 in live baseline, undisclosed",
+          "suggestion": "disclose with retained reason"
+        },
+        {
+          "defect_id": "r3-cov",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §6 + D4",
+          "evidence": "BSD-execution claim session-carried; 'originally-listed 9' unverifiable",
+          "suggestion": "carrier note + self-contained rewording"
+        },
+        {
+          "defect_id": "d3-attribution",
+          "severity": "warning",
+          "kind": "authority-chain-break",
+          "location": "spec §3 tier-1 appositive",
+          "evidence": "attribution over-claims (rule 10 lacks commands/*.md; global rule is file-class list)",
+          "suggestion": "scope appositive + name spec-added classes"
+        },
+        {
+          "defect_id": "d3-counts",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §6 command block",
+          "evidence": "9-carrier + 23-denominator not derivable from stated commands",
+          "suggestion": "append commands"
+        },
+        {
+          "defect_id": "d3-dualmode",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §4 dual-mode",
+          "evidence": "absolute 'only agent' false or renders four imperatives inert",
+          "suggestion": "first-class-channel scoping"
+        },
+        {
+          "defect_id": "d3-templates",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "spec §3 tier-1",
+          "evidence": "skills/*/infra/templates/** passes Terms test but unenumerated",
+          "suggestion": "add class"
+        },
+        {
+          "defect_id": "d3-adr-index",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §11",
+          "evidence": "bc #13/#14 cited in body, absent from index",
+          "suggestion": "append"
+        },
+        {
+          "defect_id": "d3-negative-level",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §6 L2 row",
+          "evidence": "negative claim grep-level only",
+          "suggestion": "state verification level"
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "r3-wf",
+          "action": "fixed",
+          "note": "enumeration extended"
+        },
+        {
+          "defect_id": "r3-ac7",
+          "action": "fixed",
+          "note": "three-arm AC-7"
+        },
+        {
+          "defect_id": "r3-terms",
+          "action": "fixed",
+          "note": "token-injection glossed out of Terms"
+        },
+        {
+          "defect_id": "r3-should-order",
+          "action": "fixed",
+          "note": "0-of-4 disclosed with retained reason"
+        },
+        {
+          "defect_id": "r3-cov",
+          "action": "fixed",
+          "note": "carrier notes applied"
+        },
+        {
+          "defect_id": "d3-attribution",
+          "action": "fixed",
+          "note": "spec-added classes named"
+        },
+        {
+          "defect_id": "d3-counts",
+          "action": "fixed",
+          "note": "commands appended"
+        },
+        {
+          "defect_id": "d3-dualmode",
+          "action": "fixed",
+          "note": "first-class-channel scoping"
+        },
+        {
+          "defect_id": "d3-templates",
+          "action": "fixed",
+          "note": "class added (subset-qualified in r4)"
+        },
+        {
+          "defect_id": "d3-adr-index",
+          "action": "fixed",
+          "note": "bc entries appended"
+        },
+        {
+          "defect_id": "d3-negative-level",
+          "action": "fixed",
+          "note": "verification level stated"
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "same_source_findings": 4,
+      "hetero_findings": 7,
+      "hetero_degraded": false,
+      "blockers": 2,
+      "verdict": "rewrite",
+      "findings": [
+        {
+          "defect_id": "R4-1",
+          "severity": "blocker",
+          "kind": "contradiction",
+          "location": "spec §6 L2 row",
+          "evidence": "author's idiom-clean claim false: bc activation.json comment contains '(route here)' inside the test suite",
+          "suggestion": "narrow to literal marker + disclose occurrence"
+        },
+        {
+          "defect_id": "R4-2",
+          "severity": "warning",
+          "kind": "scope-creep",
+          "location": "spec §3 templates",
+          "evidence": "10 of 12 templates files are tool configs failing the Terms test",
+          "suggestion": "model-filled subset only"
+        },
+        {
+          "defect_id": "R4-3",
+          "severity": "warning",
+          "kind": "authority-chain-break",
+          "location": "spec §4 dual-mode",
+          "evidence": "'two skills name it for ad-hoc use' unsupported",
+          "suggestion": "named-beyond-single-seat phrasing"
+        },
+        {
+          "defect_id": "R4-COV",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §6 + §5 L6",
+          "evidence": "two provenance claims session-carried; doc self-discloses",
+          "suggestion": "none required"
+        },
+        {
+          "defect_id": "pcs-r4h-1",
+          "severity": "blocker",
+          "kind": "contradiction",
+          "location": "spec §5 L6 state-line",
+          "evidence": "author's 'no run-record artifact carries the state-line evidence' false — the 20260910 run's convergence-record carries r11/r12 findings + the adopted rule",
+          "suggestion": "cite the record"
+        },
+        {
+          "defect_id": "pcs-r4h-2",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §5 L6 vs AC-7",
+          "evidence": "L6 read alone scores both wrappers as MUST-violators; conformance path only in §8",
+          "suggestion": "in-layer transition"
+        },
+        {
+          "defect_id": "pcs-r4h-3",
+          "severity": "warning",
+          "kind": "authority-chain-break",
+          "location": "spec §5 L6 quote bullet",
+          "evidence": "cited carrier states downgrade invariant but no delimiter requirement",
+          "suggestion": "split the bullet"
+        },
+        {
+          "defect_id": "pcs-r4h-4",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "spec Terms",
+          "evidence": "'seat' undefined with two senses; L3/D4/ODP-3 count over it",
+          "suggestion": "Terms entry"
+        },
+        {
+          "defect_id": "pcs-r4h-5",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §7 D4",
+          "evidence": "researcher (declared out of L3 scope) counted among bound seats",
+          "suggestion": "9 bound + naming-alignment carrier"
+        },
+        {
+          "defect_id": "pcs-r4h-6",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "spec §6 L2 + AC-3",
+          "evidence": "dual-mode SHOULD baseline missing; web-claim-verifier carries no boundary idiom",
+          "suggestion": "0-of-1 disclosure"
+        },
+        {
+          "defect_id": "pcs-r4h-COV",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §6 preamble",
+          "evidence": "'legs re-derived under ripgrep' is an unverifiable conduct claim",
+          "suggestion": "soften to repo-auditable form"
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "R4-1",
+          "action": "fixed",
+          "note": "claim narrowed to literal marker; occurrence disclosed"
+        },
+        {
+          "defect_id": "R4-2",
+          "action": "fixed",
+          "note": "subset-qualified"
+        },
+        {
+          "defect_id": "R4-3",
+          "action": "fixed",
+          "note": "rephrased"
+        },
+        {
+          "defect_id": "R4-COV",
+          "action": "rejected",
+          "note": "doc already labels session-carried; disclosure sufficient"
+        },
+        {
+          "defect_id": "pcs-r4h-1",
+          "action": "fixed",
+          "note": "carrier cited (volatile-path flag added in r6)"
+        },
+        {
+          "defect_id": "pcs-r4h-2",
+          "action": "fixed",
+          "note": "in-layer transition + covering-spec disjunct"
+        },
+        {
+          "defect_id": "pcs-r4h-3",
+          "action": "fixed",
+          "note": "bullet split into invariant MUST + delimiter SHOULD"
+        },
+        {
+          "defect_id": "pcs-r4h-4",
+          "action": "fixed",
+          "note": "seat defined in Terms"
+        },
+        {
+          "defect_id": "pcs-r4h-5",
+          "action": "fixed",
+          "note": "9 bound seats; researcher naming-alignment"
+        },
+        {
+          "defect_id": "pcs-r4h-6",
+          "action": "fixed",
+          "note": "0-of-1 baseline disclosed"
+        },
+        {
+          "defect_id": "pcs-r4h-COV",
+          "action": "fixed",
+          "note": "softened to 'independently re-derived by the review legs across rounds'"
+        }
+      ]
+    },
+    {
+      "round": 5,
+      "same_source_findings": 2,
+      "hetero_findings": 7,
+      "hetero_degraded": false,
+      "blockers": 1,
+      "verdict": "rewrite",
+      "findings": [
+        {
+          "defect_id": "r5-d4",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §7 D4",
+          "evidence": "'wider than' false at 9 vs 9; operative defect is wrong membership",
+          "suggestion": "'corrects — same cardinality, different membership'"
+        },
+        {
+          "defect_id": "r5-followup",
+          "severity": "coverage",
+          "kind": "citation-error",
+          "location": "spec §4",
+          "evidence": "'recorded follow-up' has no anchor outside the sentence itself",
+          "suggestion": "name the line as only carrier"
+        },
+        {
+          "defect_id": "pcs-r5-1",
+          "severity": "blocker",
+          "kind": "citation-error",
+          "location": "spec §3 templates sentence",
+          "evidence": "author's --scaffold-configs attribution wrong: the three named files are ARCH_CONFIGS (language-gated, no flag); the flag registry is EXTERNAL_CONFIGS",
+          "suggestion": "two-registry attribution"
+        },
+        {
+          "defect_id": "pcs-r5-2",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §6 variant-carrier command",
+          "evidence": "grep returns 8 files incl. 7 non-variant carriers; misses researcher",
+          "suggestion": "re-annotate + census note"
+        },
+        {
+          "defect_id": "pcs-r5-3",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §5 L4 vs AC-5",
+          "evidence": "L4 forbids labelled re-statements; AC-5 allows them — L5 instance passes one, fails other",
+          "suggestion": "align wording"
+        },
+        {
+          "defect_id": "pcs-r5-4",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §5 L1",
+          "evidence": "MUST over preference predicate ('prefer a table') violates rule 4 decidability",
+          "suggestion": "demote to SHOULD"
+        },
+        {
+          "defect_id": "pcs-r5-5",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §4 carrier sentence",
+          "evidence": "psv+pas lump false: pas extractor is SKILL.md NC-I2 + install.md",
+          "suggestion": "split"
+        },
+        {
+          "defect_id": "pcs-r5-6",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §4 + §11 vs L1",
+          "evidence": "comma-joined enumerations violate own L1 bullet-MUST (self-placement claim)",
+          "suggestion": "bullet-split"
+        },
+        {
+          "defect_id": "pcs-r5-7",
+          "severity": "coverage",
+          "kind": "citation-error",
+          "location": "spec header",
+          "evidence": "csr sidecar cited but run in flight",
+          "suggestion": "mark pending"
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "r5-d4",
+          "action": "fixed",
+          "note": "membership-comparative applied"
+        },
+        {
+          "defect_id": "r5-followup",
+          "action": "fixed",
+          "note": "only-carrier note"
+        },
+        {
+          "defect_id": "pcs-r5-1",
+          "action": "fixed",
+          "note": "two-registry attribution"
+        },
+        {
+          "defect_id": "pcs-r5-2",
+          "action": "fixed",
+          "note": "re-annotated + census note"
+        },
+        {
+          "defect_id": "pcs-r5-3",
+          "action": "fixed",
+          "note": "L4/AC-5 aligned via carve-out"
+        },
+        {
+          "defect_id": "pcs-r5-4",
+          "action": "fixed",
+          "note": "SHOULD + rule-4 rationale"
+        },
+        {
+          "defect_id": "pcs-r5-5",
+          "action": "fixed",
+          "note": "carrier sentence split"
+        },
+        {
+          "defect_id": "pcs-r5-6",
+          "action": "fixed",
+          "note": "§4 list and §11 index bullet-split"
+        },
+        {
+          "defect_id": "pcs-r5-7",
+          "action": "fixed",
+          "note": "header marked pending-until-convergence"
+        }
+      ]
+    },
+    {
+      "round": 6,
+      "same_source_findings": 5,
+      "hetero_findings": 5,
+      "hetero_degraded": false,
+      "blockers": 1,
+      "verdict": "rewrite",
+      "findings": [
+        {
+          "defect_id": "R6-1",
+          "severity": "blocker",
+          "kind": "contradiction",
+          "location": "spec §6 grep annotation",
+          "evidence": "author's 8-file breakdown said 6+1=7; the 8th is web-claim-verifier (read-only phrasing)",
+          "suggestion": "amend breakdown"
+        },
+        {
+          "defect_id": "R6-2",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §4 vs psv SKILL.md:59",
+          "evidence": "'carries no agent handle' overgeneralized (psv names web-claim-verifier)",
+          "suggestion": "scope to the two seats"
+        },
+        {
+          "defect_id": "R6-3",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §4 dual-mode",
+          "evidence": "'as with code-reviewer' unsupported by cited finding and file",
+          "suggestion": "re-point"
+        },
+        {
+          "defect_id": "R6-4",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec Terms",
+          "evidence": "hyphenated 'NOT-for' greps empty; marker is 'NOT for'",
+          "suggestion": "split term vs marker"
+        },
+        {
+          "defect_id": "R6-5",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "spec §5 L6",
+          "evidence": "record path under gitignored workspace/; no volatility flag",
+          "suggestion": "volatile-path note"
+        },
+        {
+          "defect_id": "r6f-line184",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §6",
+          "evidence": "'line 184 quotes it' ambiguous/false as agents-file citation (real: web-claim-verifier.agent.md:10)",
+          "suggestion": "cite file:line"
+        },
+        {
+          "defect_id": "r6f-sidecar",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec header",
+          "evidence": "csr sidecar still absent mid-run",
+          "suggestion": "pending form"
+        },
+        {
+          "defect_id": "r6f-gloss",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §3/§5 vs L1",
+          "evidence": "four bare rule citations un-glossed — L1 self-violation",
+          "suggestion": "gloss the four sites"
+        },
+        {
+          "defect_id": "r6f-notfor-zero",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec Terms",
+          "evidence": "unqualified 'zero occurrences' false of the spec itself",
+          "suggestion": "scope to artifact population"
+        },
+        {
+          "defect_id": "r6f-m2",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §2 M2/M4",
+          "evidence": "no measurement locus named",
+          "suggestion": "state baseline honestly"
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "R6-1",
+          "action": "fixed",
+          "note": "breakdown amended"
+        },
+        {
+          "defect_id": "R6-2",
+          "action": "fixed",
+          "note": "scoped to the two seats"
+        },
+        {
+          "defect_id": "R6-3",
+          "action": "fixed",
+          "note": "re-pointed to mapping-routed framing"
+        },
+        {
+          "defect_id": "R6-4",
+          "action": "fixed",
+          "note": "term vs marker split"
+        },
+        {
+          "defect_id": "R6-5",
+          "action": "fixed",
+          "note": "volatile-path flag + durable-carrier note"
+        },
+        {
+          "defect_id": "r6f-line184",
+          "action": "fixed",
+          "note": "file:line citation"
+        },
+        {
+          "defect_id": "r6f-sidecar",
+          "action": "fixed",
+          "note": "pending form"
+        },
+        {
+          "defect_id": "r6f-gloss",
+          "action": "fixed",
+          "note": "four glosses applied"
+        },
+        {
+          "defect_id": "r6f-notfor-zero",
+          "action": "fixed",
+          "note": "scoped to artifact population"
+        },
+        {
+          "defect_id": "r6f-m2",
+          "action": "fixed",
+          "note": "M2 aspirational + M4 split locus (r7)"
+        }
+      ]
+    },
+    {
+      "round": 7,
+      "same_source_findings": 2,
+      "hetero_findings": 4,
+      "hetero_degraded": false,
+      "blockers": 1,
+      "verdict": "rewrite",
+      "findings": [
+        {
+          "defect_id": "r7-w1",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §2 M4",
+          "evidence": "convergence-record has hetero_degraded but no malformed field; malformed's carrier is the progress sidecar",
+          "suggestion": "split the locus"
+        },
+        {
+          "defect_id": "r7-c1",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §6",
+          "evidence": "two session-carried execution claims not re-executed by read-only leg; static facts reproduce",
+          "suggestion": "disclosure only"
+        },
+        {
+          "defect_id": "r7d1",
+          "severity": "blocker",
+          "kind": "authority-chain-break",
+          "location": "spec §5 L3 enforcement split",
+          "evidence": "'siblings check outcome-axis bar, evidence fields' false for the code-shaped violation-log sibling (no outcome-axis field; detail unconstrained)",
+          "suggestion": "doc-family vs code-sibling split"
+        },
+        {
+          "defect_id": "r7d2",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §5 L2 vs §4/D3",
+          "evidence": "opening SHOULD names agent frontmatter while the exemption carves 22 of 23 agents — scope never stated",
+          "suggestion": "scope the opening SHOULD"
+        },
+        {
+          "defect_id": "r7d3",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §6 bullet",
+          "evidence": "nested parenthetical in own audit prose (not a quotation) — L1 self-violation",
+          "suggestion": "hoist inner note"
+        },
+        {
+          "defect_id": "r7d4",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "spec §11 + §4/§5/§6",
+          "evidence": "'pd' never paired with 'parallel-development' anywhere — unresolvable cross-reference",
+          "suggestion": "pair once in §11"
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "r7-w1",
+          "action": "fixed",
+          "note": "locus split by carrier"
+        },
+        {
+          "defect_id": "r7-c1",
+          "action": "rejected",
+          "note": "disclosure only; doc already marks session-carried"
+        },
+        {
+          "defect_id": "r7d1",
+          "action": "fixed",
+          "note": "doc-family vs code-sibling split with stated code-side gap"
+        },
+        {
+          "defect_id": "r7d2",
+          "action": "fixed",
+          "note": "opening SHOULD scoped to bound surfaces"
+        },
+        {
+          "defect_id": "r7d3",
+          "action": "fixed",
+          "note": "inner note hoisted to em-dash clause"
+        },
+        {
+          "defect_id": "r7d4",
+          "action": "fixed",
+          "note": "pd/bc pairing in §11 header"
+        }
+      ]
+    },
+    {
+      "round": 8,
+      "same_source_findings": 3,
+      "hetero_findings": 5,
+      "hetero_degraded": false,
+      "blockers": 1,
+      "verdict": "rewrite",
+      "findings": [
+        {
+          "defect_id": "r8-1",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §6 read-only bullet",
+          "evidence": "em-dash chain with '+' joins carried the load-bearing 8-file decomposition (L1 self-violation)",
+          "suggestion": "sub-bullet membership split"
+        },
+        {
+          "defect_id": "r8-2",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "spec §2 M4",
+          "evidence": "hetero_degraded is a per-round boolean, not a count",
+          "suggestion": "boolean-aggregate rewording"
+        },
+        {
+          "defect_id": "r8-cov-1",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §6 + §4",
+          "evidence": "session-carried provenance; bc researcher step text unread",
+          "suggestion": "closed by orchestrator read (bc SKILL.md:73 verbatim)"
+        },
+        {
+          "defect_id": "terms-vs-l6",
+          "severity": "blocker",
+          "kind": "contradiction",
+          "location": "spec Terms vs §5 L6 scope line",
+          "evidence": "L6 scope line still enumerated token injection as class member after Terms excluded it — cross-site fix residue from r3",
+          "suggestion": "drop token injection from scope parenthetical"
+        },
+        {
+          "defect_id": "l6-durable-carrier",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §5 L6",
+          "evidence": "versioned carriers exist (pd ADR #67 + git-tracked csr-record) — 'this spec sentence is the durable carrier' premise false",
+          "suggestion": "cite versioned carriers"
+        },
+        {
+          "defect_id": "templates-model-read",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "spec §3",
+          "evidence": "cold-start-patterns (model-READ) fit neither bucket; 'model-filled' misfits the verbatim-appended constitution template",
+          "suggestion": "filled-or-read split"
+        },
+        {
+          "defect_id": "nested-parens",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §5 L6 + §8 AC-7",
+          "evidence": "'(AC-7 arm (c))' nested parens in own prose",
+          "suggestion": "flatten"
+        },
+        {
+          "defect_id": "m2-negative",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §2 M2",
+          "evidence": "unverifiable repo-wide absence claim",
+          "suggestion": "drop the negative half"
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "r8-1",
+          "action": "fixed",
+          "note": "membership sub-bullets"
+        },
+        {
+          "defect_id": "r8-2",
+          "action": "fixed",
+          "note": "boolean-aggregate rewording"
+        },
+        {
+          "defect_id": "r8-cov-1",
+          "action": "fixed",
+          "note": "orchestrator closed (2) by verbatim read; (1) already session-carried-flagged"
+        },
+        {
+          "defect_id": "terms-vs-l6",
+          "action": "fixed",
+          "note": "scope line excludes token injection with in-line pointer"
+        },
+        {
+          "defect_id": "l6-durable-carrier",
+          "action": "fixed",
+          "note": "pd ADR #67 + git-tracked record cited; pd #67 added to §11"
+        },
+        {
+          "defect_id": "templates-model-read",
+          "action": "fixed",
+          "note": "filled-or-read split"
+        },
+        {
+          "defect_id": "nested-parens",
+          "action": "fixed",
+          "note": "flattened at both sites"
+        },
+        {
+          "defect_id": "m2-negative",
+          "action": "fixed",
+          "note": "negative half dropped"
+        }
+      ]
+    },
+    {
+      "round": 9,
+      "same_source_findings": 5,
+      "hetero_findings": 5,
+      "hetero_degraded": false,
+      "blockers": 0,
+      "verdict": "pass",
+      "findings": [
+        {
+          "defect_id": "r9-F1",
+          "severity": "warning",
+          "kind": "citation-error",
+          "location": "spec §5 L6",
+          "evidence": "CLAIMED run-dir copy absent; orchestrator verified present (reviewer glob view); class-volatility concern valid for fresh checkouts",
+          "suggestion": "class-guidance rewording"
+        },
+        {
+          "defect_id": "r9-F2",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "spec §3",
+          "evidence": ".env.solidforge.example (copy_env_example, third path, human-facing) unclassified",
+          "suggestion": "human-facing clause"
+        },
+        {
+          "defect_id": "r9-F3",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "spec Terms/§5 L6",
+          "evidence": "token-injection hyphen/space alternation; env/settings vs settings",
+          "suggestion": "one spelling"
+        },
+        {
+          "defect_id": "r9-COV1",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §5 L6/§11",
+          "evidence": "git-tracked status unconfirmable by shell-less leg",
+          "suggestion": "orchestrator confirmed tracked"
+        },
+        {
+          "defect_id": "r9-COV2",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §6",
+          "evidence": "suite-execution provenance",
+          "suggestion": "disclosure only"
+        },
+        {
+          "defect_id": "d9-tier1",
+          "severity": "warning",
+          "kind": "coverage-gap",
+          "location": "spec §3",
+          "evidence": "Terms test vs class list divergence unruled; produced blueprints + infra prose contract docs missed",
+          "suggestion": "test operative, list illustrative, two classes added"
+        },
+        {
+          "defect_id": "d9-l1-joiner",
+          "severity": "warning",
+          "kind": "authority-chain-break",
+          "location": "spec §5 L1",
+          "evidence": "restatement narrower than rule 10 (bans '-' joiner outright; rule 10 bans only mixing)",
+          "suggestion": "align to rule 10 wording"
+        },
+        {
+          "defect_id": "d9-weak-dualmode",
+          "severity": "warning",
+          "kind": "contradiction",
+          "location": "spec §4 dual-mode bullet",
+          "evidence": "'weak dual-mode instances' contradicts Terms' 1-of-23 definition and D3's exemption",
+          "suggestion": "one-sided instances on exempt surfaces"
+        },
+        {
+          "defect_id": "d9-abbreviations",
+          "severity": "warning",
+          "kind": "structural-gap",
+          "location": "spec Terms + §4",
+          "evidence": "csr/psv/pas unglossed at first use; 'pas' has no in-repo definition",
+          "suggestion": "gloss all at first use"
+        },
+        {
+          "defect_id": "d9-COV1",
+          "severity": "coverage",
+          "kind": "coverage-gap",
+          "location": "spec §6 + §2 M3",
+          "evidence": "provenance session-carried (already labelled); M3 names no instrument artifact",
+          "suggestion": "no change required"
+        }
+      ],
+      "dispositions": [
+        {
+          "defect_id": "r9-F1",
+          "action": "rejected",
+          "note": "premise false — dir exists on this machine (orchestrator ls); glob-view artifact; class-guidance rewording adopted anyway for fresh-checkout robustness"
+        },
+        {
+          "defect_id": "r9-F2",
+          "action": "fixed",
+          "note": "third-path human-facing clause"
+        },
+        {
+          "defect_id": "r9-F3",
+          "action": "fixed",
+          "note": "spelling unified"
+        },
+        {
+          "defect_id": "r9-COV1",
+          "action": "fixed",
+          "note": "orchestrator confirmed git-tracked"
+        },
+        {
+          "defect_id": "r9-COV2",
+          "action": "rejected",
+          "note": "disclosure only"
+        },
+        {
+          "defect_id": "d9-tier1",
+          "action": "fixed",
+          "note": "test operative + two classes added"
+        },
+        {
+          "defect_id": "d9-l1-joiner",
+          "action": "fixed",
+          "note": "rule-10 wording restored"
+        },
+        {
+          "defect_id": "d9-weak-dualmode",
+          "action": "fixed",
+          "note": "one-sided on exempt surfaces; dual-mode 1-of-23"
+        },
+        {
+          "defect_id": "d9-abbreviations",
+          "action": "fixed",
+          "note": "glossed at first use"
+        },
+        {
+          "defect_id": "d9-COV1",
+          "action": "rejected",
+          "note": "no doc change required; provenance already labelled session-carried"
+        }
+      ]
+    }
+  ],
+  "substantive_converged": false,
+  "coverage": [
+    "core-claims-coverage: 8/8",
+    "cap=9, rounds=9"
+  ],
+  "stalemate": true,
+  "rightness": "human_confirm_required",
+  "cap": 9,
+  "core_claims": [
+    "CC-1 NOT-for distribution: 4 review/spec SKILL.mds; agent descriptions carry named-neighbor routing idioms (ios-developer, ios-tester, security-specialist) + researcher exclusive-trigger",
+    "CC-2 L3 conformance: two-marker union 7 agents (6 no-edit + 3 oracle, overlap 2); variant carriers security-specialist + researcher; code-reviewer zero-marker gap; tool-layer no-edit on 9 files",
+    "CC-3 dispatch partition 11 mapping + 7 workflow + 1 dual + 4 platform-flow = 23 agents",
+    "CC-4 both wrappers assemble prompts via in-code adversarial_prompt() builders; zero .replace( in pd; provider-template+token-injection is settings materialization; no assert-on-prompt-text",
+    "CC-5 disconnect_check.py in all five skills",
+    "CC-6 ADR citations exist and match one-line roles (pd #14/#30/#38/#41/#42/#52/#66; bc #8/#13/#14)",
+    "CC-7 plugin_layout.py asserts $ARGUMENTS wiring (ADR #66)",
+    "CC-8 internal consistency: six layers vs restated rules 3/4/5/8/10; D/AC/ODP coherence; spec follows its own L1"
+  ],
+  "authority_ref": "CLAUDE.md + skills/parallel-development/references/design-decisions.md + skills/blueprint-crafting/docs/design-decisions.md",
+  "size_tier": "long"
+}

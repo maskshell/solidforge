@@ -1,0 +1,36 @@
+{
+  "findings": [
+    {
+      "defect_id": "pcs-r2-1",
+      "severity": "blocker",
+      "kind": "contradiction",
+      "location": "docs/prompt-content-spec.md §4 (workflow-routed label + partition line); propagated to plan-model PCS-1.scope",
+      "evidence": "Spec labels the bucket 'workflow-routed (8)' but the sentence enumerates exactly 7 agents; 11+8+1+4=24, not 23. Ground truth: 23 agent files; 11 mapping rows; 7 workflow agents; 1 dual (web-claim-verifier); 4 platform-flow. True partition 11+7+1+4=23. 'partition checks out' was a false verified-claim — same defect class as round-1 pcs-3/pcs-4.",
+      "suggestion": "Change label to 'workflow-routed (7)' and partition to '11 + 7 + 1 + 4 = 23'; update plan-model PCS-1.scope to 'workflow 7'."
+    },
+    {
+      "defect_id": "pcs-r2-2",
+      "severity": "blocker",
+      "kind": "contradiction",
+      "location": "docs/prompt-content-spec.plan-model.json PCS-4.odp_status[0].resolution vs spec §6 + §10 ODP-3",
+      "evidence": "PCS-4 odp resolution still says 'a dedicated sweep over the 9 review-seat agents' — includes researcher (a producer seat per §6), excludes code-reviewer (the zero-clause review seat the sweep most needs), and re-introduces the stale round-1 '9' framing pcs-3 ordered corrected. PCS-4.risk was updated while odp_status was not — partial fix.",
+      "suggestion": "Rewrite PCS-4.odp_status[0].resolution to mirror spec §10 ODP-3: sweep scope = 7 strict carriers + 2 variant carriers + code-reviewer's zero-clause gap (snapshot §6)."
+    },
+    {
+      "defect_id": "pcs-r2-3",
+      "severity": "warning",
+      "kind": "gap",
+      "location": "docs/prompt-content-spec.md §11 ADR list",
+      "evidence": "§11 cites only #41/#42/#52 but the body load-bearingly cites #66 (§3 commands inclusion), #14 + #30 (§4 code-reviewer reclassification), #38 (§6 honest-ceiling characterization). All present in design-decisions.md. The §1 secondary JTBD promises auditor traceability; the citation index is incomplete.",
+      "suggestion": "Extend §11 to all seven: #14, #30, #38, #41, #42, #52, #66 with one-line roles."
+    },
+    {
+      "defect_id": "pcs-r2-4",
+      "severity": "warning",
+      "kind": "contradiction",
+      "location": "docs/prompt-content-spec.md Terms workflow-routed gloss + §9 non-goal vs §6",
+      "evidence": "One concept with alternating labels: 'verification seats' (Terms), 'review seat' / 'producer seat' (§6), 'the 9 grandfathered review-seat phrasings' (§9) — violating the spec's own L1 MUST (one term per concept). §9's 'the 14 v1 role agents' is a set name defined nowhere.",
+      "suggestion": "Terms → '(the psv/csr/pas/bc pipeline-step seats)'; §9 → reference the D4 whole-inventory grandfathering + §6 snapshot instead of the 9/14 set names."
+    }
+  ]
+}
