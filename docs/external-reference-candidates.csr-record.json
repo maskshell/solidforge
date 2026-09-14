@@ -1,0 +1,135 @@
+{
+  "artifact": "docs/external-reference-candidates.md",
+  "authority_ref": "",
+  "size_tier": "short",
+  "cap": 2,
+  "rounds": [
+    {
+      "round": 1,
+      "same_source_findings": 7,
+      "hetero_findings": 7,
+      "hetero_degraded": false,
+      "blockers": 1,
+      "verdict": "rewrite",
+      "findings": [
+        {"defect_id": "R1-1", "severity": "warning", "kind": "authority-chain-break", "location": "Candidates table, C1 row", "evidence": "C1 attributed provider+model to run/convergence record schemas; all three record schemas audited clean — the fields live only on the csr_progress event sidecar.", "suggestion": "Scope provider+model to the event sidecar; record the clean-schema audit."},
+        {"defect_id": "R1-2", "severity": "warning", "kind": "citation-error", "location": "Verified claims, fast-gate bullet", "evidence": "fast_gate.py check_web (lines 201-223) also runs per-file eslint for web files, config-gated — the tool enumeration omitted it.", "suggestion": "Add eslint to the enumeration."},
+        {"defect_id": "R1-3", "severity": "warning", "kind": "authority-chain-break", "location": "Header status line", "evidence": "'any adoption gets an ADR (workspace rule 6)' states rule 6 stronger than CLAUDE.md's non-obvious-decision scope.", "suggestion": "State it as this backlog's own policy, stricter than rule 6."},
+        {"defect_id": "R1-4", "severity": "warning", "kind": "structural-gap", "location": "Frame vs value-form column", "evidence": "Five renderings vs the three defined forms; 'gap-fill candidate' ambiguous against the Decision rule.", "suggestion": "Normalize the column to exactly the three Frame terms."},
+        {"defect_id": "R1-5", "severity": "warning", "kind": "structural-gap", "location": "C2 contract cell", "evidence": "'new CC-mass share' undefined; CC collides with Claude Code.", "suggestion": "Define the mass term at first use; avoid the CC collision."},
+        {"defect_id": "R1-6", "severity": "coverage", "kind": "coverage-gap", "location": "Verified claims, bc-schema bullet", "evidence": "The declared open audit (bc run-record schema) was run by the leg: zero term-set matches — closes the open item.", "suggestion": "Record the audit result."},
+        {"defect_id": "R1-7", "severity": "coverage", "kind": "coverage-gap", "location": "Origin evaluations + Non-adopt list", "evidence": "E1-E4 external attributions unverifiable by a local-only same-family leg.", "suggestion": "Carry in coverage notes with the orchestrator's evaluation-time fetch evidence."},
+        {"defect_id": "H1-c2-erosion-attribution", "severity": "blocker", "kind": "authority-chain-break", "location": "C2 contract cell (the round-1 fix text)", "evidence": "The R1-5 fix called 'Σ CC×√SLOC over new/changed functions' E2's erosion numerator. Fetched E2 (earendil post + arXiv:2603.24755v1, web-claim-verifier, verified 2026-09-14): Erosion = Σ_{f:CC(f)>10} mass(f) / Σ_f mass(f) with mass(f)=CC(f)×√SLOC(f); 'the fraction between the mass of the functions with a cyclomatic complexity larger than 10, by the mass of all functions'; Verbosity = |AST-Grep flagged lines ∪ clone lines|/LOC (duplication is clone-detected, ast-grep supplies flagged/wordy lines). No sum over new/changed functions exists in either source; the only scoping is checkpoint-level. A fix-introduced defect: the mislabeling entered with the R1-5 rewording.", "suggestion": "Attribute the mass TERM to E2, mark the patch scoping as C2's own extension, and fix the ast-grep/clone division."},
+        {"defect_id": "H2-reviewer-agent-enumeration", "severity": "warning", "kind": "citation-error", "location": "Verified claims, reviewer-agents bullet", "evidence": "agents/collision-verifier.agent.md exists and is in-class (verdict enum inline); the enumeration missed it.", "suggestion": "Add collision-verifier; extractors out-of-class."},
+        {"defect_id": "H3-record-schema-audit-precision", "severity": "warning", "kind": "citation-error", "location": "C1 cell + schema-audit bullet", "evidence": "pd run-record schema DOES match the raw term set — top_fingerprints/fingerprint_count are ERROR fingerprints, blueprint_version pins the artifact; 'audited clean' overclaims under the raw term set.", "suggestion": "Name the sense: no environment-provenance field; fingerprint-named fields are error fingerprints."},
+        {"defect_id": "H4-e4-persona-untraced", "severity": "warning", "kind": "coverage-gap", "location": "E4 origin line", "evidence": "'review persona density' occurred exactly once in the doc — mapped to no candidate, no non-adopt, no convergence-record row.", "suggestion": "State that C8 absorbs it."},
+        {"defect_id": "H5-insurance-value-form", "severity": "warning", "kind": "structural-gap", "location": "C1 contract cell", "evidence": "'insurance value-form' — a fourth form token inside a contract cell, defined nowhere; the Decision rule has no branch for it.", "suggestion": "Drop the token."},
+        {"defect_id": "H6-cov-e1-unverified", "severity": "coverage", "kind": "citation-error", "location": "E1-derived rows and non-adopts", "evidence": "The different-family leg fetched E2/E3/E4 but NOT E1; E1 attributions disclosed unverified by that leg.", "suggestion": "Attach the orchestrator's evaluation-time fetch evidence or web-seat E1."},
+        {"defect_id": "H7-cov-e4-fine-detail", "severity": "coverage", "kind": "citation-error", "location": "E4 origin, C5, convergence record", "evidence": "'18 skills' README-asserted at the fetched page, not tree-verified in that leg; the four convergence mappings are interpretive pairings, not adjudicated.", "suggestion": "Tree-verify before any E4-sourced candidate leaves the backlog."}
+      ],
+      "dispositions": [
+        {"defect_id": "R1-1", "action": "fixed", "note": "C1 reworded: provider+model scoped to the csr_progress event sidecar; clean-schema audit recorded."},
+        {"defect_id": "R1-2", "action": "fixed", "note": "eslint (config-gated, web files) added to the fast-gate enumeration."},
+        {"defect_id": "R1-3", "action": "fixed", "note": "Restated as this backlog's own policy, explicitly stricter than workspace rule 6."},
+        {"defect_id": "R1-4", "action": "fixed", "note": "Value-form column normalized to the three Frame terms; qualifiers moved into contract cells."},
+        {"defect_id": "R1-5", "action": "fixed", "note": "Renamed to complexity-mass with the E2 mass term spelled out; Claude Code spelled out. The fix text itself then required the H1 blocker fix in the same round."},
+        {"defect_id": "R1-6", "action": "fixed", "note": "bc-schema bullet updated with the completed audit."},
+        {"defect_id": "R1-7", "action": "rejected", "note": "Not a defect — coverage disclosure carried in this record's coverage notes: the orchestrator fetched E1-E4 directly at evaluation time (2026-09-14, in-session), grounding the attributions; the same-family leg has no web seat by construction."},
+        {"defect_id": "H1-c2-erosion-attribution", "action": "fixed", "note": "Web-grounded before recording (web-claim-verifier spawn, per the step-2 spawn condition — evidence packet in run-dir evidence/H1-c2-erosion-attribution.json): C2 cell now separates E2's verbosity formula, the clone-vs-ast-grep division, and the mass term from C2's own patch scoping."},
+        {"defect_id": "H2-reviewer-agent-enumeration", "action": "fixed", "note": "collision-verifier added; extractors marked out-of-class."},
+        {"defect_id": "H3-record-schema-audit-precision", "action": "fixed", "note": "Audit bullet restated per-sense (error fingerprints; artifact-version pin); later rounds completed the enumeration."},
+        {"defect_id": "H4-e4-persona-untraced", "action": "fixed", "note": "E4 origin line now maps persona-density → C8 explicitly."},
+        {"defect_id": "H5-insurance-value-form", "action": "fixed", "note": "Token dropped; C1's insurance nature is now carried by the gap-fill definition."},
+        {"defect_id": "H6-cov-e1-unverified", "action": "rejected", "note": "Coverage disclosure carried in coverage notes; E1 grounded by the orchestrator's evaluation-time fetches (repo tree + SKILL.md + PROMPT.md + cli/index.mjs)."},
+        {"defect_id": "H7-cov-e4-fine-detail", "action": "rejected", "note": "Coverage disclosure carried: the orchestrator's GitHub tree listing did count 18 skill dirs; the four convergence mappings stay interpretive (cross-domain pairings, not adjudicated)."}
+      ]
+    },
+    {
+      "round": 2,
+      "same_source_findings": 7,
+      "hetero_findings": 6,
+      "hetero_degraded": false,
+      "blockers": 0,
+      "verdict": "pass",
+      "findings": [
+        {"defect_id": "R2-1", "severity": "warning", "kind": "structural-gap", "location": "Reviewer-agents bullet", "evidence": "'verdict-class seats' undefined; doc-reviewer and plan-reviewer emit findings lists, not verdicts.", "suggestion": "Rename the class; state the split."},
+        {"defect_id": "R2-2", "severity": "warning", "kind": "citation-error", "location": "Schema-audit bullet", "evidence": "pd schema description quoted with altered punctuation (comma clause for a parenthetical).", "suggestion": "Quote verbatim or paraphrase unquoted."},
+        {"defect_id": "R2-3", "severity": "warning", "kind": "structural-gap", "location": "Schema-audit bullet", "evidence": "A third schema (psv coverage-record) matches the term set on volatile_source prose — enumeration incomplete.", "suggestion": "Add psv to the enumeration."},
+        {"defect_id": "R2-4", "severity": "warning", "kind": "structural-gap", "location": "C3a value-form cell", "evidence": "'gap-fill, cheap' — a fourth token in the value-form column (round-1 normalization incomplete).", "suggestion": "Move 'cheap' into the contract cell."},
+        {"defect_id": "R2-5", "severity": "warning", "kind": "structural-gap", "location": "C8 source cell", "evidence": "'thermo-nuclear' names no referent in the doc.", "suggestion": "Gloss the label."},
+        {"defect_id": "R2-6", "severity": "warning", "kind": "citation-error", "location": "C2 contract cell", "evidence": "'Goodheart' misspelled (Goodhart) and unglossed.", "suggestion": "Spell and gloss."},
+        {"defect_id": "R2-7", "severity": "coverage", "kind": "coverage-gap", "location": "Provenance stamps", "evidence": "'web-verified 2026-09-14' / 'csr round 1' resolve to no in-repo record path (run dir is gitignored).", "suggestion": "Point at the durable record path."},
+        {"defect_id": "h1-r2", "severity": "warning", "kind": "structural-gap", "location": "Schema-audit bullet", "evidence": "prior-art-search collision-record.schema.json also matches the term set on coverage-note prose — a fourth matcher, same defect class as R2-3.", "suggestion": "Add it or restate as 'the record schemas checked' with the full list."},
+        {"defect_id": "h2-r2", "severity": "warning", "kind": "contradiction", "location": "Frame vs value forms", "evidence": "'ONLY candidates that passed the problem-existence test' vs option/registration rows whose problem has not fired — the test as defined is problem-now only.", "suggestion": "Make the test three-valued or narrow the claim."},
+        {"defect_id": "h3-r2", "severity": "warning", "kind": "structural-gap", "location": "C1 contract cell", "evidence": "'per-round environment fingerprint' not implementable for the pd run-record: it has no rounds[] (nearest analogue outer_verdicts, one entry per inner→outer fold); only the csr convergence-record has rounds[].", "suggestion": "Split the contract by record type."},
+        {"defect_id": "h4-r2", "severity": "warning", "kind": "structural-gap", "location": "C2 source cell", "evidence": "'E4 corroboration' referent unresolvable: E4's only slop element is deslop — judgment-level, no metric; the E4 absorption map names no slop item.", "suggestion": "Name the referent with its level, or drop."},
+        {"defect_id": "h5-r2", "severity": "warning", "kind": "contradiction", "location": "Section heading vs bullet provenance", "evidence": "'pre-authoring audit' heading vs a bullet whose provenance is csr round 1 (in-run).", "suggestion": "Retitle or mark provenance inline."},
+        {"defect_id": "h6-r2", "severity": "coverage", "kind": "citation-error", "location": "Two cites of docs/external-reference-candidates.csr-record.json", "evidence": "The cited record did not exist mid-run; present-tense citation dangling as reviewed.", "suggestion": "Mark it as emitted at run end."}
+      ],
+      "dispositions": [
+        {"defect_id": "R2-1", "action": "fixed", "note": "Renamed 'adversarial reviewer seats' with the split stated (later refined by R3-3 to the dual-mode account)."},
+        {"defect_id": "R2-2", "action": "fixed", "note": "Verbatim quote with parentheses."},
+        {"defect_id": "R2-3", "action": "fixed", "note": "psv added; net claim restated as field-level."},
+        {"defect_id": "R2-4", "action": "fixed", "note": "Value form is gap-fill; 'cheap: registry + checker, no agent runs' moved to the contract cell."},
+        {"defect_id": "R2-5", "action": "fixed", "note": "Glossed as 'E4 (its thermo-nuclear review skill)'."},
+        {"defect_id": "R2-6", "action": "fixed", "note": "Goodhart's law spelled with gloss (attribution later corrected by round-3 gb)."},
+        {"defect_id": "R2-7", "action": "fixed", "note": "Stamps now point at this durable record."},
+        {"defect_id": "h1-r2", "action": "fixed", "note": "prior-art-search collision-record added; enumeration now names all record schemas checked."},
+        {"defect_id": "h2-r2", "action": "fixed", "note": "Frame restated: the test's outcome is three-valued and the value forms ARE those outcomes (problem-now / problem-conditional / problem-conditional-recurring)."},
+        {"defect_id": "h3-r2", "action": "fixed", "note": "C1 split: csr convergence-record rounds[] per-round fingerprint; pd run-record per-fold beside outer_verdicts."},
+        {"defect_id": "h4-r2", "action": "fixed", "note": "C2 source now reads 'E4 deslop — corroborates the concern, not the metric: judgment-level persona, no formula'."},
+        {"defect_id": "h5-r2", "action": "fixed", "note": "Retitled 'pre-authoring audit + csr-round re-verification' with in-run provenance marked."},
+        {"defect_id": "h6-r2", "action": "fixed", "note": "Both cites carry 'written when this run converges'; the record now exists, making the citation resolvable."}
+      ]
+    },
+    {
+      "round": 3,
+      "same_source_findings": 5,
+      "hetero_findings": 4,
+      "hetero_degraded": false,
+      "blockers": 0,
+      "verdict": "pass",
+      "findings": [
+        {"defect_id": "R3-1", "severity": "warning", "kind": "citation-error", "location": "Schema-audit bullet, psv account", "evidence": "psv coverage-record also matches on `model` prose in the verified-count description (line 26) — accounting incomplete.", "suggestion": "Extend the psv account."},
+        {"defect_id": "R3-2", "severity": "warning", "kind": "citation-error", "location": "Schema-audit bullet, pd account", "evidence": "'required top_fingerprints + fingerprint_count' imprecise — fingerprint_count is a $defs item schema; unenumerated prose hits (step-count proxy / provider-normalized / wall-clock confounds provider throughput).", "suggestion": "Reword and enumerate."},
+        {"defect_id": "R3-3", "severity": "warning", "kind": "structural-gap", "location": "Reviewer-agents bullet", "evidence": "web-claim-verifier is dual-mode (claim mode → verdict; question mode → findings[]) — the clean 3/2 partition is wrong.", "suggestion": "State the dual mode."},
+        {"defect_id": "R3-4", "severity": "coverage", "kind": "coverage-gap", "location": "Origin evaluations + E-sourced rows", "evidence": "E1-E4 unverifiable from a no-web leg; the durable record should carry the web evidence.", "suggestion": "Record responsibility."},
+        {"defect_id": "R3-5", "severity": "warning", "kind": "structural-gap", "location": "Schema-audit bullet", "evidence": "'psv' never expanded; four schema paths omitted — not re-verifiable from the doc alone (rule 10).", "suggestion": "Expand and inline paths."},
+        {"defect_id": "gb-r3", "severity": "warning", "kind": "authority-chain-break", "location": "C2 contract cell, final clause", "evidence": "Fetched E2: the Goodhart caveat is scoped to the ΔLOC 'simplest method' passage, not to verbosity/erosion — 'E2's own caveat' misattributes.", "suggestion": "Attribute the caveat to C2 itself or to the ΔLOC passage."},
+        {"defect_id": "adr8-r3", "severity": "warning", "kind": "citation-error", "location": "C3b row + trigger_check bullet", "evidence": "Bare 'ADR #8' collides: bc/pd/psv/prior-art-search each have a DIFFERENT ADR #8; the intended referent is bc's activation-surface decision.", "suggestion": "Write 'bc ADR #8' + name the log."},
+        {"defect_id": "value-form-frame-drift", "severity": "warning", "kind": "contradiction", "location": "Frame vs C3a/C3b/C8 rows", "evidence": "C3a gap-fill but its trigger allowed 'a dedicated small change' (gap-fill forbids dedicated sessions); C3b option but its trigger is a recurrence condition (registration semantics); C8 registration but its trigger is a touchpoint (gap-fill semantics).", "suggestion": "Re-assign C3b→registration, C8→gap-fill; drop C3a's dedicated-change alternative."},
+        {"defect_id": "e1-attributions-unfetched", "severity": "coverage", "kind": "citation-error", "location": "E1 origin, C7, non-adopts, convergence-record bullet", "evidence": "The leg web-confirmed E2 (verbosity formula + CC>10 erosion share + mass square-root), E3 (should_trigger CSV with negative control test-04, --json JSONL graders, --output-schema rubric), and E4 (18 skills, verify-this artifacts layout) by direct fetch; E1 remains web-seat-unverified.", "suggestion": "Mark E1 in-doc or web-seat it."}
+      ],
+      "dispositions": [
+        {"defect_id": "R3-1", "action": "fixed", "note": "psv account extended to both match sites."},
+        {"defect_id": "R3-2", "action": "fixed", "note": "Record-required top_fingerprints with items typed by the fingerprint_count def; prose hits enumerated."},
+        {"defect_id": "R3-3", "action": "fixed", "note": "Seat classification restated with web-claim-verifier's dual mode."},
+        {"defect_id": "R3-4", "action": "rejected", "note": "Record responsibility — this record embeds the H1 web packet (below) and the coverage notes carry the E1-E4 verification state. Not a doc defect."},
+        {"defect_id": "R3-5", "action": "fixed", "note": "psv expanded at first use; all four schema paths inlined."},
+        {"defect_id": "gb-r3", "action": "fixed", "note": "C2 now attributes the caveat to E2's ΔLOC passage specifically, with any slop proxy inheriting it."},
+        {"defect_id": "adr8-r3", "action": "fixed", "note": "Both sites now read 'bc ADR #8' with the log path named and the per-skill collision noted."},
+        {"defect_id": "value-form-frame-drift", "action": "fixed", "note": "C3a trigger narrowed to the gate-layer touch; C3b → registration; C8 → gap-fill."},
+        {"defect_id": "e1-attributions-unfetched", "action": "fixed", "note": "E1 origin line now carries the in-doc coverage marker (orchestrator's evaluation-time fetches; not web-seat re-verified; E2/E3/E4 web-seat-confirmed round 3)."}
+      ]
+    }
+  ],
+  "substantive_converged": true,
+  "rightness": "human_confirm_required",
+  "stalemate": false,
+  "core_claims": [
+    "C1 scope: csr_progress events carry provider/model; no record schema carries an environment-provenance field; pd records are fold-shaped not round-shaped",
+    "C3 correction: bc has a surface trigger check (4 assertions, activation.json, bc ADR #8 seam); parallel-development has none; the behavioral layer is deliberately outer-ring",
+    "C2 gap: fast_gate is per-file lint/format across six checkers; no duplication/slop-density signal in the gate layer",
+    "C4 premise: five adversarial reviewer seats embed criteria and output schemas inline at agents/*.agent.md",
+    "Structural: table ↔ sections ↔ three-valued problem-existence outcomes consistent; all ADR/rule/skill/path referents resolve"
+  ],
+  "coverage": [
+    "Cap extension disclosed: short tier cap=2 was reached at round 2 with a 1-clean-round streak; extended to round 3 per the user's recorded standing preference for a formal 2-clean-round streak (csr formal-streak preference, 2026-08). Round 3 completed the streak; rounds 2-3 both zero new blockers. Not a silent pick.",
+    "E1 (frontier-harness-eval) attributions rest on the orchestrator's evaluation-time fetches (2026-09-14, in-session: repo tree, SKILL.md, PROMPT.md, cli/index.mjs, reference.md) and were NOT re-verified by a web seat. E2/E3/E4 were web-confirmed by the round-3 different-family leg (direct fetch), and E2's load-bearing formula claims by the web-claim-verifier spawn.",
+    "H1 web-verification packet (evidence dir, run 20260914-014155): verdict verified; URL https://earendil.com/posts/measuring-code-sloppiness/ fetched 2026-09-14; quote: 'Erosion = Σ_{f:CC(f)>10} mass(f) / Σ_f mass(f), mass(f)=CC(f)×√SLOC(f)' and 'the fraction between the mass of the functions with a cyclomatic complexity larger than 10, by the mass of all functions'; corroborated by two fetch passes of arXiv:2603.24755v1 ('137 targeted AST-Grep rules' for flagged lines; 'clone lines normalized by LOC' for duplication; no CC×√SLOC sum over new/changed/diff-restricted functions anywhere).",
+    "The four External-convergence-record mappings are cross-domain interpretive pairings (process-axis), not adjudicated equivalences — their truth is outcome-axis.",
+    "Different-family substrate telemetry: 3 legs, all outcome ok, none degraded (ADR #52 bounds never approached: max elapsed ~263s, heartbeats nominal). The wrapper's cc_stderr_tail shows a recurring benign '[claude-code:unrecognized_model] deepseek-flash[1m]' line on every leg; legs completed ok with valid findings throughout.",
+    "Same-family legs are local-only (Read/Grep/Glob) — external attributions are uncheckable there by construction; disclosed rather than assumed.",
+    "All run-progress appends succeeded (ADR #61 sidecar, no failed-append events); the sidecar and round JSONs live in gitignored workspace/cross-source-review/runs/20260914-014155-external-reference-candidates/ — this record is the durable in-repo trace."
+  ]
+}

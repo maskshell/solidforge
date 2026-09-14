@@ -1,0 +1,63 @@
+# External-reference candidates — backlog
+
+> Status: living backlog (updated 2026-09-14). NOT commitments. Candidates carried from four external evaluations run 2026-09-14, each screened by the **problem-existence test**: adopt a borrowed mechanism only when THIS workspace has the problem it solves, not because the mechanism is elegant. None is scheduled; fold-ins happen at natural touchpoints; any adoption gets an ADR before implementation (this backlog's own policy — stricter than workspace rule 6, which requires ADRs for non-obvious decisions only). Chinese translation (derived, non-authoritative): `docs/external-reference-candidates.zh-CN.md`.
+> Origin evaluations:
+>
+> - E1 — github.com/frontier-harness-eval/eval: skill distribution form + record provenance discipline. (Coverage: the one origin whose attributions rest on the orchestrator's evaluation-time fetches — repo tree + SKILL.md + PROMPT.md + cli/index.mjs, 2026-09-14 — and were NOT re-verified by a web seat; E2/E3/E4 were web-seat-confirmed in round 3.)
+> - E2 — earendil.com/posts/measuring-code-sloppiness/ + SlopCodeBench (arXiv:2603.24755): cheap deterministic slop metrics (verbosity / erosion).
+> - E3 — developers.openai.com/blog/eval-skills: skill evals (trigger CSV with negative controls, JSONL deterministic graders, rubric pass).
+> - E4 — github.com/cursor/plugins cursor-team-kit (18 skills): review persona density (absorbed by C8 — the persona-density borrowable IS the C8 micro-adoption batch), skill-as-rubric + thin agent (→ C4), evidence-producer/verdict-consumer split (→ C5 + External-convergence record).
+
+## Frame
+
+All four evaluations concluded the same thing: the workspace's core architecture already has, usually more rigorously, most of what the external sources prescribe. This backlog holds ONLY the residual candidates that passed the problem-existence test. The test's outcome is three-valued, and the value forms below ARE those outcomes:
+
+- **gap-fill** (problem-now): the workspace has the problem today; the item waits for a natural touchpoint, not a dedicated session.
+- **option** (problem-conditional): the problem exists only if the trigger event fires; the pattern stays on file until then.
+- **registration** (problem-conditional, recurring): the pattern stays on file; adopted only if its trigger condition demonstrably recurs.
+
+## Candidates
+
+| ID | Candidate | Source | Value form | One-line contract | Trigger / natural touchpoint |
+| --- | --- | --- | --- | --- | --- |
+| C1 | Environment provenance in records | E1 | gap-fill | the csr convergence-record gains a per-round environment fingerprint inside its rounds[] (provider+model exist ONLY on the csr_progress event sidecar — no record schema carries an environment-provenance field, csr round 1; add proxy/NO_PROXY state, wrapper + Claude Code version, cross-round comparability note); the pd run-record gains a per-fold fingerprint beside outer_verdicts (it has no rounds[] — one entry == one inner→outer context fold); changed environment → new run, never relabel | next run-record or convergence-record schema touch |
+| C2 | Diff-level slop-density advisory gate | E2 (+E4 `deslop` — corroborates the concern, not the metric: judgment-level persona, no formula) | gap-fill | per-round patch Δverbosity — E2's verbosity formula \|AST-Grep flagged lines ∪ clone lines\|/LOC applied to the round's patch; duplication is CLONE-DETECTED, wordy lines are AST-Grep-flagged — plus a patch-scoped complexity-mass built from E2's per-function mass term mass(f)=CC(f)×√SLOC(f) (E2 itself sums this term only over CC>10 functions as its erosion share and never over a diff — the patch scoping is C2's own extension, not E2's, web-verified 2026-09-14; verdict packet + durable record: `docs/external-reference-candidates.csr-record.json`, written when this run converges) — emitted as `warning`, never Blocker (Goodhart's law — a metric optimized against stops measuring; E2 attaches this caveat to its ΔLOC metric specifically, and any slop proxy inherits it) | next touch of the parallel-development gate layer |
+| C3a | Port surface trigger check to parallel-development | E3 | gap-fill | mirror blueprint-crafting `trigger_check.py` + `activation.json` registry pattern onto parallel-development's description surface — cheap: registry + checker, no agent runs | same as C2 (gate-layer touch) |
+| C3b | Behavioral trigger suite | E3 | registration | should_trigger CSV + negative controls, run as real agent probes; probes the bc ADR #8 seam (skills/blueprint-crafting/docs/design-decisions.md — ADR numbers are per-skill and collide across logs; this one is the activation-surface-not-deterministic-router decision), which is deliberately outer-ring | recurring evidence of trigger regressions reaching the outer ring |
+| C4 | Rubric single-sourcing for reviewer agents | E4 | gap-fill | thin `agents/*.agent.md` whose first instruction loads the skill-side rubric file as the complete criteria + a degraded fallback; removes the two-truth-sources duplication with skill docs (L4 concern; architecture-level change) | next reviewer-prompt refactor; needs ADR first (loading-hop cost vs single-source) |
+| C5 | Empirical-verification evidence layout | E4 (`verify-this`) | registration | claim/timeline/baseline/treatment/diff/verdict.md directory schema for A/B measurement claims | a recurring empirical A/B verification need (one-off precedent: ADR #54 edition-derivation local repro) |
+| C6 | Memory confidence tiers | E4 (`workflow-from-chats`) | registration | strong/medium/weak/contradicted tiers; `contradicted` → ask the user before writing (low expected value) | recurring cross-session memory conflicts |
+| C7 | Distribution pair: PROMPT.md twin + thin installer | E1 | option | per-skill human-pasteable driving prompt (five unguessable facts, numbered stop boundaries) + materialize/symlink/doctor/forward installer for non-Claude-Code agents | the public repo (maskshell/solidforge) serving codex/cursor consumers |
+| C8 | Reviewer-prompt micro-adoptions | E4 (its thermo-nuclear review skill) | gap-fill | presumptive-blocker middle tier; output priority ordering + anti-nit-flooding rule; findings→remedy-direction pairing; "delete complexity, don't rearrange it" criterion (batch of four independent adoptions) | next prompt-content-spec / reviewer-prompt touch (L4 discipline applies: these are uncodable semantic guidance, legitimately outer-ring prose) |
+
+## Verified repo-state claims (pre-authoring audit + csr-round re-verification)
+
+These claims were checked before this doc was written and re-verified by csr legs against drift; round-1 in-run additions are provenance-marked inline:
+
+- `skills/cross-source-review/infra/scripts/csr_progress.py` — progress-event schemas REQUIRE `provider` (lines 65, 73, 84); the heartbeat event renders `model` (line 261). Proxy/NO_PROXY state, wrapper/CC version, and an environment fingerprint are absent from csr_progress events. The bc run-record schema (`skills/blueprint-crafting/infra/schemas/run-record.schema.json`) was audited in csr round 1 (2026-09-14; durable record: `docs/external-reference-candidates.csr-record.json`, written when this run converges): zero matches for provider|model|proxy|fingerprint|environment|version — clean. The other four record schemas checked — `skills/cross-source-review/infra/schemas/convergence-record.schema.json`, `skills/parallel-development/infra/schemas/run-record.schema.json`, `skills/primary-source-verification/infra/schemas/coverage-record.schema.json` (psv = primary-source-verification), `skills/prior-art-search/infra/schemas/collision-record.schema.json` — DO match the raw term set, but every match is out-of-sense: the pd schema's fingerprint-named fields are ERROR fingerprints (record-required `top_fingerprints`, its items typed by the `fingerprint_count` def — "Top recurring error fingerprints (error-compounding evidence)"; remaining hits are prose: `blueprint_version` pins the artifact version, "(step-count proxy)", "provider-normalized", "wall-clock confounds provider throughput"); the csr schema's single `provider` hit is prose inside a description (ADR #41); the psv coverage-record matches on `volatile_source` prose ("shell environment state", "unversioned") and on `model` prose in the verified-count description; the prior-art-search collision-record matches on coverage-note prose ("the comparison model found no collision", "found text is model-extracted"). Net: no environment-provenance FIELD exists in ANY record schema (a "provider" property appears in zero skill schemas); provider+model live on the event sidecar only (the corrected C1 attribution).
+- `skills/blueprint-crafting/infra/test/trigger_check.py` EXISTS and asserts the description surface (positive coverage, no positive steal, parallel-dev reachable, scope guard), data-driven by `infra/test/activation.json`. Its documented seam: activation routing is the model's call — not deterministically decidable (bc ADR #8, skills/blueprint-crafting/docs/design-decisions.md). **Correction recorded**: the originating evaluation (E3) claimed "no trigger verification exists at all"; that was wrong at the surface layer. The true residual gaps are C3a (parallel-development has no equivalent surface check) and C3b (no behavioral probe, by design).
+- `skills/parallel-development/infra/hooks/fast_gate.py` — per-file lint/format only (ruff / swift-format / rustfmt / google-java-format / gofmt / eslint for web files, config-gated); heavier checks belong to the arch-contract gate. No duplication/slop-density signal anywhere in the gate layer (C2 gap claim; nearest analog drift_check.py is rule-7 helper-drift, not slop density).
+- Reviewer agents live at repo root `agents/*.agent.md` — the five adversarial reviewer seats (doc-reviewer, claim-verifier, plan-reviewer, web-claim-verifier, collision-verifier; claim-verifier and collision-verifier are per-claim verdict-only, web-claim-verifier is dual-mode — verdict in claim mode, findings[] in question mode — doc-reviewer and plan-reviewer emit findings lists) — and embed their review criteria and output schemas inline (C4 premise; the extractor seats claim-extractor / novelty-claim-extractor are out-of-class — they enumerate, they do not verdict).
+
+## Non-adopt list
+
+Evaluated and rejected, with reasons — do not re-derive:
+
+- Runta runtime machinery from E1 (paid cloud checkpoints/egress proxy; this workspace's environment is the repo + local deterministic gates).
+- E1's benchmark content and vendor onboarding (the skill is partly commercial onboarding).
+- E4's thin-skill Trigger/Workflow/Guardrails/Output skeleton (this workspace's progressive-disclosure / loading-chain system is strictly richer).
+- Zero-eval publishing (E4 ships 18 skills with no evals; this workspace's self-gate rule 1 forbids that posture).
+- TS/npm-centric conventions (E4 kit assumes them; this workspace is multi-language with per-platform registries).
+
+## External-convergence record (validation only, no action)
+
+Recorded because independent convergence is evidence the core architecture is not missing something:
+
+- E1 `methodology_comparable: false` by default + never relabel evidence ↔ rule 3 (never silently green) + psv/prior-art-search coverage-disclosure top lines.
+- E2 judge unreliability (presentation-cue bias flips verdicts) ↔ csr's fresh-context + schema'd findings + convergence loops, never single-pass preference calls.
+- E3 prompt→trace→checks→score with deterministic-first layering ↔ fast gate / arch-contract gate / outer-ring split.
+- E4 evidence-producers (control-cli/control-ui) feeding a verdict-consumer (verify-this) ↔ csr/psv reviewer-verifier seat separation; E4's skill-as-rubric thin agent ↔ this workspace's skill+agent system (C4 is the delta); E4's `verify-this` three-valued verdict with confound rules ↔ psv's verified/refuted/narrowed/unverifiable.
+
+## Decision rule
+
+An item leaves this backlog only by one of: adopted via ADR at a natural touchpoint (gap-fill), trigger event fires (option), or trigger condition demonstrably recurs (registration). Items are re-screened by the problem-existence test at leave-time — a candidate whose problem has since been solved in-repo (as C3's original form was) is narrowed or dropped, not implemented as originally written.
