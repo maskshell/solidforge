@@ -179,3 +179,45 @@ Driver: the sidecar-round incident (every wrapper-emitted leg event labeled roun
 because the SKILL.md protocol command never passed the flag — deterministic default
 beat prompt compliance). pi note: pi's wrapper takes the same shape if its footers/
 sidecar surface ever labels rounds from argv; substrate-neutral, copyable verbatim.
+
+## csr-only extension (ADR #69, 2026-09-16) — assistant-event execution stream log
+
+csr-FIRST, NOT ported to pd's `hetero_review.py` — a REAL divergence until a
+candidate port lands (same recording convention as the ADR #61 entry above).
+Surface:
+
+- `<run-dir>/round<k>-<provider>.stream.jsonl`: one distilled JSONL line per
+  stream-json ASSISTANT content block — text → `{"ts","kind":"text","text"}`;
+  tool_use → `{"ts","kind":"tool","tool","input_head"}` (json.dumps capped
+  300 chars; text capped 2000). Preceded by ONE `spawn-start` line per spawn
+  carrying `schema` bool (`"--json-schema" in argv`) — the structured-output
+  retry's argv drops that flag, so retries self-identify with zero state.
+  Partials (`stream_event`), tool_result/user/system events, and the result
+  event are skipped; unknown block shapes are skipped, never errors
+  (isinstance-guarded, ASSUME-3 defense). tailable live (`tail -f`) — the
+  different-family counterpart of a foreground subagent's visible activity.
+- Module-globals `_STREAM_LOG_PATH` + `_STREAM_LOG_WARNED` + helpers
+  `_stream_log_append` / `_stream_log_assistant_event` — deliberately NOT a
+  `_run_streamed` kwarg or `guards` key, so the preserved-signature CONTRACT
+  table above stays byte-true (ADR #61 rejected-(d) precedent). The path is
+  derived in `main()`'s per-provider loop from `--progress-file` +
+  `--round-index` + provider name; no `--progress-file` (or `--no-stream` /
+  dry-run, which never reach `_run_streamed`) → the hook stays inert and NO
+  file is created (no false promise).
+- The hook sits AFTER all `tele` updates in `stdout_reader` and never touches
+  counters (`hetero_doc_guards.py` asserts exact values). The
+  same-file double-append from the retry is ts-ordered and self-identifying
+  via `schema:false`.
+- BEST-EFFORT by contract (ADR #61 doctrine): OSError AND ValueError caught
+  (ValueError covers UnicodeEncodeError — a lone-surrogate escape in
+  model-derived text passes json.dumps and explodes at write; the stream log
+  is the first progress-family writer whose payload is model-derived,
+  outer-ring W1), warned once on stderr, never fails the review. The hook runs
+  OUTSIDE the `tele` lock (filesystem I/O never couples to idle_s sampling,
+  outer-ring W2). The no-kill guarantee is scoped to SEMANTIC
+  intermediates (helper present, global still None → "no stream log"); the
+  import-time kill edge (a spawn against a mid-edit partial file → SyntaxError)
+  is excluded by edit discipline, not code (ADR #69 ASSUME-1).
+- pd port candidacy: pd's loop has the same what-is-it-doing opacity; porting =
+  the same ~80-line block (helpers + hook + loop wiring), a pd-side decision
+  when wanted — NOT silently assumed here.

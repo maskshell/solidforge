@@ -15,9 +15,42 @@
       "type": "array",
       "items": {"$ref": "#/$defs/finding"},
       "description": "One entry per real defect (or coverage disclosure). Empty when the artifact is clean."
+    },
+    "execution_trace": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/trace_entry"},
+      "description": "OPTIONAL (ADR #69 read side, same-family leg): the reviewer's between-step narration lines — the post-hoc distilled execution record the orchestrator persists as round<k>-same-family.stream.jsonl (same format + renderer as the different-family wrapper's live distillate). Absent on different-family legs (the wrapper distills live) and on any leg that ran without the narration discipline — absence is tolerated, never a defect. Capped server-side at write time (text<=2000, input_head<=300)."
     }
   },
   "$defs": {
+    "trace_entry": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "kind": {"const": "text"},
+            "text": {"type": "string", "minLength": 1, "maxLength": 2000}
+          },
+          "required": ["kind", "text"]
+        },
+        {
+          "properties": {
+            "kind": {"const": "tool"},
+            "tool": {"type": "string", "minLength": 1},
+            "input_head": {"type": "string", "maxLength": 300}
+          },
+          "required": ["kind", "tool"]
+        }
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {"type": "string", "enum": ["text", "tool"]},
+        "text": {"type": "string", "maxLength": 2000},
+        "tool": {"type": "string"},
+        "input_head": {"type": "string", "maxLength": 300}
+      },
+      "description": "One narration step: kind=text carries a one-line what+why; kind=tool carries the tool name (+ optional input head). The same shape the wrapper's distiller writes live."
+    },
     "finding": {
       "type": "object",
       "required": ["defect_id", "severity", "kind", "location", "evidence"],

@@ -90,10 +90,21 @@ session: pass `--progress-file <path>` and the wrapper appends its leg boundarie
 heartbeats as JSONL there too (best-effort — an unwritable path warns once and never
 fails the review); the csr orchestrator writes the round-level events via
 `csr_progress.py` (append/status, pure stdlib). An external terminal then watches a
-live run with `csr_progress.py status <run-dir> --watch 5`. The orchestrating
+live run with `csr_progress.py status <run-dir> --watch 5` — or the whole runs dir
+(`csr_progress.py status workspace/cross-source-review/runs/ --watch 5`) for one
+labeled block per active run under concurrent sessions (ADR #69). The wrapper ALSO
+distills the different-family execution stream to `round<k>-<provider>.stream.jsonl`
+beside the progress file (assistant text + tool calls, best-effort; `csr_progress.py
+stream <run-dir> [--watch 5]` renders it in HUMAN form — reviewer prose + tool
+lines — or `tail -f` the raw JSONL; ADR #69). The same-family leg spawns foreground so
+its own subagent stream is that leg's live report, and its POST-HOC distilled record lands
+as `round<k>-same-family.stream.jsonl` — the reviewer's self-reported execution_trace,
+persisted by the orchestrator via `csr_progress.py trace-append` and read by the SAME
+`stream` renderer (one format, every same-family spawn: the leg + each reconcile-moment
+web-claim-verifier check lands as `verify-<claim_id>.stream.jsonl`). The orchestrating
 session itself also narrates one condensed status line to its conversation every
-~2 minutes while a leg runs (ADR #62 — zero-interaction reporting; the sidecar is
-the data source).
+~2 minutes while a different-family leg runs (ADR #62 — zero-interaction reporting;
+the sidecar is the data source).
 
 ## Adding a custom third-party provider (zero code change)
 

@@ -577,6 +577,77 @@ def _progress_append(event_type, **fields):
             _PROGRESS_WARNED = True
 
 
+# Execution stream log (ADR #69): the ADR #61 sidecar reports THAT the leg is
+# alive (counters, boundaries); this log reports WHAT the reviewer is doing —
+# one distilled JSONL line per assistant content block (text / tool_use) at
+# <run-dir>/round<k>-<provider>.stream.jsonl, tailable live (`tail -f`) as the
+# different-family counterpart of a foreground subagent's visible activity.
+# Module-global on the same precedent as _PROGRESS_PATH (ADR #61 rejected-(d)):
+# NOT a _run_streamed kwarg — the divergence.md preserved-signature contract
+# stays byte-true. BEST-EFFORT like every progress write (ADR #61 doctrine):
+# OSError is caught, warned once, never kills the review.
+_STREAM_LOG_PATH = None
+_STREAM_LOG_WARNED = False
+
+
+def _stream_log_append(kind, **fields):
+    global _STREAM_LOG_WARNED
+    if not _STREAM_LOG_PATH:
+        return
+    line = {
+        "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "kind": kind,
+        **fields,
+    }
+    try:
+        parent = os.path.dirname(os.path.abspath(_STREAM_LOG_PATH))
+        os.makedirs(parent, exist_ok=True)
+        with open(_STREAM_LOG_PATH, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(line, ensure_ascii=False) + "\n")
+            fh.flush()
+    except (OSError, ValueError) as exc:
+        # ValueError catches UnicodeEncodeError (a ValueError subclass, NOT an
+        # OSError): a lone-surrogate escape in model-derived text passes
+        # json.dumps(ensure_ascii=False) and explodes at write — the first
+        # progress-family writer whose payload is MODEL-derived, so the
+        # exception surface is wider than _progress_append's (outer-ring W1).
+        if not _STREAM_LOG_WARNED:
+            print(
+                f"warning: stream log unwritable ({exc}); continuing without it",
+                file=sys.stderr,
+            )
+            _STREAM_LOG_WARNED = True
+
+
+def _stream_log_assistant_event(evt):
+    """Distill ONE stream-json assistant event into stream-log lines (ADR #69):
+    per message.content block — text -> kind=text (capped 2000 chars); tool_use
+    -> kind=tool + input_head (json.dumps capped 300 chars). Partials
+    (stream_event), tool_result/user/system events, and the result event never
+    reach here (the stdout_reader seam pre-filters). Skip-unknown-shape:
+    isinstance-guarded, never raises (ASSUME-3 defense); counters are NEVER
+    touched (hetero_doc_guards.py asserts exact tele values)."""
+    msg = evt.get("message")
+    if not isinstance(msg, dict):
+        return
+    blocks = msg.get("content")
+    if not isinstance(blocks, list):
+        return
+    for block in blocks:
+        if not isinstance(block, dict):
+            continue
+        btype = block.get("type")
+        if btype == "text" and isinstance(block.get("text"), str):
+            _stream_log_append("text", text=block["text"][:2000])
+        elif btype == "tool_use" and isinstance(block.get("name"), str):
+            try:
+                head = json.dumps(block.get("input"), ensure_ascii=False)[:300]
+            except (TypeError, ValueError):
+                head = "<unserializable>"
+            _stream_log_append("tool", tool=block["name"], input_head=head)
+        # unknown block shapes are skipped, not errors (ASSUME-3)
+
+
 def _emit_heartbeat(provider, tele):
     """One progress line to STDERR (stdout stays the single result JSON). The
     heartbeat is the wrapper's liveness contract (ADR #52): an outer orchestrator
@@ -656,9 +727,13 @@ def _run_streamed(argv, timeout_s, max_stream_bytes, provider):
     proc = subprocess.Popen(
         argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
     )
+    # ADR #69 execution-stream log: one marker per spawn. The schema flag
+    # self-identifies the structured-output retry (its argv drops --json-schema).
+    _stream_log_append("spawn-start", schema=("--json-schema" in argv))
 
     def stdout_reader():
         for line in proc.stdout or ():
+            evt = None
             with lock:
                 tele["stream_bytes"] += len(line.encode("utf-8", "replace"))
                 tele["events"] += 1
@@ -674,6 +749,12 @@ def _run_streamed(argv, timeout_s, max_stream_bytes, provider):
                             ):
                                 tele["model"] = msg["model"]
                 out_chunks.append(line)
+            # ADR #69: distill OUTSIDE the tele lock — the hook is filesystem
+            # I/O and evt is reader-thread-local (order preserved; single
+            # reader thread); holding the lock across it would couple
+            # idle_s sampling + heartbeats to disk latency (outer-ring W2).
+            if evt is not None and evt.get("type") == "assistant":
+                _stream_log_assistant_event(evt)
 
     def stderr_reader():
         for line in proc.stderr or ():
@@ -1327,7 +1408,7 @@ def main():
     args = ap.parse_args()
     # Run-progress sidecar (ADR #61): module-global, NOT a run_claude kwarg, so the
     # preserved function-signature contract (divergence.md) stays untouched.
-    global _PROGRESS_PATH
+    global _PROGRESS_PATH, _STREAM_LOG_PATH
     _PROGRESS_PATH = args.progress_file or None
     # The offline knobs (--dry-run-malform / --dry-run-budget) imply --dry-run — without
     # this, --dry-run-budget alone would skip run_claude's canned branch and fall through to
@@ -1412,6 +1493,13 @@ def main():
             if args.no_stream
             else {"provider": name, "max_stream_bytes": args.max_stream_bytes}
         )
+        # ADR #69 execution-stream log: derived per provider+round beside the
+        # progress sidecar; None (no --progress-file) keeps the hook inert.
+        if _PROGRESS_PATH:
+            _STREAM_LOG_PATH = os.path.join(
+                os.path.dirname(os.path.abspath(_PROGRESS_PATH)),
+                f"round{round_index}-{name}.stream.jsonl",
+            )
         _progress_append("hetero-leg-start", round=round_index, provider=name)
         try:
             rc = run_claude(

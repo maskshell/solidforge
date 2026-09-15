@@ -18,7 +18,8 @@ model call (rule 4) — the wrapper half runs via --dry-run / a faked stream chi
      a RUNNING (no run-end) file never crash.
   5. wrapper-flag-surface — wrapper --dry-run --progress-file appends
      hetero-leg-start + hetero-leg-end JSONL lines while stdout stays the
-     single result JSON.
+     single result JSON; NO *.stream.jsonl is created (a dry run never reaches
+     _run_streamed — no false promise of an execution log, ADR #69).
   6. wrapper-heartbeat-tee — a faked streamed child's stderr heartbeats ALSO
      land in the progress file (module-global _PROGRESS_PATH seam).
   7. wrapper-best-effort — an unwritable progress path NEVER raises
@@ -29,11 +30,42 @@ model call (rule 4) — the wrapper half runs via --dry-run / a faked stream chi
   9. narration-contract — SKILL.md's step-2 different-family bullet launches the
      wrapper as a BACKGROUND task with stderr captured to wrapper.stderr + a
      ~2-minute poll narration loop whose FIRST line per leg hands the human the
-     runs/LATEST watch pointer (ADR #62 zero-interaction + the 2026-09-07
-     observability-affordance pointer); the workspace ADR log carries #62.
+     session's OWN run-dir + progress.jsonl and stream.jsonl tail commands,
+     keeping the runs/LATEST single-active-run one-liner (ADR #62 zero-
+     interaction + the ADR #69 re-scoped pointer); the workspace ADR log
+     carries #62 AND #69; the step-2 SAME-FAMILY bullet spawns FOREGROUND
+     (contains FOREGROUND, lacks run_in_background, keeps both sidecar
+     appends); the sidecar poll clause names the different-family leg.
  10. latest-pointer — csr_progress.py's run-start append atomically keeps
      runs/LATEST (relative symlink) pointed at the newest run dir; other event
      types never touch it (behavioral).
+ 11. stream-log-distillation — a faked streamed child's assistant blocks land
+     as distilled stream-log lines (text / tool + input_head<=300 / one
+     spawn-start with a bool schema flag); partials + result events never do;
+     an unwritable stream-log path NEVER raises (ADR #69 best-effort).
+ 12. multi-run-render — `status <runs-dir>` renders one labeled block per
+     ACTIVE run (no run-end), collapses ended runs, EXCLUDES the LATEST
+     symlink from the scan (no double render) while still RESOLVING it at
+     dispatch (symlinked single-run case); zero-active renders the most-recent
+     block; dir-vs-file dispatch is identical and the single-run render
+     matches the PRE-change frozen golden (age-normalized — the phase age is
+     wall-clock-relative; everything else byte-compared, ADR #69).
+ 13. stream-render — `csr_progress.py stream <run-dir|.stream.jsonl>` renders
+     the distilled execution log in HUMAN form (spawn divider, prose text,
+     ▸ tool lines; no raw JSON leakage), auto-picks the NEWEST stream log for
+     a run dir, and tolerates a torn tail under concurrent writes; snapshot
+     shaping --tail N + --newest-first keeps the newest events in the visible
+     head for CC-tool-result consumption (follow-incompatible, exit 2)
+     (ADR #69 read side).
+ 14. trace-append — `csr_progress.py trace-append --file --entries` persists
+     a same-family leg's self-reported execution_trace as stream-log JSONL:
+     strict vocabulary (kind text|tool; unknown field/shape exits non-zero),
+     server-side caps by truncation (text<=2000, input_head<=300), ts stamped,
+     and the written file round-trips through the SAME stream renderer —
+     both legs' execution records share one format + one reader (ADR #69).
+     ALSO pins the two SKILL.md call sites: the same-family bullet names
+     round<k>-same-family.stream.jsonl, and the web-claim-verifier spawn
+     condition names verify-<claim_id>.stream.jsonl (both via trace-append).
 
 Usage:
     python3 infra/test/csr_progress_gates.py
@@ -66,6 +98,104 @@ print('{"type":"stream_event","delta":"tok"}', flush=True)
 time.sleep(1.2)
 msg = {"type": "assistant", "message": {"model": "fake-model-x", "content": []}}
 print(json.dumps(msg), flush=True)
+"""
+
+# Faked streamed child for check 11 (ADR #69 stream-log distillation): two
+# assistant events — one text+tool_use, one text-only — around a partial and a
+# result event that must NEVER reach the stream log. The parent passes
+# --json-schema as a trailing argv token so the spawn-start marker's schema
+# flag is exercised on its True branch.
+_FAKE_STREAM_LOG = r"""
+import json
+print(json.dumps({"type": "system", "subtype": "init"}), flush=True)
+print('{"type":"stream_event","delta":"tok"}', flush=True)
+blocks = [
+    {"type": "text", "text": "Reviewing the artifact."},
+    {"type": "tool_use", "name": "Read",
+     "input": {"file_path": "SKILL.md", "offset": 1, "limit": 50}},
+]
+print(json.dumps({"type": "assistant",
+                  "message": {"model": "fake-model-x", "content": blocks}}),
+      flush=True)
+print(json.dumps({"type": "assistant",
+                  "message": {"model": "fake-model-x",
+                              "content": [{"type": "text",
+                                           "text": "Second pass."},
+                                          {"type": "text",
+                                           "text": "L" * 3000}]}}),
+      flush=True)
+print(json.dumps({"type": "result", "subtype": "success"}), flush=True)
+"""
+
+# The PRE-change frozen golden for check 12's byte regression (captured from
+# the pre-ADR-#69 renderer 2026-09-16, blueprint P2 PRE-STEP — never
+# regenerated; a post-change regeneration would compare the code to itself).
+# _AGE_NORM normalizes the ONLY wall-clock-relative field (the phase-age
+# suffix); every other byte is compared.
+_AGE_NORM = r"— \d+s ago"
+_GOLDEN_EVENTS = [
+    {
+        "ts": "2026-09-16T00:00:00",
+        "type": "run-start",
+        "artifact": "docs/golden-probe.md",
+        "tier": "short",
+        "cap": 2,
+    },
+    {"ts": "2026-09-16T00:00:01", "type": "same-family-spawn", "round": 1},
+    {
+        "ts": "2026-09-16T00:01:00",
+        "type": "same-family-complete",
+        "round": 1,
+        "findings": 3,
+    },
+    {
+        "ts": "2026-09-16T00:01:30",
+        "type": "hetero-leg-start",
+        "round": 1,
+        "provider": "deepseek",
+    },
+    {
+        "ts": "2026-09-16T00:02:00",
+        "type": "hetero-heartbeat",
+        "provider": "deepseek",
+        "elapsed_s": 30.0,
+        "stream_bytes": 1000,
+        "events": 10,
+        "assistant_events": 2,
+        "model": "deepseek-flash",
+        "idle_s": 0.1,
+        "killed": None,
+    },
+    {
+        "ts": "2026-09-16T00:02:30",
+        "type": "hetero-leg-end",
+        "round": 1,
+        "provider": "deepseek",
+        "outcome": "ok",
+        "findings": 2,
+        "model": "deepseek-flash",
+        "elapsed_s": 60.0,
+        "degraded": False,
+    },
+    {
+        "ts": "2026-09-16T00:03:00",
+        "type": "reconcile",
+        "round": 1,
+        "fixed": 4,
+        "rejected": 1,
+        "escalated": 0,
+    },
+    {"ts": "2026-09-16T00:03:01", "type": "round-end", "round": 1, "new_blockers": 1},
+]
+_GOLDEN_RENDER = """csr run: docs/golden-probe.md (tier short, cap 2)
+round: 1 of 2
+phase: round-end — 2154s ago
+same-family: 1 legs, 3 findings
+hetero: 1 legs (ok 1, degraded 0, malformed 0)
+reconcile: fixed 4, rejected 1, escalated 0
+new-blockers: r1=1
+state: RUNNING
+unparsed: 0
 """
 
 
@@ -119,7 +249,7 @@ def _skill_vocabulary(skill_text):
 
 
 def run():
-    """Ten checks (incl. the RUNNING render variant). Returns (findings, coverage)."""
+    """Fourteen checks (incl. the RUNNING render variant). Returns (findings, coverage)."""
     coverage = [
         "csr-progress-gates (BLOCKER, rule 4 codifiable): the ADR #61 run-progress "
         "observability contract — registry sync, append shape, status render, "
@@ -357,6 +487,10 @@ def run():
                 e.get("type") == "hetero-leg-end" and e.get("outcome") == "ok"
                 for e in wrap_lines
             )
+            # ADR #69 no-false-promise: a dry run sets the stream-log path (the
+            # provider loop derives it from --progress-file) but never reaches
+            # _run_streamed — NO *.stream.jsonl may exist anywhere in td.
+            and not any(f.endswith(".stream.jsonl") for f in os.listdir(td))
         )
         _check(
             "wrapper-flag-surface",
@@ -487,6 +621,18 @@ def run():
         re.DOTALL,
     )
     bullet_text = bullet.group(0) if bullet else ""
+    sf_bullet = re.search(
+        r"- Run the \*\*same-family leg\*\*(.*?)(?=\n   - |\n3\. )",
+        skill_text,
+        re.DOTALL,
+    )
+    sf_text = sf_bullet.group(0) if sf_bullet else ""
+    sidecar_sec = re.search(
+        r"###\s+Run-progress sidecar.*?(?=\n###\s|\n##\s)", skill_text, re.DOTALL
+    )
+    sidecar_text = sidecar_sec.group(0) if sidecar_sec else ""
+    # ADR #69 canonical pinned set (blueprint AC-1; the SAME set is restated in
+    # AC-3/P6 — this is the single enforcing site).
     ok9 = (
         bool(bullet)
         and "run_in_background" in bullet_text
@@ -494,18 +640,30 @@ def run():
         and "csr_progress.py status" in bullet_text
         and "runs/LATEST" in bullet_text  # watch-pointer first-narration (2026-09-07)
         and "## 62." in (adr_log or "")
+        and "stream.jsonl" in bullet_text
+        and "ADR #69" in bullet_text
+        and "## 69." in (adr_log or "")
+        and bool(sf_bullet)
+        and "FOREGROUND" in sf_text
+        and "run_in_background" not in sf_text
+        and "same-family-spawn" in sf_text
+        and "same-family-complete" in sf_text
+        and "different-family leg" in sidecar_text
     )
     _check(
         "narration-contract",
         ok9,
-        "step-2 different-family bullet: background launch / wrapper.stderr "
-        "capture / status narration / runs/LATEST watch pointer / ADR #62 "
-        "cross-ref — some missing",
-        "the zero-interaction reporting contract lives in the step-2 "
-        "different-family bullet (ADR #62): background launch + poll ~2min + "
-        "one condensed status line per poll + wrapper.stderr on a pre-leg "
-        "fail-fast; static presence only — whether the orchestrator actually "
-        "narrates is outer-ring + live-dogfood territory",
+        "step-2 bullets / sidecar prose: background launch / wrapper.stderr "
+        "capture / status narration / session-own run-dir + stream.jsonl + "
+        "ADR #69 pointer / runs/LATEST one-liner / same-family FOREGROUND "
+        "(no run_in_background, appends kept) / ADR #62+#69 log cross-refs — "
+        "some missing",
+        "the zero-interaction reporting contract lives in the step-2 bullets "
+        "(ADR #62 for the different-family leg; ADR #69 adds the foreground "
+        "same-family spawn, the execution-stream pointer, and the re-scoped "
+        "run-dir pointer); static presence only — whether the orchestrator "
+        "actually narrates / spawns foreground is outer-ring + live-dogfood "
+        "territory",
         findings,
         coverage,
         file_="SKILL.md",
@@ -559,6 +717,457 @@ def run():
             "symlink, atomic replace) pointed at the newest run — the stable "
             "human-facing watch path (SKILL.md sidecar section + step-2 first "
             "narration); best-effort: a failed pointer never aborts the append",
+            findings,
+            coverage,
+            file_="infra/scripts/csr_progress.py",
+        )
+
+    # --- check 11: execution stream log distillation (ADR #69) -----------
+    with tempfile.TemporaryDirectory() as td:
+        slog = os.path.join(td, "round1-fake.stream.jsonl")
+        hmod = _load_module(HETERO, "hetero_wrapper_11")
+        hmod.HEARTBEAT_INTERVAL_S = 0.3
+        hmod._PROGRESS_PATH = os.path.join(td, "progress.jsonl")
+        hmod._STREAM_LOG_PATH = slog
+        _, rc11, tele11, _ = hmod._run_streamed(
+            [sys.executable, "-c", _FAKE_STREAM_LOG, "--json-schema"],
+            30,
+            10 * 1024 * 1024,
+            "fake",
+        )
+        slines = []
+        try:
+            with open(slog, encoding="utf-8") as fh:
+                slines = [json.loads(ln) for ln in fh if ln.strip()]
+        except (OSError, json.JSONDecodeError):
+            pass
+        kinds11 = [ln.get("kind") for ln in slines]
+        tool11 = [ln for ln in slines if ln.get("kind") == "tool"]
+        spawn11 = [ln for ln in slines if ln.get("kind") == "spawn-start"]
+        ok11 = (
+            rc11 == 0
+            and kinds11.count("text") == 3
+            and len(tool11) == 1
+            and tool11[0].get("tool") == "Read"
+            and isinstance(tool11[0].get("input_head"), str)
+            and len(tool11[0]["input_head"]) <= 300
+            and len(spawn11) == 1
+            and spawn11[0].get("schema") is True
+            and tele11["assistant_events"] == 2
+            and tele11["events"] == 5
+            and not any("stream_event" in json.dumps(ln) for ln in slines)
+            and not any(ln.get("kind") == "result" for ln in slines)
+            # text-cap branch (outer-ring A3): the 3000-char block must land
+            # truncated to <= 2000.
+            and all(
+                len(ln.get("text", "")) <= 2000
+                for ln in slines
+                if ln.get("kind") == "text"
+            )
+        )
+        # schema-false branch (outer-ring A3): a spawn WITHOUT --json-schema
+        # in argv self-identifies the structured-output retry shape.
+        slog2 = os.path.join(td, "round1-fake-retry.stream.jsonl")
+        hmod._STREAM_LOG_PATH = slog2
+        hmod._STREAM_LOG_WARNED = False
+        hmod._run_streamed(
+            [sys.executable, "-c", _FAKE_STREAM_LOG], 30, 10 * 1024 * 1024, "fake"
+        )
+        spawn2 = []
+        try:
+            with open(slog2, encoding="utf-8") as fh:
+                spawn2 = [
+                    json.loads(ln)
+                    for ln in fh
+                    if ln.strip() and json.loads(ln).get("kind") == "spawn-start"
+                ]
+        except (OSError, json.JSONDecodeError):
+            pass
+        ok11 = ok11 and len(spawn2) == 1 and spawn2[0].get("schema") is False
+        # best-effort sub-case: an unwritable stream-log path NEVER raises
+        # (mirror of check 7's blocker-file trick for the progress path).
+        blocker11 = os.path.join(td, "blocker")
+        with open(blocker11, "w", encoding="utf-8") as fh:
+            fh.write("x")
+        hmod._STREAM_LOG_PATH = os.path.join(blocker11, "sub", "s.jsonl")
+        hmod._STREAM_LOG_WARNED = False
+        try:
+            hmod._run_streamed(
+                [sys.executable, "-c", _FAKE_STREAM_LOG, "--json-schema"],
+                30,
+                10 * 1024 * 1024,
+                "fake",
+            )
+            best_effort11 = True
+        except Exception:  # noqa: BLE001 — the contract is "never raises"
+            best_effort11 = False
+        _check(
+            "stream-log-distillation",
+            ok11 and best_effort11,
+            f"stream log lines={kinds11} tele={tele11} best_effort={best_effort11}",
+            "the wrapper distills assistant blocks to "
+            "<run-dir>/round<k>-<provider>.stream.jsonl (text / tool+input_head "
+            "<=300 / one spawn-start with a bool schema flag); partials and the "
+            "result event never land; an unwritable path degrades, never raises "
+            "(ADR #69)",
+            findings,
+            coverage,
+            file_="infra/scripts/hetero_doc_review.py",
+        )
+
+    # --- check 12: multi-run status render (ADR #69) ---------------------
+    with tempfile.TemporaryDirectory() as td:
+        runs_dir = os.path.join(td, "runs")
+        run_a = os.path.join(runs_dir, "20260907-aaa-slug")  # ended
+        run_b = os.path.join(runs_dir, "20260907-bbb-slug")  # active
+        for d in (run_a, run_b):
+            os.makedirs(d, exist_ok=True)
+        _append(
+            CSR_PROGRESS,
+            os.path.join(run_a, "progress.jsonl"),
+            "run-start",
+            {"artifact": "a.md", "tier": "short", "cap": "2"},
+        )
+        _append(
+            CSR_PROGRESS,
+            os.path.join(run_a, "progress.jsonl"),
+            "run-end",
+            {"outcome": "converged"},
+        )
+        _append(
+            CSR_PROGRESS,
+            os.path.join(run_b, "progress.jsonl"),
+            "run-start",
+            {"artifact": "b.md", "tier": "short", "cap": "2"},
+        )
+        # run_b's run-start append has ALREADY pointed runs/LATEST at run_b
+        # (the real mechanism — cmd_append's run-start hook), so the symlink
+        # exists for the scan-exclusion and dispatch-resolution cases below.
+        # (a) all-runs view: one ACTIVE block, ended collapsed, no LATEST
+        # double-render (the scan excludes symlinks).
+        p12 = subprocess.run(
+            [sys.executable, CSR_PROGRESS, "status", runs_dir],
+            capture_output=True,
+            text=True,
+        )
+        ok12a = (
+            p12.returncode == 0
+            and "20260907-bbb-slug (ACTIVE" in p12.stdout
+            and "b.md" in p12.stdout
+            and p12.stdout.count("csr run:") == 1
+            and "1 ended" in p12.stdout
+            and "a.md" not in p12.stdout
+        )
+        # (b) symlinked single-run dispatch: `status runs/LATEST` resolves the
+        # symlink (isdir-follows-symlink) — NOT the scan path — and renders
+        # the pointed-at run single-run.
+        p12b = subprocess.run(
+            [sys.executable, CSR_PROGRESS, "status", os.path.join(runs_dir, "LATEST")],
+            capture_output=True,
+            text=True,
+        )
+        ok12b = p12b.returncode == 0 and p12b.stdout.startswith("csr run: b.md")
+        # (c) dir-vs-file dispatch identity (age-normalized — the phase age is
+        # wall-clock-relative; everything else byte-compared).
+        p12c = subprocess.run(
+            [sys.executable, CSR_PROGRESS, "status", run_b],
+            capture_output=True,
+            text=True,
+        )
+        p12d = subprocess.run(
+            [
+                sys.executable,
+                CSR_PROGRESS,
+                "status",
+                os.path.join(run_b, "progress.jsonl"),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        norm = lambda s: re.sub(_AGE_NORM, "— Ns ago", s)  # noqa: E731
+        ok12c = norm(p12c.stdout) == norm(p12d.stdout)
+        # (d) zero-active fallback: end run_b; the view names "no active runs"
+        # and renders the most-recent run's full block.
+        _append(
+            CSR_PROGRESS,
+            os.path.join(run_b, "progress.jsonl"),
+            "run-end",
+            {"outcome": "converged"},
+        )
+        p12e = subprocess.run(
+            [sys.executable, CSR_PROGRESS, "status", runs_dir],
+            capture_output=True,
+            text=True,
+        )
+        ok12d = (
+            "no active runs" in p12e.stdout
+            and "most recent" in p12e.stdout
+            and p12e.stdout.count("csr run:") == 1
+        )
+        # (e) PRE-change golden regression (age-normalized): the single-run
+        # render is byte-stable against the frozen pre-ADR-#69 capture.
+        gold_prog = os.path.join(td, "gold", "progress.jsonl")
+        os.makedirs(os.path.dirname(gold_prog), exist_ok=True)
+        with open(gold_prog, "w", encoding="utf-8") as fh:
+            for evt in _GOLDEN_EVENTS:
+                fh.write(json.dumps(evt, ensure_ascii=False) + "\n")
+        p12f = subprocess.run(
+            [sys.executable, CSR_PROGRESS, "status", os.path.dirname(gold_prog)],
+            capture_output=True,
+            text=True,
+        )
+        ok12e = norm(p12f.stdout) == norm(_GOLDEN_RENDER)
+        _check(
+            "multi-run-render",
+            ok12a and ok12b and ok12c and ok12d and ok12e,
+            f"active-block={ok12a} symlink-dispatch={ok12b} "
+            f"dir-vs-file={ok12c} zero-active={ok12d} golden={ok12e}",
+            "csr_progress.py status <runs-dir> renders one labeled block per "
+            "active run (scan excludes LATEST; dispatch resolves it); zero "
+            "active renders the most recent; single-run output matches the "
+            "pre-change frozen golden (ADR #69)",
+            findings,
+            coverage,
+            file_="infra/scripts/csr_progress.py",
+        )
+
+    # --- check 13: stream render (ADR #69 read side) ---------------------
+    with tempfile.TemporaryDirectory() as td:
+        rd = os.path.join(td, "run")
+        empty_rd = os.path.join(td, "empty-run")
+        os.makedirs(rd)
+        os.makedirs(empty_rd)
+        slog = os.path.join(rd, "round1-fake.stream.jsonl")
+        with open(slog, "w", encoding="utf-8") as fh:
+            fh.write(
+                json.dumps(
+                    {
+                        "ts": "2026-09-16T01:21:30",
+                        "kind": "spawn-start",
+                        "schema": True,
+                    }
+                )
+                + "\n"
+            )
+            fh.write(
+                json.dumps(
+                    {
+                        "ts": "2026-09-16T01:21:36",
+                        "kind": "text",
+                        "text": "Reviewing the artifact.",
+                    }
+                )
+                + "\n"
+            )
+            fh.write(
+                json.dumps(
+                    {
+                        "ts": "2026-09-16T01:21:37",
+                        "kind": "tool",
+                        "tool": "Read",
+                        "input_head": '{"file_path": "SKILL.md"}',
+                    }
+                )
+                + "\n"
+            )
+            fh.write('{"ts": "2026-09-16T01:21:40", "kind": "te')  # torn tail
+        # an OLDER stream log in the same dir must lose the auto-pick
+        old_log = os.path.join(rd, "round0-fake.stream.jsonl")
+        with open(old_log, "w", encoding="utf-8") as fh:
+            fh.write(
+                json.dumps(
+                    {
+                        "ts": "2026-09-16T00:00:00",
+                        "kind": "spawn-start",
+                        "schema": True,
+                    }
+                )
+                + "\n"
+            )
+        os.utime(old_log, (0, 0))
+        p13 = subprocess.run(
+            [sys.executable, CSR_PROGRESS, "stream", rd],
+            capture_output=True,
+            text=True,
+        )
+        p13b = subprocess.run(
+            [sys.executable, CSR_PROGRESS, "stream", slog],
+            capture_output=True,
+            text=True,
+        )
+        p13c = subprocess.run(
+            [sys.executable, CSR_PROGRESS, "stream", empty_rd],
+            capture_output=True,
+            text=True,
+        )
+        # snapshot shaping: --tail 2 --newest-first keeps the newest 2 events
+        # with the NEWEST on top (CC-tool-result consumption: the preview head
+        # carries fresh lines; the fold only ever swallows old ones).
+        p13d = subprocess.run(
+            [
+                sys.executable,
+                CSR_PROGRESS,
+                "stream",
+                rd,
+                "--tail",
+                "2",
+                "--newest-first",
+            ],
+            capture_output=True,
+            text=True,
+        )
+        d_lines = [ln for ln in p13d.stdout.splitlines() if ln.strip()]
+        # snapshot shaping is follow-incompatible (exit 2, loud misuse)
+        p13e = subprocess.run(
+            [
+                sys.executable,
+                CSR_PROGRESS,
+                "stream",
+                rd,
+                "--tail",
+                "2",
+                "--watch",
+                "5",
+            ],
+            capture_output=True,
+            text=True,
+        )
+        ok13 = (
+            p13.returncode == 0
+            and "── spawn 01:21:30 (structured) ──" in p13.stdout
+            and "01:21:36  Reviewing the artifact." in p13.stdout
+            and "▸ Read" in p13.stdout
+            and '"kind"' not in p13.stdout  # no raw JSON leakage
+            and "00:00:00" not in p13.stdout  # auto-pick took the NEWEST log
+            and p13b.stdout == p13.stdout  # file form == dir auto-pick form
+            and p13c.returncode == 0
+            and "no *.stream.jsonl" in p13c.stdout
+            and p13d.returncode == 0
+            and len(d_lines) == 2
+            and d_lines[0].startswith("01:21:37")  # newest (tool) on top
+            and d_lines[1].startswith("01:21:36")  # older (text) below
+            and p13e.returncode == 2  # snapshot + follow = loud misuse
+        )
+        _check(
+            "stream-render",
+            ok13,
+            f"rc={p13.returncode} out={p13.stdout[:120]!r} empty={p13c.stdout[:60]!r}",
+            "csr_progress.py stream renders the distilled execution log in "
+            "human form (spawn divider / prose / ▸ tool lines, no raw JSON), "
+            "auto-picks the newest *.stream.jsonl for a run dir, and skips a "
+            "torn tail without crashing (ADR #69 read side)",
+            findings,
+            coverage,
+            file_="infra/scripts/csr_progress.py",
+        )
+
+    # --- check 14: trace-append (ADR #69 same-family read side) -----------
+    with tempfile.TemporaryDirectory() as td:
+        tfile = os.path.join(td, "round1-same-family.stream.jsonl")
+        entries = json.dumps(
+            [
+                {"kind": "text", "text": "verifying §F6 against MEMORY.md"},
+                {
+                    "kind": "tool",
+                    "tool": "Read",
+                    "input_head": '{"file_path": "MEMORY.md"}',
+                },
+                {"kind": "text", "text": "L" * 3000},
+            ]
+        )
+        p14 = subprocess.run(
+            [
+                sys.executable,
+                CSR_PROGRESS,
+                "trace-append",
+                "--file",
+                tfile,
+                "--entries",
+                entries,
+            ],
+            capture_output=True,
+            text=True,
+        )
+        # renderer round-trip: the written file renders like any stream log
+        p14r = subprocess.run(
+            [sys.executable, CSR_PROGRESS, "stream", tfile],
+            capture_output=True,
+            text=True,
+        )
+        # misuse: unknown kind / unknown field / non-array
+        p14b = subprocess.run(
+            [
+                sys.executable,
+                CSR_PROGRESS,
+                "trace-append",
+                "--file",
+                tfile,
+                "--entries",
+                json.dumps([{"kind": "thought"}]),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        p14c = subprocess.run(
+            [
+                sys.executable,
+                CSR_PROGRESS,
+                "trace-append",
+                "--file",
+                tfile,
+                "--entries",
+                json.dumps([{"kind": "text", "text": "ok", "why": "x"}]),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        p14d = subprocess.run(
+            [
+                sys.executable,
+                CSR_PROGRESS,
+                "trace-append",
+                "--file",
+                tfile,
+                "--entries",
+                "not-json",
+            ],
+            capture_output=True,
+            text=True,
+        )
+        lines14 = []
+        try:
+            with open(tfile, encoding="utf-8") as fh:
+                lines14 = [json.loads(ln) for ln in fh if ln.strip()]
+        except (OSError, json.JSONDecodeError):
+            pass
+        ok14 = (
+            p14.returncode == 0
+            and len(lines14) == 3
+            and all("ts" in ln for ln in lines14)
+            and lines14[0]["kind"] == "text"
+            and "§F6" in lines14[0]["text"]
+            and lines14[1]["tool"] == "Read"
+            and len(lines14[1]["input_head"]) <= 300
+            and len(lines14[2]["text"]) <= 2000  # 3000-char line truncated
+            and p14r.returncode == 0
+            and "▸ Read" in p14r.stdout  # same renderer consumes it
+            and p14b.returncode == 2
+            and p14c.returncode == 2
+            and p14d.returncode == 2
+            # both SKILL.md call sites instruct trace-append persistence
+            and "round<k>-same-family.stream.jsonl" in skill_text
+            and "trace-append" in skill_text
+            and "verify-<claim_id>.stream.jsonl" in skill_text
+        )
+        _check(
+            "trace-append",
+            ok14,
+            f"rc={p14.returncode} lines={len(lines14)} "
+            f"misuse={[p14b.returncode, p14c.returncode, p14d.returncode]}",
+            "csr_progress.py trace-append persists the same-family "
+            "execution_trace as stream-log JSONL (strict vocabulary, "
+            "server-side caps by truncation, ts stamped) that the SAME stream "
+            "renderer consumes (ADR #69)",
             findings,
             coverage,
             file_="infra/scripts/csr_progress.py",

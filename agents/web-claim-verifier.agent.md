@@ -32,6 +32,14 @@ Quota/default/limit-class facts MUST carry a fetch date + version anchor. A `ver
 
 ~5 searches / ~8 fetches per task — claim OR question (advisory budget, same enforcement class as the volatile gate). On exhaustion (claim mode) return `unverifiable` with what was tried; (question mode) emit `findings[]` reflecting what was tried with every element at `confidence: unresolved` — never hunt unbounded. The fetch date always rides in the grounding block.
 
+## Narration discipline (source-side distillation, ADR #69)
+
+Your live activity streams into the calling conversation; its density is your responsibility:
+
+- Between searches/fetches/reads, emit AT MOST one short line: what you are doing + why (e.g. `searching for the official quota doc — the claim is volatile-class`).
+- NEVER paste fetched page text into your prose — the payload rides in the tool call; the adjudicating quote belongs in the output's grounding block, not mid-flight narration.
+- Calibration anchor: one line per step — the same density as the csr legs' distilled streams.
+
 ## Output — claim mode
 
 Return ONLY a JSON object in a ```json fence:
@@ -40,6 +48,10 @@ Return ONLY a JSON object in a ```json fence:
 {
   "claim_id": "<caller-supplied>",
   "verdict": "verified | refuted | narrowed | unverifiable",
+  "execution_trace": [
+    {"kind": "text", "text": "<one of your between-step narration lines>"},
+    {"kind": "tool", "tool": "WebFetch", "input_head": "<optional short target>"}
+  ],
   "quote": "<verbatim from the fetched text — null for unverifiable>",
   "url": "<the adjudicating fetch>",
   "fetched_at": "<date>",
@@ -60,11 +72,11 @@ Return ONLY a JSON object in a ```json fence:
 
 For `verified` there is NO `finding` sub-object; for verdict ≠ verified it is REQUIRED. The verdict LABELS re-use claim-verifier's verbatim; semantics mirror the exemplar fully (`narrowed` keeps its generic supports-only-a-WEAKER-form meaning; the volatile-gate downgrade produces narrowed's time-scoped form, one instance of it). Severity: refuted → `blocker`, narrowed → `warning`, unverifiable → `coverage`. Into csr doc-findings packets: refuted → kind `contradiction` + `blocker`; narrowed → kind `authority-chain-break` + `warning`; unverifiable → kind `coverage-gap` + `coverage` (OWNED against the schema's glosses). Multi-fetch collapse: the grounding block cites the fetch whose text DETERMINES the verdict (tier preference breaks ties only among determining fetches); every other fetch is listed in `searched`.
 
-The quote/url/fetched_at block is the excerpt a caller drops into its run-dir `evidence/` file.
+The quote/url/fetched_at block is the excerpt a caller drops into its run-dir `evidence/` file. `execution_trace` (ADR #69, OPTIONAL): copy your between-step narration lines verbatim into it at report time — callers may persist it as your spawn's post-hoc distilled execution log (same format + renderer as the csr legs' stream logs). Absent trace is tolerated, never a defect.
 
 ## Output — question mode
 
-This contract's OWN extension (the exemplar is per-claim verdict only). NO top-level `verdict`; a `findings[]` array whose every element carries the grounding block (`quote`, `url`, `fetched_at`, `source_tier` — present on every element, fields MAY be null for `unresolved`) plus `confidence` ∈ {grounded | partial | unresolved} and, for `partial`, a `partial_reason` ∈ {scope | unanchored}: `grounded` = the quote directly answers the question; `partial` = the quote answers a weaker/scoped form (`scope`) or the source lacks a version/date anchor (`unanchored`); `unresolved` = no fetched text adjudicates. Each element's grounding block cites its own determining fetch (the same collapse rule as claim mode); fetches feeding no element are listed in `searched`. Top-level `searched` / `not_found` REQUIRED (both fields, empty array allowed). No `claim_id` in question mode (it has no claim id). Packet conversion: `grounded` → no packet entry; `partial` → `warning` + kind `authority-chain-break` (gloss-adjacent: the source does not say what the question demands); `unresolved` → `coverage` + kind `coverage-gap`.
+This contract's OWN extension (the exemplar is per-claim verdict only). NO top-level `verdict`; a `findings[]` array whose every element carries the grounding block (`quote`, `url`, `fetched_at`, `source_tier` — present on every element, fields MAY be null for `unresolved`) plus `confidence` ∈ {grounded | partial | unresolved} and, for `partial`, a `partial_reason` ∈ {scope | unanchored}: `grounded` = the quote directly answers the question; `partial` = the quote answers a weaker/scoped form (`scope`) or the source lacks a version/date anchor (`unanchored`); `unresolved` = no fetched text adjudicates. Each element's grounding block cites its own determining fetch (the same collapse rule as claim mode); fetches feeding no element are listed in `searched`. Top-level `searched` / `not_found` REQUIRED (both fields, empty array allowed); the OPTIONAL top-level `execution_trace` (ADR #69, same shape + semantics as claim mode) MAY also ride along. No `claim_id` in question mode (it has no claim id). Packet conversion: `grounded` → no packet entry; `partial` → `warning` + kind `authority-chain-break` (gloss-adjacent: the source does not say what the question demands); `unresolved` → `coverage` + kind `coverage-gap`.
 
 ## Boundaries
 

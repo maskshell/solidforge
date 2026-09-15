@@ -28,7 +28,10 @@ Self-contained (rule 7): pure stdlib, no skill imports, independently deployable
 Usage:
     csr_progress.py append --file <progress.jsonl> --type <event-type> \
         [--field key=value ...]
-    csr_progress.py status <progress.jsonl | run-dir> [--watch <seconds>]
+    csr_progress.py status <progress.jsonl | run-dir | runs-dir> [--watch <seconds>]
+    csr_progress.py stream <stream.jsonl | run-dir> [--watch <seconds>]
+                                    | [--tail <N>] [--newest-first]  (snapshot shaping)
+    csr_progress.py trace-append --file <stream.jsonl> --entries <json-array | @file>
 """
 
 import argparse
@@ -341,6 +344,78 @@ def render_status(path):
     return "\n".join(lines)
 
 
+def _collect_run_dirs(target):
+    """Run dirs under a runs dir: entries having progress.jsonl, EXCLUDING
+    symlinks (runs/LATEST would double-render the pointed-at run — this is the
+    SCAN-level exclusion ONLY; dispatch still resolves symlinks, ADR #69),
+    newest-first by progress.jsonl mtime."""
+    try:
+        entries = sorted(os.listdir(target))
+    except OSError:
+        return []
+    out = []
+    for name in entries:
+        path = os.path.join(target, name)
+        if os.path.islink(path):
+            continue
+        if os.path.isfile(os.path.join(path, "progress.jsonl")):
+            out.append(path)
+
+    def _mtime_or_old(path):
+        # A dir deleted between listing and sorting sorts OLDEST, never raises
+        # (the renderer's OSError posture holds end to end; outer-ring A1).
+        try:
+            return os.path.getmtime(path)
+        except OSError:
+            return 0.0
+
+    out.sort(
+        key=lambda d: _mtime_or_old(os.path.join(d, "progress.jsonl")),
+        reverse=True,
+    )
+    return out
+
+
+def _is_active_run(progress_path):
+    """Active = no run-end event — the only deterministic rule from sidecar
+    data. A crashed run never emits run-end and renders ACTIVE forever; its
+    last-event age line is the operator's staleness signal. Deliberately NO
+    mtime-staleness threshold (rule 4 — a heuristic cutoff is not a Blocker
+    basis and has no principled value)."""
+    events, _ = _read_events(progress_path)
+    return not any(e.get("type") == "run-end" for e in events)
+
+
+def render_multi_status(runs_dir):
+    """All-runs view (ADR #69): one labeled block per ACTIVE run (each block's
+    artifact line self-identifies the run — the user picks by artifact name),
+    ended runs collapsed to a count line, zero active renders the most-recent
+    run's full block. Read-only (AC-2)."""
+    run_dirs = _collect_run_dirs(runs_dir)
+    if not run_dirs:
+        # Unreachable via the CLI — cmd_status routes an empty scan to the
+        # single-run path, keeping today's `no file at <path>` message (AC-4
+        # pins it); this branch keeps the function total for direct callers
+        # (outer-ring A2: one declared truth per surface, enforcement = CLI).
+        return f"csr progress: no run dirs with progress.jsonl under {runs_dir}"
+    actives = [d for d in run_dirs if _is_active_run(os.path.join(d, "progress.jsonl"))]
+    ended = len(run_dirs) - len(actives)
+    lines = [f"runs: {len(run_dirs)} total, {len(actives)} active, {ended} ended"]
+    if not actives:
+        lines.append("no active runs — most recent:")
+        lines.append(render_status(os.path.join(run_dirs[0], "progress.jsonl")))
+        return "\n".join(lines)
+    for d in actives:
+        prog = os.path.join(d, "progress.jsonl")
+        events, _ = _read_events(prog)
+        last_ts = events[-1].get("ts") if events else None
+        age = _age_s(last_ts)
+        age_txt = f"{age}s ago" if age is not None else "age unknown"
+        lines.append(f"-- {os.path.basename(d)} (ACTIVE, last event {age_txt}) --")
+        lines.append(render_status(prog))
+    return "\n".join(lines)
+
+
 def _resolve_status_path(target):
     if os.path.isdir(target):
         return os.path.join(target, "progress.jsonl")
@@ -354,13 +429,234 @@ def cmd_status(args):
             file=sys.stderr,
         )
         return 2
-    path = _resolve_status_path(args.target)
+    # ADR #69 dispatch: a dir WITH its own progress.jsonl renders single-run
+    # (os.path.isdir follows symlinks, so `status runs/LATEST` keeps the
+    # single-active-run one-liner); a dir WITHOUT one but WITH */progress.jsonl
+    # is a runs dir (all-runs view); anything else keeps today's path handling
+    # (file path, or the no-file message for a dir with neither).
+    target = args.target
+    multi = os.path.isdir(target) and not os.path.exists(
+        os.path.join(target, "progress.jsonl")
+    )
+    if multi:
+        multi = bool(_collect_run_dirs(target))
     if args.watch:
         while True:
-            print(render_status(path), flush=True)
+            print(
+                render_multi_status(target)
+                if multi
+                else render_status(_resolve_status_path(target)),
+                flush=True,
+            )
             print("---", flush=True)
             time.sleep(args.watch)
-    print(render_status(path))
+    print(
+        render_multi_status(target)
+        if multi
+        else render_status(_resolve_status_path(target))
+    )
+    return 0
+
+
+def _render_stream_event(evt):
+    """ONE readable line for a distilled stream-log event (ADR #69 read side).
+    spawn-start -> a divider (works for both the first spawn and the
+    structured-output retry, which self-identifies via schema=false); text ->
+    the reviewer's prose verbatim; tool -> name + input head. Unknown kinds
+    render generically (forward-compat — the log may outlive this renderer).
+    Returns None for unrenderable input (never raises; torn/malformed lines
+    are skipped by the caller, mirroring _read_events' tolerance)."""
+    if not isinstance(evt, dict):
+        return None
+    kind = evt.get("kind")
+    ts = str(evt.get("ts") or "")[11:19]  # HH:MM:SS of the ISO timestamp
+    if kind == "spawn-start":
+        mode = "structured" if evt.get("schema") else "unstructured-retry"
+        return f"── spawn {ts} ({mode}) ──"
+    if kind == "text":
+        text = evt.get("text")
+        if isinstance(text, str) and text:
+            return f"{ts}  {text}"
+        return None
+    if kind == "tool":
+        name = evt.get("tool")
+        head = evt.get("input_head")
+        if isinstance(name, str) and isinstance(head, str):
+            return f"{ts}  ▸ {name} {head}"
+        if isinstance(name, str):
+            return f"{ts}  ▸ {name}"
+        return None
+    return f"{ts}  ? {json.dumps(evt, ensure_ascii=False)[:120]}"
+
+
+def _read_stream_events(path):
+    """Parse a stream log, tolerating a torn tail under concurrent writes
+    (same doctrine as _read_events: malformed lines are skipped, never fatal)."""
+    events = []
+    try:
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    obj = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                events.append(obj)
+    except OSError:
+        pass
+    return events
+
+
+def _resolve_stream_path(target):
+    """A .stream.jsonl path passes through; a DIRECTORY resolves to its NEWEST
+    *.stream.jsonl (the in-flight leg's log during a live run)."""
+    if not os.path.isdir(target):
+        return target
+    try:
+        names = [
+            n
+            for n in os.listdir(target)
+            if n.endswith(".stream.jsonl")
+            and not os.path.islink(os.path.join(target, n))
+        ]
+    except OSError:
+        names = []
+    if not names:
+        return None
+    names.sort(key=lambda n: os.path.getmtime(os.path.join(target, n)), reverse=True)
+    return os.path.join(target, names[0])
+
+
+def cmd_stream(args):
+    if args.watch < 0:
+        print(
+            "error: --watch wants seconds > 0 (or omit it for a single render)",
+            file=sys.stderr,
+        )
+        return 2
+    if args.watch and (args.tail or args.newest_first):
+        print(
+            "error: --tail/--newest-first shape a SNAPSHOT render; --watch is "
+            "follow mode (chronological append) — pick one",
+            file=sys.stderr,
+        )
+        return 2
+    path = _resolve_stream_path(args.target)
+    if path is None or not os.path.exists(path):
+        print(f"csr stream: no *.stream.jsonl at {args.target} (no streamed leg yet)")
+        return 0
+    printed = 0
+    while True:
+        events = _read_stream_events(path)
+        shown = events[printed:]
+        if not args.watch:
+            # Snapshot shaping (ADR #69 read side): --tail N keeps the NEWEST
+            # N events, --newest-first puts the newest line on top — built for
+            # consumption inside a CC tool result, whose preview shows the HEAD
+            # and folds the tail: the fold swallows OLD lines, never new ones.
+            if args.tail > 0:
+                shown = shown[-args.tail :]
+            if args.newest_first:
+                shown = list(reversed(shown))
+        for evt in shown:
+            out = _render_stream_event(evt)
+            if out is not None:
+                print(out, flush=True)
+        printed = len(events)
+        if not args.watch:
+            return 0
+        time.sleep(args.watch)
+
+
+def cmd_trace_append(args):
+    """Append validated execution_trace entries as distilled stream-log JSONL
+    (ADR #69 same-family read side). The orchestrator calls this at
+    same-family-complete with the doc-reviewer's self-reported narration
+    lines; the file it writes is the SAME format the wrapper's live distiller
+    emits, so `csr_progress.py stream` renders both legs uniformly. Exit 2 on
+    misuse (shape violations — strict vocabulary, rule 3); exit 1 on an
+    unwritable target (clean one-line error, never a traceback — mirrors
+    cmd_append). Length caps are enforced server-side by TRUNCATION (text
+    2000 / input_head 300), matching the wrapper's distiller semantics — the
+    reviewer's report never fails the append over a long line."""
+    raw = args.entries
+    if raw.startswith("@"):
+        try:
+            with open(raw[1:], encoding="utf-8") as fh:
+                raw = fh.read()
+        except OSError as exc:
+            print(f"error: cannot read --entries @file: {exc}", file=sys.stderr)
+            return 2
+    try:
+        entries = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        print(f"error: --entries wants a JSON array or @file: {exc}", file=sys.stderr)
+        return 2
+    if not isinstance(entries, list) or not entries:
+        print(
+            "error: --entries wants a non-empty JSON array of trace entries",
+            file=sys.stderr,
+        )
+        return 2
+    events = []
+    for i, ent in enumerate(entries):
+        if not isinstance(ent, dict) or "kind" not in ent:
+            print(f"error: entry[{i}] wants an object with kind", file=sys.stderr)
+            return 2
+        unknown = set(ent) - {"kind", "text", "tool", "input_head"}
+        if unknown:
+            print(
+                f"error: entry[{i}] unknown field(s) {sorted(unknown)} "
+                "(strict vocabulary)",
+                file=sys.stderr,
+            )
+            return 2
+        kind = ent["kind"]
+        evt = {"ts": _now_ts(), "kind": kind}
+        if kind == "text":
+            text = ent.get("text")
+            if not isinstance(text, str) or not text:
+                print(
+                    f"error: entry[{i}] kind=text wants non-empty text", file=sys.stderr
+                )
+                return 2
+            evt["text"] = text[:2000]
+        elif kind == "tool":
+            tool = ent.get("tool")
+            if not isinstance(tool, str) or not tool:
+                print(
+                    f"error: entry[{i}] kind=tool wants non-empty tool", file=sys.stderr
+                )
+                return 2
+            evt["tool"] = tool
+            head = ent.get("input_head")
+            if head is not None:
+                if not isinstance(head, str):
+                    print(
+                        f"error: entry[{i}] input_head wants a string",
+                        file=sys.stderr,
+                    )
+                    return 2
+                evt["input_head"] = head[:300]
+        else:
+            print(
+                f"error: entry[{i}] kind wants 'text' or 'tool', got {kind!r}",
+                file=sys.stderr,
+            )
+            return 2
+        events.append(evt)
+    try:
+        parent = os.path.dirname(os.path.abspath(args.file))
+        os.makedirs(parent, exist_ok=True)
+        with open(args.file, "a", encoding="utf-8") as fh:
+            for evt in events:
+                fh.write(json.dumps(evt, ensure_ascii=False) + "\n")
+            fh.flush()
+    except OSError as exc:
+        print(f"error: cannot write trace file: {exc}", file=sys.stderr)
+        return 1
     return 0
 
 
@@ -396,6 +692,48 @@ def main():
         help="re-render every N seconds until interrupted",
     )
     ap_status.set_defaults(func=cmd_status)
+
+    ap_stream = sub.add_parser(
+        "stream",
+        help="render a wrapper execution stream log in readable form (ADR #69)",
+    )
+    ap_stream.add_argument(
+        "target",
+        help="*.stream.jsonl path OR a run dir (resolves to its newest stream log)",
+    )
+    ap_stream.add_argument(
+        "--watch",
+        type=float,
+        default=0,
+        help="follow: render new lines every N seconds until interrupted",
+    )
+    ap_stream.add_argument(
+        "--tail",
+        type=int,
+        default=0,
+        help="snapshot only: render the LAST N events (newest kept)",
+    )
+    ap_stream.add_argument(
+        "--newest-first",
+        action="store_true",
+        help="snapshot only: newest line on top (old lines fold away first)",
+    )
+    ap_stream.set_defaults(func=cmd_stream)
+
+    ap_trace = sub.add_parser(
+        "trace-append",
+        help="persist a same-family leg's execution_trace as stream-log JSONL "
+        "(ADR #69; same format the wrapper distills live)",
+    )
+    ap_trace.add_argument(
+        "--file", required=True, help="target *.stream.jsonl path (append)"
+    )
+    ap_trace.add_argument(
+        "--entries",
+        required=True,
+        help="JSON array of {kind, text|tool, input_head?} or @file containing it",
+    )
+    ap_trace.set_defaults(func=cmd_trace_append)
 
     args = ap.parse_args()
     return args.func(args)
