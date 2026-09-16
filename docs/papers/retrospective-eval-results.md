@@ -58,6 +58,6 @@
 | 1 | Annotation layer (index v2) | DONE — `evidence-corpus/analysis/index-v2.json` |
 | 2 | metrics.py + normalization table | DONE (table inline in metrics.py constants; script lint-clean, assertions green) |
 | 3 | RQ2 coding pass | DONE — LLM pass + orchestrator-tier spot-check + 96.9% consistency re-run (tier deviation disclosed; human step pending (orchestrator-tier deviation disclosed)) |
-| 4 | Results doc | THIS DOCUMENT (draft — spot-check may adjust RQ2) |
+| 4 | Results doc | THIS DOCUMENT (FINAL — the A6 human spot-check gate executed 2026-09-16 at the delegated-human tier; 9/9 positives verified) |
 | 5 | Paper integration draft | DRAFTED — `docs/papers/retrospective-section-draft.md` (pending author incorporation into the canonical paper) |
 | 6 | Dedup arithmetic | DONE — `evidence-corpus/analysis/dedup-arithmetic.json` (raw vs unique per unit) |
