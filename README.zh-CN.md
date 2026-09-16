@@ -22,6 +22,8 @@
 
 每个技能的 `docs/` 目录包含设计提案、迭代计划、ADR 日志（`design-decisions.md`）与收敛记录（`*.convergence.md`）。这些是**维护者向**的设计依据（技能为何如此工作、经过了怎样的交叉评审、锁定了哪些决策）——不是用户向文档。**使用技能只需要 `SKILL.md` + `references/`**。`docs/` 保持公开是为了透明：它们是支撑每个设计决策的收敛轨迹，与项目自身的收敛驱动哲学一致。
 
+顶层 `docs/` 里有一份用户向的例外：[从需求开始用 SolidForge](docs/start-from-requirements.zh-CN.md)——从一句话需求到收敛代码的上手指南（模糊需求访谈 / 现成需求文档两条起点），配套完整实案 [case-ios-reader](docs/case-ios-reader/)。
+
 ## 安装 + 启用（第 1 层）
 
 **从仓库 URL 安装**（本仓库同时是自己的 marketplace——`.claude-plugin/marketplace.json`）：

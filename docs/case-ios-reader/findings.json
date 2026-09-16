@@ -1,0 +1,21 @@
+{
+  "outcome_axis_respected": true,
+  "findings": [
+    {
+      "defect_id": "novel-6",
+      "severity": "warning",
+      "kind": "contradiction",
+      "location": "docs/product-spec.md §6 AC-13 (also mirrored in SPEC-AC-13.scope) — introduced by the novel-2 repair",
+      "evidence": "AC-13 now asserts: \"未配置 AI key 时跳转配置引导页而非报错，且此时应用自身外发网络请求为 0（OM-8 隐私底线）\", and SPEC-AC-13.scope: \"无 key 跳配置引导而非报错且此时应用外发请求为 0（OM-8）\". Both restate OM-8's consequent but drop its second conjunct — OM-8 itself requires \"未配置 AI key 且 iCloud 关闭时\". Read literally (app-scoped claim, keyless state), AC-13 contradicts AC-12: with no AI key but iCloud ON, CloudKit sync legitimately produces outbound traffic (required by OM-6). The \"（OM-8 隐私底线）\" citation makes the full condition recoverable, so this is recoverable imprecision rather than a hard blocker — but as written the clause is false in the keyless+sync-on state.",
+      "suggestion": "Restate AC-13's clause with OM-8's full condition (\"未配置 AI key 且 iCloud 关闭时\") or scope the zero-request claim to the translation flow itself."
+    },
+    {
+      "defect_id": "novel-7",
+      "severity": "warning",
+      "kind": "contradiction",
+      "location": "plan-model.json anchors.constraints-assumptions.ref — introduced by the novel-5 repair",
+      "evidence": "plan-model.json line 267 still reads \"ref\": \"docs/product-spec.md §4 约束（C1..C6）与假设（A1..A3）\", but the repaired spec §4.2 now declares four assumptions, ending with the load-bearing \"A4 同一 Apple ID 下的各设备持有同一书目的相同文件副本……AC-12 的同步正确性……以此为前提\". The normalized anchor metadata misenumerates the authority artifact's assumption set; A4 is AC-12's correctness premise, so the drift is not cosmetic.",
+      "suggestion": "Update the anchor ref to \"约束（C1..C6）与假设（A1..A4）\"."
+    }
+  ]
+}

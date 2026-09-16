@@ -22,6 +22,8 @@ A Claude Code plugin bundling the **converge → specify → implement** pipelin
 
 Each skill's `docs/` directory contains the design proposal, iteration plan, ADR log (`design-decisions.md`), and convergence records (`*.convergence.md`). These are **maintainer-facing** design rationale (why the skill works the way it does, what was cross-reviewed, what decisions were locked) — not user-facing docs. **Users only need `SKILL.md` + `references/`** to use a skill. The `docs/` are kept public for transparency: they're the convergence trail that backs every design decision, consistent with the project's own convergence-driven philosophy.
 
+One user-facing exception lives at the top level of `docs/`: [Starting from requirements (简体中文)](docs/start-from-requirements.zh-CN.md) — a getting-started guide from a one-line idea to converged code (vague-idea interview or ready-made requirements doc), with a full worked case in [docs/case-ios-reader/](docs/case-ios-reader/).
+
 ## Install + enable (Layer 1)
 
 **From the repo URL** (the repo is its own marketplace — `.claude-plugin/marketplace.json`):

@@ -14,6 +14,8 @@ Have a code task? Invoke pd directly — **the slash command guarantees the skil
 
 No plan needed for a single task. If you already have one, skip to [Workflows](#workflows).
 
+Not even at a code task yet — just an idea or a rough requirements doc? Start with [Starting from requirements (简体中文)](docs/start-from-requirements.zh-CN.md): from a one-line idea to a frozen PRD, then come back here for implementation.
+
 ## The skill pipeline
 
 Five skills, one pipeline plus two additive outcome-axis layers (cited-source verification + uncited-prior-art collision):
