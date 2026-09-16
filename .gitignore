@@ -26,7 +26,17 @@ htmlcov/
 .env.solidforge
 !.env.solidforge.example
 
-# evidence-corpus (A+B harvest): pre-scrub, placement decision pending — see docs/papers/evidence-corpus/README.md
+# evidence-corpus (A+B harvest): pre-scrub, placement decision pending — see docs/papers/evidence-corpus/*
+!docs/papers/evidence-corpus/analysis
+docs/papers/evidence-corpus/analysis/*
+!docs/papers/evidence-corpus/analysis/metrics.py
+!docs/papers/evidence-corpus/analysis/analyze.py
+!docs/papers/evidence-corpus/analysis/rq2_export.pyREADME.md
 # structural untracked (was discipline-only, csr round-4 R4-5); also neutralizes the half-commit hazard
 # the broad *-hetero-*.json rule below would otherwise drop hetero round files while staging same-leg files
-docs/papers/evidence-corpus/
+docs/papers/evidence-corpus/*
+!docs/papers/evidence-corpus/analysis
+docs/papers/evidence-corpus/analysis/*
+!docs/papers/evidence-corpus/analysis/metrics.py
+!docs/papers/evidence-corpus/analysis/analyze.py
+!docs/papers/evidence-corpus/analysis/rq2_export.py
