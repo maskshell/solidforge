@@ -14,13 +14,13 @@
 
 | Bucket | Count | Share of attributable |
 | --- | --- | --- |
-| same-only | 192 | 53.5% |
-| hetero-only | 167 | 46.5% |
-| both (id-level) | 0 | 0% |
+| same-only | 179 | 51.7% |
+| hetero-only | 154 | 44.5% |
+| both (pair-adjudicated) | 13 | 3.8% |
 | unattributable | 308 | — |
 
-- **Headline**: among the 359 findings with per-finding leg attribution, the two legs contribute near-symmetrically — each leg alone would lose roughly half of what the pair finds. (Both=0 is an id-level artifact — cross-leg ids never match; kind+location pair adjudication is pending and can only MOVE findings from only-buckets to both, never remove them.)
-- Honest bounds: attribution coverage is 359/667 defect findings (54%); the unattributable mass sits in units without leg-separated files (consumer layer, and embedded-array records). Small-N disclosure per design: per-finding attribution exists in 8+ units.
+- **Headline**: among the 346 findings with per-finding leg attribution, the two legs contribute near-symmetrically — each leg alone would lose roughly half of what the pair finds. The pair-adjudication pass (D1, 2026-09-16: 21 kind+evidence-overlap candidates → 13 confirmed same-defect pairs, LLM-adjudicated + 7/7 spot-checked at the delegated-human tier) moved 13 findings into the both-bucket. Each leg still uniquely contributes ~96% of its discoveries — the multi-leg necessity conclusion is UNCHANGED, now measured rather than upper-bounded.
+- Honest bounds: attribution coverage is 346/667 defect findings (52%); the unattributable mass sits in units without leg-separated files (consumer layer, and embedded-array records). Small-N disclosure per design: per-finding attribution exists in 8+ units.
 
 ## RQ2 — fix-introduced defect frequency
 

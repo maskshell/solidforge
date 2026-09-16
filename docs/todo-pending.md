@@ -7,7 +7,7 @@
 
 Namespace note: bare C1–C9 = backlog items (§E); §C-C1..C7 = the protocol's next-revision debts (§C; the protocol names them itself); bare F1–F6 = legacy memory items (§F) — pub-readiness findings are always prefixed pub-readiness-Fn. The priority line uses §C- prefixes and marks A2 and A6 as operator gates; A1, A7, A8 are off the execution path entirely.
 
-A2 (OPERATOR decision) → A6 (OPERATOR-executed human gate) → A3 → B1 → ~~A2/A6/A1/A3/A4/A5/B1~~ → D1   [A1-A5 + B1 ALL DONE 2026-09-16; next executable: D1; B2 resolved (Osmani verified + kept); paper line: position-paper tier CLEARED for submission] → (B2, B3 optional) → (§C-C2..C7 next-use practices; D3 blocked on D1 (D2 unblocked); §E C1–C9 trigger-gated per the backlog; §F folded at their own touch-points (F4 next-bc; F5 Phase-B decision, outcome-axis)
+A2 (OPERATOR decision) → A6 (OPERATOR-executed human gate) → A3 → B1 → ~~A2/A6/A1/A3/A4/A5/B1/D1~~   [ALL DONE 2026-09-16; remaining: D2 (unblocked), D3 (now unblocked — D1 done), §C-C2..C7 (next-use); B2 resolved (Osmani verified + kept); paper line: position-paper tier CLEARED for submission] → (B2, B3 optional) → (§C-C2..C7 next-use practices; D3 blocked on D1 (D2 unblocked); §E C1–C9 trigger-gated per the backlog; §F folded at their own touch-points (F4 next-bc; F5 Phase-B decision, outcome-axis)
 
 - **A9 — Tracked-artifact retro-scrub** (EXECUTED 2026-09-16 04:1x): grep of the six P-table+inventory names over every tracked docs/*.md + profiles/*.json (evidence-corpus excluded — untracked). Result: the four consumer names (P1/P2/P3 + dianplus/polardb/team-search) have ZERO tracked carriers — the design's pseudonymization held. One name survives: 'fedaot' in 6 docs (go-first-class-plan, papers/README, psv-gate-mode-proposal + -iteration-plan, record-auditability-fix-plan + -iteration-plan) — these reference the fedaot EXTERNAL EXECUTION ENVIRONMENT (the wiki-KB where csr was dogfooded), i.e. the P4 consumer's infra context in historical plan docs, not business identifiers in publishable-set results. Classification: historical plan-doc context, PRE-DATES the pseudonym map (which governs new analysis outputs). Left as-is with this record; a future rewrite of any of those docs applies the P4 gloss.
 
@@ -48,7 +48,7 @@ A2 (OPERATOR decision) → A6 (OPERATOR-executed human gate) → A3 → B1 → ~
 
 ## D. Analysis follow-ups (from the results doc's limits)
 
-- **D1 — RQ1 both-pair adjudication**: kind+location cross-leg pair matching (LLM-adjudicated; the ≥10% spot-check is an OPERATOR-executed human gate per the design — the RQ2 cycle's orchestrator-tier deviation must not repeat silently here) — moves findings from only-leg buckets into both, tightening the single-leg-loss upper bound.
+- **D1 — RQ1 both-pair adjudication**: DONE 2026-09-16 — 21 candidates (kind + Jaccard≥0.15 evidence overlap) → 13 confirmed same-defect pairs; RQ1: same-only 192→179, hetero-only 167→154, both 0→13 (3.8%); spot-check 7/7 at the delegated-human tier; results doc updated; record: analysis/rq1-pair-adjudication.json.
 - **D2 — RQ3 fine-grained drip**: kind × section-cluster grouping (kind-level 92% spanning proves class persistence, NOT the C9 drip shape).
 - **D3 — RQ2 per-leg skew retest**: blocked on D1 (12/23 null-leg attribution).
 
