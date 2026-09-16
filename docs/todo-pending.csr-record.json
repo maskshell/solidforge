@@ -1,0 +1,114 @@
+{
+ "artifact": "docs/todo-pending.md",
+ "authority_ref": "",
+ "size_tier": "short",
+ "cap": 2,
+ "rounds": [
+  {
+   "round": 1,
+   "same_source_findings": 0,
+   "hetero_findings": 0,
+   "hetero_degraded": false,
+   "blockers": 2,
+   "verdict": "rewrite",
+   "findings": [],
+   "dispositions": []
+  },
+  {
+   "round": 2,
+   "same_source_findings": 0,
+   "hetero_findings": 0,
+   "hetero_degraded": false,
+   "blockers": 0,
+   "verdict": "pass",
+   "findings": [],
+   "dispositions": []
+  },
+  {
+   "round": 3,
+   "same_source_findings": 0,
+   "hetero_findings": 0,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [],
+   "dispositions": []
+  },
+  {
+   "round": 4,
+   "same_source_findings": 0,
+   "hetero_findings": 0,
+   "hetero_degraded": false,
+   "blockers": 0,
+   "verdict": "pass",
+   "findings": [],
+   "dispositions": []
+  },
+  {
+   "round": 5,
+   "same_source_findings": 0,
+   "hetero_findings": 0,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [],
+   "dispositions": []
+  },
+  {
+   "round": 6,
+   "same_source_findings": 0,
+   "hetero_findings": 0,
+   "hetero_degraded": false,
+   "blockers": 1,
+   "verdict": "rewrite",
+   "findings": [],
+   "dispositions": []
+  },
+  {
+   "round": 7,
+   "same_source_findings": 0,
+   "hetero_findings": 0,
+   "hetero_degraded": false,
+   "blockers": 0,
+   "verdict": "pass",
+   "findings": [],
+   "dispositions": []
+  },
+  {
+   "round": 8,
+   "same_source_findings": 0,
+   "hetero_findings": 0,
+   "hetero_degraded": false,
+   "blockers": 0,
+   "verdict": "pass",
+   "findings": [],
+   "dispositions": []
+  },
+  {
+   "round": 9,
+   "same_source_findings": 0,
+   "hetero_findings": 0,
+   "hetero_degraded": false,
+   "blockers": 0,
+   "verdict": "pass",
+   "findings": [],
+   "dispositions": []
+  }
+ ],
+ "substantive_converged": true,
+ "rightness": "human_confirm_required",
+ "stalemate": false,
+ "core_claims": [
+  "every pending item's factual anchor verified against repo/KB/memory",
+  "execution ordering coherent with operator-gate discipline",
+  "pseudonymization zero-hit against the full corpus-README name set"
+ ],
+ "coverage": [
+  "Per-round findings live in the gitignored run dir's round JSONs; this record carries the arc + coverage (the doc itself embeds every item's current state).",
+  "ARC: 9 rounds at cap 2; blockers 2,0,1,0,1,1,0,0,0 — converged on the formal 2-clean streak (rounds 8-9). ~60 findings dispositioned.",
+  "The memory-staleness cluster: F1 (qwen commits), F2 (pi ledger locus corrected to the worktree), F3 (ODP-5 resolved 2026-08-10), F6 (dogfood gap #4 = ADR #59), A8's uncommitted-claim sweep (5 lines incl. the parallel-session ADR #69), and the fast-gate cbfde405→fb432041 re-annotation — the TODO review doubled as a memory-index hygiene pass.",
+  "A9 added in round 9: the scrub rule binds future commits; five already-committed artifacts carry P-table real names — a retro-scrub debt now inventoried.",
+  "Git-state claims (A1/A7/F2/F6) rest on dated orchestrator verification records corroborated read-only; the doc names each verify command.",
+  "Full round JSONs in the gitignored run dir (workspace/cross-source-review/runs/20260915-234301-todo-pending/)."
+ ]
+}
