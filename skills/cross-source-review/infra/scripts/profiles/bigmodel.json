@@ -10,7 +10,7 @@
     "CLAUDE_CODE_SUBAGENT_MODEL": "GLM-5.3-Flash[1M]",
     "CLAUDE_FAST_MODEL": "GLM-5.3-Flash",
     "ANTHROPIC_DEFAULT_FABLE_MODEL": "GLM-5.3-Flash[1M]",
-    "CLAUDE_CODE_EFFORT_LEVEL": "max"
+    "CLAUDE_CODE_EFFORT_LEVEL": "high"
   },
   "model": "GLM-5.3-Flash[1M]",
   "_family": "glm"
