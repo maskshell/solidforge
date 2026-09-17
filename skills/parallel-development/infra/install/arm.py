@@ -925,6 +925,11 @@ def lsp_advisory(project_dir):
     print(
         "  (Solid Forge does NOT bundle .lsp.json or install language servers; opt in per language.)"
     )
+    print(
+        "  (multi-worktree fleets: share ONE language server per machine, with a live check "
+        "that per-worktree diagnostics still arrive — per-worktree servers measured ~8.7 GB "
+        "at 30 worktrees; design-decisions.md ADR #70.)"
+    )
 
 
 # --- report ------------------------------------------------------------------

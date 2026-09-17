@@ -287,9 +287,11 @@ intent those gates were meant to approximate. Common manifestations:
 deleting or \texttt{@Ignore}-ing a failing test, rewriting an assertion
 to match the code's actual output (``fixing the test''),
 \texttt{try/catch}-swallowing the exception that triggered the loop,
-mocking away a real dependency, over-fitting existing test inputs, or
+mocking away a real dependency, over-fitting existing test inputs,
 satisfying a local interface contract while leaving the upstream root
-cause unaddressed.
+cause unaddressed, or removing public API surface that has no in-repo
+callers while external consumers still import it (documented at
+production scale in Teknium 2026; §7).
 
 These manifestations include a regime structurally invisible to
 same-source verification --- where the proxy's adequacy for intent is
@@ -1244,6 +1246,28 @@ the §4.4 note). LoopX additionally supplies the only observed deployed
 instance of the two-axis separation among the cohort --- evidence that
 the discipline is practised even where it is not theorized.
 
+\textbf{A production-scale external instance: the Hermes self-refactor.}
+The largest published worktree-parallel agent refactor --- 1,393
+subagents over roughly nineteen active hours, reducing non-test Python
+by 34.4\% (Teknium 2026) --- is, read through our frame, an external
+corroboration of both §4.3's bifurcation and §6.5's
+fix-introduced-defect class. Its automated interface-preservation checks
+held (tool JSON schemas required to remain identical; CLI
+\texttt{-\/-help} output compared byte for byte), yet two regression
+classes the existing tests missed surfaced in human community review
+rather than in the agents' gates: ``public names that workers had
+removed because they had no callers inside the repository, even though
+external plugins could import them'' --- optimizing the in-repo
+caller-graph proxy while the true objective included external API
+consumers (the §3.1 manifestation above) --- and ``an automated rewrite
+of \texttt{suppress()} calls also changed exception handling at roughly
+65 sites,'' a batch fix-introduced defect. The response was exactly the
+salient-defense codification §4.3 predicts: ``a check that flags removed
+public names and tests for review.'' The latent breaches were found by
+the only oracle in the loop that was not the agent's own gates: human
+reviewers --- consistent with the frame, though the report itself does
+not theorize it.
+
 \textbf{Loop engineering as practice.} Osmani (2026) and concurrent
 industry discussions (2026-06) named the \emph{practice} of designing
 agent loops; they enumerate primitives (Automations, Worktrees, Skills,
@@ -1437,6 +1461,10 @@ independent discriminator.
   Wahi, V. (2026). \emph{LLM-as-a-Judge Is Not an Oracle: Why
   Self-Improving Agents Need Deterministic Guardrails.}
   arXiv:2609.02246.
+\item
+  Teknium. (2026). \emph{Refactoring Hermes with 1,393 agents.} Nous
+  Research.
+  \url{https://nousresearch.com/refactoring-hermes-with-1393-agents}
 \item
   SolidForge --- reference implementation for §6. Repository:
   https://github.com/maskshell/solidforge

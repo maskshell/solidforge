@@ -116,6 +116,10 @@ def t_lsp_advisory():
         "does NOT bundle .lsp.json" in out,
     )
     check(
+        "lsp advisory carries multi-worktree shared-server note (ADR #70)",
+        "share ONE language server" in out,
+    )
+    check(
         "lsp advisory notes plugin detection limit",
         "cannot detect whether a Claude Code plugin" in out,
     )
